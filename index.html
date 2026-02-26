@@ -718,6 +718,7 @@ function getTeamTicketValues() {
     values[4][city] = 0;
   });
   
+  // Calculate from art cards in gallery
   document.querySelectorAll('.art-card').forEach(card => {
     const team = card.dataset.team;
     if (team && team !== 'undefined') {
@@ -726,12 +727,30 @@ function getTeamTicketValues() {
       const art = artworks[idx];
       cities.forEach(city => {
         // Safety check for missing cities data
-        if (art.cities && art.cities[city] !== undefined) {
+        if (art && art.cities && art.cities[city] !== undefined) {
           values[teamNum][city] += art.cities[city];
         }
       });
     }
   });
+  
+  // Also calculate from gameState (for when loading saved games before cards are rendered)
+  for (let teamNum = 1; teamNum <= 4; teamNum++) {
+    const team = gameState.teams[teamNum];
+    if (team && team.artworks) {
+      team.artworks.forEach(savedArt => {
+        // Look up the full artwork data from the artworks array using idx
+        const art = artworks[savedArt.idx];
+        if (art && art.cities) {
+          cities.forEach(city => {
+            if (art.cities[city] !== undefined) {
+              values[teamNum][city] += art.cities[city];
+            }
+          });
+        }
+      });
+    }
+  }
   return values;
 }
 
