@@ -775,41 +775,53 @@ function populateDestinationDropdowns() {
 }
 
 function updateTeamDisplay() {
-  const tv = getTeamTicketValues();
-  
+  // Update team cash, artworks count in sidebar (safe operations)
   for (let i = 1; i <= 4; i++) {
-    const dest = document.getElementById(`dest${i}`).value || gameState.teams[i].city;
-    const ticketVal = dest !== 'start' ? tv[i][dest] || 0 : 0;
-    document.getElementById(`tv${i}`).textContent = '$' + ticketVal;
+    const team = gameState.teams[i];
+    if (!team) continue;
     
-    const cash = gameState.teams[i].cash;
+    // Update cash display
     const cashEl = document.getElementById(`cash${i}`);
-    cashEl.textContent = '$' + cash.toLocaleString();
-    cashEl.style.color = cash < 0 ? '#E94235' : '#0F9D58';
-    document.getElementById(`artcount${i}`).textContent = gameState.teams[i].artworks.length;
+    if (cashEl) {
+      cashEl.textContent = '$' + (team.cash || 0).toLocaleString();
+      cashEl.style.color = team.cash < 0 ? '#E94235' : '#0F9D58';
+    }
+    
+    // Update artwork count
+    const artCountEl = document.getElementById(`artcount${i}`);
+    if (artCountEl) {
+      artCountEl.textContent = (team.artworks || []).length;
+    }
   }
-  
+
+  // Update scoreboard
   const teams = [
-    {num: 1, cash: gameState.teams[1].cash, color: '#E94235', textColor: '#fff'},
-    {num: 2, cash: gameState.teams[2].cash, color: '#FBBC04', textColor: '#000'},
-    {num: 3, cash: gameState.teams[3].cash, color: '#4285F4', textColor: '#fff'},
-    {num: 4, cash: gameState.teams[4].cash, color: '#0F9D58', textColor: '#fff'}
+    {num: 1, cash: gameState.teams[1]?.cash || 0, color: '#E94235', textColor: '#fff'},
+    {num: 2, cash: gameState.teams[2]?.cash || 0, color: '#FBBC04', textColor: '#000'},
+    {num: 3, cash: gameState.teams[3]?.cash || 0, color: '#4285F4', textColor: '#fff'},
+    {num: 4, cash: gameState.teams[4]?.cash || 0, color: '#0F9D58', textColor: '#fff'}
   ];
   teams.sort((a, b) => b.cash - a.cash);
-  
+
   const scoreboard = document.getElementById('scoreboard');
-  scoreboard.innerHTML = teams.map((t, i) => `
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:#1a1a1a;margin-bottom:6px;border-radius:4px;border-left:4px solid ${t.color}">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:#666;font-weight:bold;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">#${i+1}</span>
-        <span style="color:${t.color};font-weight:bold;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">${["RED", "YELLOW", "BLUE", "GREEN"][t.num-1]}</span>
+  if (scoreboard) {
+    scoreboard.innerHTML = teams.map((t, i) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:#1a1a1a;margin-bottom:6px;border-radius:4px;border-left:4px solid ${t.color}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="color:#666;font-weight:bold;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">#${i+1}</span>
+          <span style="color:${t.color};font-weight:bold;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">${["RED", "YELLOW", "BLUE", "GREEN"][t.num-1]}</span>
+        </div>
+        <span style="color:${t.cash >= 0 ? '#0F9D58' : '#E94235'};font-weight:bold;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">$${t.cash.toLocaleString()}</span>
       </div>
-      <span style="color:${t.cash >= 0 ? '#0F9D58' : '#E94235'};font-weight:bold;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">$${t.cash.toLocaleString()}</span>
-    </div>
-  `).join('');
-  
-  document.getElementById('roundsRemaining').textContent = Math.max(0, gameState.maxRounds - gameState.round + 1);
-  
+    `).join('');
+  }
+
+  // Update rounds remaining
+  const roundsEl = document.getElementById('roundsRemaining');
+  if (roundsEl) {
+    roundsEl.textContent = Math.max(0, gameState.maxRounds - gameState.round + 1);
+  }
+}
 }
 
 function calculateRevenue() {
@@ -1090,113 +1102,46 @@ function loadGame() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
-
   input.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const saveData = JSON.parse(event.target.result);
-
         if (!saveData.version || !saveData.gameState) {
-          alert('Invalid save file format');
+          alert('Invalid save file');
           return;
         }
-
-        // Restore game state
         gameState = saveData.gameState;
-        
-        // Restore auction state (chips spent and history)
         if (saveData.auctionState) {
           auctionState.teams = saveData.auctionState.teams;
           auctionState.history = saveData.auctionState.history;
         }
-
-        // Clear all current assignments
-        document.querySelectorAll('.team-badge-container').forEach(container => {
-          container.innerHTML = '';
-        });
-        document.querySelectorAll('.art-card').forEach(card => {
-          delete card.dataset.team;
-        });
-
-        // Restore artwork assignments
-        saveData.artworkAssignments.forEach(assignment => {
-          const card = document.querySelector(`.art-card[data-idx="${assignment.idx}"]`);
-          if (!card) return;
-
-          card.dataset.team = ['RED', 'YELLOW', 'BLUE', 'GREEN'][assignment.team-1];
-
-          const container = card.querySelector('.team-badge-container');
-          container.innerHTML = `
-            <div class="team-badge team-${assignment.team}">
-              <span>${["RED", "YELLOW", "BLUE", "GREEN"][assignment.team-1]}</span>
-              <span class="remove" data-idx="${assignment.idx}" data-team="${assignment.team}">×</span>
-            </div>
-          `;
-
-          // Add remove handler
-          container.querySelector('.remove').addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (confirm('Remove this artwork from ' + ['RED', 'YELLOW', 'BLUE', 'GREEN'][assignment.team-1] + '?')) {
-              const artIdx = gameState.teams[assignment.team].artworks.findIndex(a => a.idx === assignment.idx);
-              if (artIdx !== -1) {
-                const artwork = gameState.teams[assignment.team].artworks[artIdx];
-                gameState.teams[assignment.team].cash += artwork.price * 1000000;
-                gameState.teams[assignment.team].artworks.splice(artIdx, 1);
-              }
-              container.innerHTML = '';
-              delete card.dataset.team;
-              updateTeamDisplay();
-              updateCompetitiveAnalysis();
+        document.querySelectorAll('.team-badge-container').forEach(c => c.innerHTML = '');
+        document.querySelectorAll('.art-card').forEach(c => delete c.dataset.team);
+        if (saveData.artworkAssignments) {
+          saveData.artworkAssignments.forEach(a => {
+            const card = document.querySelector(`.art-card[data-idx="${a.idx}"]`);
+            if (card) {
+              card.dataset.team = ['RED','YELLOW','BLUE','GREEN'][a.team-1];
+              const cont = card.querySelector('.team-badge-container');
+              if (cont) cont.innerHTML = `<div class="team-badge team-${a.team}"><span>${['RED','YELLOW','BLUE','GREEN'][a.team-1]}</span></div>`;
             }
           });
-        });
-
-        // Update displays - wrapped in try-catch
-        try {
-          drawTeams();
-        } catch (err) {
-          console.error('Error in drawTeams:', err);
         }
-        
-        try {
-          populateDestinationDropdowns();
-        } catch (err) {
-          console.error('Error in populateDestinationDropdowns:', err);
-        }
-        
-        try {
-          updateTeamDisplay();
-        } catch (err) {
-          console.error('Error in updateTeamDisplay:', err);
-        }
-        
-        try {
-          updateCompetitiveAnalysis();
-        } catch (err) {
-          console.error('Error in updateCompetitiveAnalysis:', err);
-        }
-
-        // Restore game log
-        const logDiv = document.getElementById('logEntries');
-        logDiv.innerHTML = '';
-
-        alert(`Game loaded! Round ${gameState.round} of ${gameState.maxRounds}`);
-
-      } catch (error) {
-        console.error('Full error:', error);
-        alert('Error loading save file: ' + error.message);
+        alert('Game loaded! Round ' + gameState.round + ' of ' + gameState.maxRounds + '. Click MAP to continue.');
+        location.reload();
+      } catch (err) {
+        alert('Error: ' + err.message);
       }
     };
-
     reader.readAsText(file);
   });
-
   input.click();
 }
+
+
 function resetGame() {
   gameState = {
     round: 1,
