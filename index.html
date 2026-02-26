@@ -1090,21 +1090,21 @@ function loadGame() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
-  
+
   input.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const saveData = JSON.parse(event.target.result);
-        
+
         if (!saveData.version || !saveData.gameState) {
           alert('Invalid save file format');
           return;
         }
-        
+
         // Restore game state
         gameState = saveData.gameState;
         
@@ -1113,7 +1113,7 @@ function loadGame() {
           auctionState.teams = saveData.auctionState.teams;
           auctionState.history = saveData.auctionState.history;
         }
-        
+
         // Clear all current assignments
         document.querySelectorAll('.team-badge-container').forEach(container => {
           container.innerHTML = '';
@@ -1121,14 +1121,14 @@ function loadGame() {
         document.querySelectorAll('.art-card').forEach(card => {
           delete card.dataset.team;
         });
-        
+
         // Restore artwork assignments
         saveData.artworkAssignments.forEach(assignment => {
           const card = document.querySelector(`.art-card[data-idx="${assignment.idx}"]`);
           if (!card) return;
-          
+
           card.dataset.team = ['RED', 'YELLOW', 'BLUE', 'GREEN'][assignment.team-1];
-          
+
           const container = card.querySelector('.team-badge-container');
           container.innerHTML = `
             <div class="team-badge team-${assignment.team}">
@@ -1136,7 +1136,7 @@ function loadGame() {
               <span class="remove" data-idx="${assignment.idx}" data-team="${assignment.team}">×</span>
             </div>
           `;
-          
+
           // Add remove handler
           container.querySelector('.remove').addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1144,7 +1144,7 @@ function loadGame() {
               const artIdx = gameState.teams[assignment.team].artworks.findIndex(a => a.idx === assignment.idx);
               if (artIdx !== -1) {
                 const artwork = gameState.teams[assignment.team].artworks[artIdx];
-                gameState.teams[assignment.team].cash += artwork.price;
+                gameState.teams[assignment.team].cash += artwork.price * 1000000;
                 gameState.teams[assignment.team].artworks.splice(artIdx, 1);
               }
               container.innerHTML = '';
@@ -1154,30 +1154,49 @@ function loadGame() {
             }
           });
         });
+
+        // Update displays - wrapped in try-catch
+        try {
+          drawTeams();
+        } catch (err) {
+          console.error('Error in drawTeams:', err);
+        }
         
-        // Update displays
-        drawTeams();
-        populateDestinationDropdowns();
-        updateTeamDisplay();
-        updateCompetitiveAnalysis();
+        try {
+          populateDestinationDropdowns();
+        } catch (err) {
+          console.error('Error in populateDestinationDropdowns:', err);
+        }
         
+        try {
+          updateTeamDisplay();
+        } catch (err) {
+          console.error('Error in updateTeamDisplay:', err);
+        }
+        
+        try {
+          updateCompetitiveAnalysis();
+        } catch (err) {
+          console.error('Error in updateCompetitiveAnalysis:', err);
+        }
+
         // Restore game log
         const logDiv = document.getElementById('logEntries');
         logDiv.innerHTML = '';
-        
+
         alert(`Game loaded! Round ${gameState.round} of ${gameState.maxRounds}`);
-        
+
       } catch (error) {
+        console.error('Full error:', error);
         alert('Error loading save file: ' + error.message);
       }
     };
-    
+
     reader.readAsText(file);
   });
-  
+
   input.click();
 }
-
 function resetGame() {
   gameState = {
     round: 1,
