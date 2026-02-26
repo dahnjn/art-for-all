@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🎨 ART for ALL</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#fff;min-height:100vh;padding:40px 20px;color:#1a1a1a}
+.container{max-width:1400px;margin:0 auto}
+header{text-align:center;margin-bottom:50px;border-bottom:1px solid #e0e0e0;padding-bottom:30px}
+h1{font-size:2rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:25px;color:#000}
+.controls{display:flex;flex-direction:column;align-items:center;gap:20px}
+.search-box{position:relative;width:100%;max-width:400px}
+.search-box input{width:100%;padding:12px 15px 12px 40px;border:1px solid #ccc;background:#fafafa;color:#333;font-size:0.9rem;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;outline:none}
+.search-box input:focus{border-color:#000}
+.search-box::before{content:"⌕";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999;font-size:1.1rem}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.filter-tag{padding:8px 16px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;font-size:0.75rem;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:0.1em;transition:all 0.2s}
+.filter-tag:hover{border-color:#000;color:#000}
+.filter-tag.active{background:#000;color:#fff;border-color:#000}
+.sort-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.sort-row label{color:#999;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em}
+.sort-row select{padding:8px 12px;border:1px solid #ccc;background:#fff;color:#333;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.8rem}
+.results-count{color:#999;text-align:center;margin-bottom:20px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.art-card{background:#fff;border:6px solid #000;height:475px;display:flex;flex-direction:column;transition:box-shadow 0.3s;position:relative}
+.art-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.art-card.hidden{display:none}
+.card-header{padding:15px;background:#fff;border-bottom:1px solid #eee}
+.artwork-title{color:#000;font-size:0.85rem;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artist-name{color:#666;font-size:0.8rem;font-weight:400}
+.artwork-meta{color:#999;font-size:0.7rem;margin-top:4px;text-transform:uppercase;letter-spacing:0.05em}
+.image-container{flex:1;background:#f5f5f5;display:flex;align-items:center;justify-content:center;padding:15px;overflow:hidden}
+.image-container img{max-width:100%;max-height:100%;object-fit:contain}
+.card-footer{padding:10px 15px;background:#fafafa;border-top:1px solid #eee}
+.category-row{display:flex;justify-content:center;gap:5px;margin-bottom:8px}
+.category-tag{padding:4px 10px;background:#f0f0f0;color:#666;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em}
+.ticket-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.ticket-chip{display:flex;justify-content:space-between;padding:4px 8px;border-radius:2px;font-size:0.65rem}
+.ticket-city{font-weight:600;text-transform:uppercase}
+.ticket-price{font-weight:400}
+.city-newyork{background:#FFE5E5;color:#B91C1C}.city-london{background:#E0E7FF;color:#3730A3}.city-paris{background:#FEF3C7;color:#92400E}
+.city-dubai{background:#DBEAFE;color:#1E40AF}.city-capetown{background:#D1FAE5;color:#065F46}.city-mexicocity{background:#FCE7F3;color:#9F1239}
+.city-saopaulo{background:#F3E8FF;color:#6B21A8}.city-tokyo{background:#FED7AA;color:#9A3412}.city-shanghai{background:#E0F2FE;color:#075985}
+.city-moscow{background:#e0e0e0;color:#000}
+.add-btn{position:absolute;top:10px;right:10px;width:32px;height:32px;background:#000;color:#fff;border:none;font-size:1.5rem;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;border-radius:50%;line-height:1}
+.add-btn:hover{background:#333}
+.team-badge{position:absolute;top:10px;right:50px;padding:6px 12px;font-size:0.7rem;font-weight:700;border-radius:4px;z-index:2;display:flex;align-items:center;gap:6px;text-transform:uppercase}
+.team-badge.team-1{background:#E94235;color:#fff}
+.team-badge.team-2{background:#FBBC04;color:#000}
+.team-badge.team-3{background:#4285F4;color:#fff}
+.team-badge.team-4{background:#0F9D58;color:#fff}
+.team-badge .remove{cursor:pointer;font-weight:bold;opacity:0.7;padding:0 4px}
+.team-badge .remove:hover{opacity:1}
+.rounds-input{width:60px;padding:5px;margin-left:10px;border:1px solid #444;background:#222;color:#fff;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.map-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:none;flex-direction:column}
+.map-modal.show{display:flex}
+.map-header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#111;border-bottom:1px solid #333}
+.map-title{color:#fff;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:1.2rem}
+.map-close{background:#333;color:#fff;border:none;padding:8px 16px;cursor:pointer;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.map-content{flex:1;display:flex;position:relative;overflow:hidden}
+.map-area{flex:1;position:relative;background:#000;display:flex;align-items:center;justify-content:center;padding:20px}
+.map-container{position:relative;width:100%;max-width:1200px;height:100%;max-height:800px}
+svg.map-svg{width:100%;height:100%}
+.city-circle{cursor:pointer;transition:all 0.3s}
+.city-circle:hover{filter:brightness(1.3)}
+.city-label{fill:#fff;font-size:18px;font-weight:bold;text-anchor:middle;text-shadow:2px 2px 4px rgba(0,0,0,0.8)}
+.city-pop-label{fill:#000;font-size:16px;font-weight:bold;text-anchor:middle}
+.connection-line{stroke:#999;stroke-width:3}
+.team-marker{transition:all 0.3s;cursor:pointer}
+.team-marker:hover{opacity:0.8}
+.starting-position{fill:#4CAF50;stroke:#000;stroke-width:4;opacity:0.3}
+.sidebar{width:320px;background:#111;padding:20px;overflow-y:auto;border-left:1px solid #333}
+.sidebar h3{color:#fff;font-size:0.9rem;margin-bottom:15px;text-transform:uppercase;letter-spacing:0.1em}
+.round-info{background:#222;padding:15px;margin-bottom:15px;border-radius:4px}
+.round-info label{color:#888;font-size:0.75rem;display:block;margin-bottom:5px}
+.round-info span{color:#fff;font-size:1.2rem;font-weight:bold}
+.team-panel{background:#222;padding:15px;margin-bottom:10px;border-radius:4px;border-left:4px solid}
+.team-panel.team-1{border-left-color:#E94235}
+.team-panel.team-2{border-left-color:#FBBC04}
+.team-panel.team-3{border-left-color:#4285F4}
+.team-panel.team-4{border-left-color:#0F9D58}
+.team-panel h4{color:#fff;font-size:0.85rem;margin-bottom:10px}
+.team-panel select{width:100%;padding:8px;background:#333;color:#fff;border:1px solid #444;margin-bottom:8px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.team-stat{display:flex;justify-content:space-between;color:#ccc;font-size:0.75rem;margin-top:5px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.game-controls{padding:15px;background:#222;border-radius:4px;margin-bottom:15px}
+.game-controls button{width:100%;padding:10px;margin-bottom:8px;background:#0F9D58;color:#fff;border:none;cursor:pointer;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:bold;font-size:0.85rem}
+.game-controls button:hover{background:#0d8549}
+#resetGame{background:#E94235}
+#resetGame:hover{background:#c23629}
+#saveGame:hover{background:#3367d6}
+#loadGame:hover{background:#f9ab00}
+.log-container{background:#222;padding:15px;border-radius:4px;max-height:300px;overflow-y:auto}
+.log-container h3{color:#fff;font-size:0.85rem;margin-bottom:10px;text-transform:uppercase}
+.log-entry{color:#ccc;font-size:0.75rem;margin-bottom:5px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;padding:5px;background:#1a1a1a;border-radius:2px}
+
+/* Auction styles */
+.auction-team-section{background:#fff;border-radius:10px;padding:15px;border:2px solid #ddd}
+.auction-team-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid #eee}
+.auction-team-circle{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,0.2)}
+.auction-team-stats{display:flex;gap:15px;font-size:0.85rem;margin-bottom:10px}
+.auction-chip-container{display:flex;flex-wrap:wrap;gap:5px}
+.auction-chip{width:45px;height:45px;border-radius:50%;font-weight:bold;font-size:0.85rem;cursor:pointer;border:3px solid transparent;transition:all 0.2s;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+.auction-chip:hover:not(.selected){transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.2)}
+.auction-chip.selected{border:3px solid #000;transform:scale(1.15);box-shadow:0 4px 8px rgba(0,0,0,0.4)}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>🎨 ART for ALL</h1>
+  <div class="controls">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search artworks...">
+    </div>
+    <div class="filter-row">
+      <button class="filter-tag active" data-category="all">All</button>
+      <button class="filter-tag" data-category="painting">Painting</button>
+      <button class="filter-tag" data-category="sculpture">Sculpture</button>
+      <button class="filter-tag" data-category="installation">Installation</button>
+      <button class="filter-tag" data-category="photography">Photography</button>
+    </div>
+    <div class="sort-row">
+      <label>Sort by City:</label>
+      <select id="citySelect">
+        <option value="">None</option>
+        <option value="newyork">NYC</option>
+        <option value="london">LDN</option>
+        <option value="paris">PAR</option>
+        <option value="dubai">DXB</option>
+        <option value="capetown">CPT</option>
+        <option value="mexicocity">MEX</option>
+        <option value="saopaulo">SAO</option>
+        <option value="tokyo">TYO</option>
+        <option value="shanghai">SHA</option>
+        <option value="moscow">MOS</option>
+      </select>
+      <select id="sortDirection">
+        <option value="high">High to Low</option>
+        <option value="low">Low to High</option>
+      </select>
+    </div>
+    <div class="sort-row">
+      <label>Filter by Team:</label>
+      <select id="teamFilter">
+        <option value="all">All Teams</option>
+        <option value="1">RED</option>
+        <option value="2">YELLOW</option>
+        <option value="3">BLUE</option>
+        <option value="4">GREEN</option>
+        <option value="unassigned">Unassigned</option>
+      </select>
+    </div>
+  </div>
+  <button id="mapBtn" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer">MAP</button>
+  <button id="auctionBtn" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;margin-left:10px">AUCTIONS</button>
+</header>
+
+<div id="competitiveAnalysis" style="margin-bottom:30px;display:none">
+  <h2 style="text-align:center;font-size:1.2rem;margin-bottom:20px;text-transform:uppercase;letter-spacing:0.1em">Competitive Analysis</h2>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">
+      <thead>
+        <tr style="background:#000;color:#fff">
+          <th style="padding:12px;text-align:left">CITY</th>
+          <th style="padding:12px;text-align:center">RED</th>
+          <th style="padding:12px;text-align:center">YELLOW</th>
+          <th style="padding:12px;text-align:center">BLUE</th>
+          <th style="padding:12px;text-align:center">GREEN</th>
+        </tr>
+      </thead>
+      <tbody id="analysisTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="results-count" id="resultsCount">24 Works</div>
+<div class="gallery" id="gallery"></div>
+</div>
+
+<!-- MAP MODAL -->
+<div class="map-modal" id="mapModal">
+  <div class="map-header">
+    <div class="map-title">🎨 ART for ALL - TRAVEL MAP</div>
+    <div style="display:flex;align-items:center;gap:20px">
+      <label style="color:#888;font-size:0.8rem">Rounds:<input type="number" id="totalRounds" class="rounds-input" value="8" min="1" max="20"></label>
+      <button class="map-close" id="mapClose">✕ CLOSE</button>
+    </div>
+  </div>
+  <div class="map-content">
+    <div class="map-area" id="mapArea">
+      <div class="map-container">
+        <svg class="map-svg" id="mapSvg" viewBox="0 0 1000 600">
+          <g id="connectionLines"></g>
+          <g id="citiesGroup"></g>
+          <g id="teamsGroup"></g>
+        </svg>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="round-info">
+        <label>Rounds Remaining</label>
+        <span id="roundsRemaining">8</span>
+      </div>
+      <div class="scoreboard-container" style="background:#222;padding:15px;border-radius:4px;margin-bottom:20px">
+        <h3 style="color:#fff;font-size:0.9rem;margin-bottom:15px;text-transform:uppercase;letter-spacing:0.1em">Scoreboard</h3>
+        <div id="scoreboard"></div>
+      </div>
+      <div class="game-controls">
+        <button id="nextRound">NEXT YEAR →</button>
+        <button id="resetGame">⟲ RESET GAME</button>
+        <button id="saveGame" style="background:#4285F4">💾 SAVE GAME</button>
+        <button id="loadGame" style="background:#FBBC04;color:#000">📂 LOAD GAME</button>
+      </div>
+      <h3>Team Destinations</h3>
+      <div class="team-panel team-1">
+        <h4>RED</h4>
+        <select id="dest1"></select>
+        <div class="team-stat"><span>Ticket Value:</span><span id="tv1">$0</span></div>
+        <div class="team-stat"><span>Cash:</span><span id="cash1" style="font-weight:bold">$0</span></div>
+        <div class="team-stat"><span>Artworks:</span><span id="artcount1">0</span></div>
+      </div>
+      <div class="team-panel team-2">
+        <h4>YELLOW</h4>
+        <select id="dest2"></select>
+        <div class="team-stat"><span>Ticket Value:</span><span id="tv2">$0</span></div>
+        <div class="team-stat"><span>Cash:</span><span id="cash2" style="font-weight:bold">$0</span></div>
+        <div class="team-stat"><span>Artworks:</span><span id="artcount2">0</span></div>
+      </div>
+      <div class="team-panel team-3">
+        <h4>BLUE</h4>
+        <select id="dest3"></select>
+        <div class="team-stat"><span>Ticket Value:</span><span id="tv3">$0</span></div>
+        <div class="team-stat"><span>Cash:</span><span id="cash3" style="font-weight:bold">$0</span></div>
+        <div class="team-stat"><span>Artworks:</span><span id="artcount3">0</span></div>
+      </div>
+      <div class="team-panel team-4">
+        <h4>GREEN</h4>
+        <select id="dest4"></select>
+        <div class="team-stat"><span>Ticket Value:</span><span id="tv4">$0</span></div>
+        <div class="team-stat"><span>Cash:</span><span id="cash4" style="font-weight:bold">$0</span></div>
+        <div class="team-stat"><span>Artworks:</span><span id="artcount4">0</span></div>
+      </div>
+      <div class="log-container">
+        <h3>Game Log</h3>
+        <div id="logEntries"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUCTION MODAL -->
+<div id="auctionModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;overflow-y:auto;">
+  <div style="max-width:1400px;margin:0 auto;padding:20px;position:relative;">
+    <button onclick="closeAuctionModal()" style="position:absolute;top:20px;right:20px;background:#E94235;color:#fff;border:none;padding:10px 20px;font-size:1.2rem;cursor:pointer;border-radius:4px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:bold;">✕ CLOSE</button>
+    <h1 style="text-align:center;color:#fff;margin-bottom:30px;font-size:2.5rem;">🎨 ART AUCTION</h1>
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:30px;">
+      <div id="auctionArtworkCard" style="background:#fff;border-radius:20px;padding:20px;border:6px solid #000;">
+        <div style="text-align:center;color:#666;padding:40px 20px;">Select an artwork to auction</div>
+      </div>
+      <div style="background:#f5f5f5;border-radius:20px;padding:20px;border:2px solid #e0e0e0;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <select id="auctionArtworkSelect" onchange="selectArtworkForAuction()" style="font-size:1.1rem;padding:10px 20px;border-radius:10px;border:2px solid #ccc;background:#fff;width:100%;max-width:500px;">
+            <option value="">-- Choose Artwork --</option>
+          </select>
+        </div>
+        <div id="auctionInterface" style="display:none;">
+          <div style="background:#fff;padding:20px;border-radius:15px;margin-bottom:20px;text-align:center;border:3px solid #000;">
+            <div style="font-size:0.9rem;opacity:0.6;margin-bottom:5px;">CURRENT BID</div>
+            <div id="currentBidAmount" style="font-size:3rem;font-weight:bold;margin-bottom:5px;">$0M</div>
+            <div id="currentBidTeam" style="font-size:1.2rem;opacity:0.7;">No bids yet</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;">
+            <div id="redTeamAuction" class="auction-team-section"></div>
+            <div id="yellowTeamAuction" class="auction-team-section"></div>
+            <div id="blueTeamAuction" class="auction-team-section"></div>
+            <div id="greenTeamAuction" class="auction-team-section"></div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;">
+            <button onclick="clearAllBids()" style="background:#666;color:#fff;border:none;padding:15px 30px;font-size:1.1rem;cursor:pointer;border-radius:10px;font-weight:bold;">CLEAR ALL BIDS</button>
+            <button onclick="finishAuction()" style="background:#0F9D58;color:#fff;border:none;padding:15px 30px;font-size:1.1rem;cursor:pointer;border-radius:10px;font-weight:bold;">FINISH AUCTION</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff;border-radius:15px;padding:20px;margin-top:20px;">
+      <h2 style="margin-bottom:15px;">Auction Results</h2>
+      <div id="auctionHistory"><p style="text-align:center;opacity:0.5;">No artworks sold yet</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- END GAME MODAL -->
+<div id="endGameModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:20000;overflow-y:auto;">
+  <div style="max-width:1200px;margin:50px auto;padding:40px;background:#fff;border-radius:20px;border:8px solid #000;">
+    <h1 style="text-align:center;font-size:3rem;margin-bottom:40px;text-transform:uppercase;letter-spacing:0.1em;">🏆 GAME OVER</h1>
+    <div id="winnerAnnouncement" style="text-align:center;margin-bottom:40px;padding:30px;background:#f5f5f5;border-radius:15px;border:4px solid #000;">
+      <div style="font-size:1.5rem;margin-bottom:10px;opacity:0.7;">WINNER</div>
+      <div id="winnerTeamName" style="font-size:4rem;font-weight:bold;margin-bottom:10px;">TEAM X</div>
+      <div id="winnerProfit" style="font-size:2.5rem;color:#0F9D58;font-weight:bold;">PROFIT: $XXM</div>
+    </div>
+    <div style="margin-bottom:40px;">
+      <h2 style="text-align:center;margin-bottom:20px;font-size:1.8rem;">FINAL STANDINGS</h2>
+      <div id="finalStandings"></div>
+    </div>
+    <div style="margin-bottom:40px;">
+      <h2 style="text-align:center;margin-bottom:20px;font-size:1.8rem;">⭐ BEST PURCHASE</h2>
+      <div id="bestArtworks"></div>
+    </div>
+    <div style="margin-bottom:40px;">
+      <h2 style="text-align:center;margin-bottom:20px;font-size:1.8rem;">GAME STATISTICS</h2>
+      <div id="gameStatistics"></div>
+    </div>
+    <div style="text-align:center;">
+      <button onclick="closeEndGameModal()" style="padding:15px 40px;background:#E94235;color:#fff;border:none;font-size:1.2rem;font-weight:bold;cursor:pointer;border-radius:10px;">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const artworks = [
+  {title:"Infinity Mirrored Room",artist:"Yayoi Kusama",year:"2013",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_4.jpg",cities:{"newyork":12,"london":12,"paris":12,"dubai":12,"capetown":12,"mexicocity":12,"saopaulo":12,"tokyo":12,"shanghai":12,"moscow":12}},
+  {title:"Cloud Gate",artist:"Anish Kapoor",year:"2006",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_1.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":11,"capetown":11,"mexicocity":10,"saopaulo":10,"tokyo":10,"shanghai":8,"moscow":0}},
+  {title:"The Scream",artist:"Edvard Munch",year:"1893",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_1.jpg",cities:{"newyork":12,"london":12,"paris":12,"dubai":11,"capetown":10,"mexicocity":8,"saopaulo":6,"tokyo":4,"shanghai":5,"moscow":0}},
+  {title:"Forever Bicycles",artist:"Ai Weiwei",year:"2011",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_3.webp",cities:{"newyork":8,"london":8,"paris":9,"dubai":9,"capetown":8,"mexicocity":7,"saopaulo":6,"tokyo":12,"shanghai":12,"moscow":0}},
+  {title:"The Persistence of Memory",artist:"Salvador Dalí",year:"1931",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_5.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":10,"capetown":9,"mexicocity":7,"saopaulo":5,"tokyo":3,"shanghai":3,"moscow":0}},
+  {title:"The Physical Impossibility",artist:"Damien Hirst",year:"1991",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_4.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":10,"capetown":8,"mexicocity":7,"saopaulo":6,"tokyo":3,"shanghai":3,"moscow":0}},
+  {title:"Earth Globe",artist:"Mona Hatoum",year:"2007",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_2.jpg",cities:{"newyork":10,"london":10,"paris":10,"dubai":9,"capetown":8,"mexicocity":8,"saopaulo":7,"tokyo":6,"shanghai":6,"moscow":0}},
+  {title:"The Weather Project",artist:"Olafur Eliasson",year:"2003",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_6.jpg",cities:{"newyork":11,"london":11,"paris":10,"dubai":9,"capetown":8,"mexicocity":7,"saopaulo":5,"tokyo":3,"shanghai":2,"moscow":0}},
+  {title:"Composition",artist:"Piet Mondrian",year:"1921",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_3.jpg",cities:{"newyork":11,"london":11,"paris":10,"dubai":9,"capetown":8,"mexicocity":6,"saopaulo":5,"tokyo":3,"shanghai":2,"moscow":0}},
+  {title:"Balloon Dog",artist:"Jeff Koons",year:"1994",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_1.png",cities:{"newyork":10,"london":10,"paris":9,"dubai":8,"capetown":7,"mexicocity":6,"saopaulo":5,"tokyo":5,"shanghai":6,"moscow":0}},
+  {title:"727-727",artist:"Takashi Murakami",year:"2006",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_4.webp",cities:{"newyork":5,"london":4,"paris":5,"dubai":6,"capetown":5,"mexicocity":4,"saopaulo":4,"tokyo":12,"shanghai":15,"moscow":0}},
+  {title:"Sunflower Seeds",artist:"Ai Weiwei",year:"2010",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_5.jpg",cities:{"newyork":8,"london":8,"paris":8,"dubai":7,"capetown":6,"mexicocity":10,"saopaulo":11,"tokyo":4,"shanghai":4,"moscow":6}},
+  {title:"The Two Fridas",artist:"Frida Kahlo",year:"1939",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_6.jpg",cities:{"newyork":4,"london":4,"paris":4,"dubai":3,"capetown":3,"mexicocity":12,"saopaulo":12,"tokyo":5,"shanghai":5,"moscow":0}},
+  {title:"Pumpkin",artist:"Yayoi Kusama",year:"2022",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_2.jpg",cities:{"newyork":3,"london":3,"paris":3,"dubai":4,"capetown":3,"mexicocity":2,"saopaulo":2,"tokyo":12,"shanghai":15,"moscow":3}},
+  {title:"A Bigger Splash",artist:"David Hockney",year:"1967",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_2.jpg",cities:{"newyork":8,"london":11,"paris":10,"dubai":8,"capetown":6,"mexicocity":4,"saopaulo":3,"tokyo":2,"shanghai":0,"moscow":0}},
+  {title:"Maman",artist:"Louise Bourgeois",year:"1999",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_3_.jpg",cities:{"newyork":10,"london":11,"paris":10,"dubai":8,"capetown":6,"mexicocity":3,"saopaulo":2,"tokyo":0,"shanghai":0,"moscow":0}},
+  {title:"Mobile",artist:"Alexander Calder",year:"1958",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_6.jpg",cities:{"newyork":9,"london":9,"paris":9,"dubai":8,"capetown":7,"mexicocity":5,"saopaulo":3,"tokyo":2,"shanghai":0,"moscow":0}},
+  {title:"Migrant Mother",artist:"Dorothea Lange",year:"1936",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_5.jpg",cities:{"newyork":10,"london":9,"paris":8,"dubai":7,"capetown":5,"mexicocity":2,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
+  {title:"Earthrise",artist:"William Anders",year:"1968",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_6.jpg",cities:{"newyork":11,"london":10,"paris":9,"dubai":7,"capetown":3,"mexicocity":0,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
+  {title:"Atmosphere and Environment XII",artist:"Louise Nevelson",year:"1970",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_5_.jpg",cities:{"newyork":9,"london":9,"paris":8,"dubai":7,"capetown":5,"mexicocity":2,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
+  {title:"Einstein Tongue",artist:"Arthur Sasse",year:"1951",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_3.jpg",cities:{"newyork":8,"london":8,"paris":7,"dubai":5,"capetown":2,"mexicocity":0,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
+  {title:"Last Barbary Lion",artist:"Unknown",year:"1925",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_4.webp",cities:{"newyork":7,"london":7,"paris":6,"dubai":5,"capetown":3,"mexicocity":2,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
+  {title:"First Flight",artist:"Wright Brothers",year:"1903",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_1.jpg",cities:{"newyork":6,"london":6,"paris":5,"dubai":3,"capetown":2,"mexicocity":0,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
+  {title:"Abbey Road",artist:"Iain Macmillan",year:"1969",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_2.jpg",cities:{"newyork":1,"london":9,"paris":1,"dubai":1,"capetown":0,"mexicocity":0,"saopaulo":0,"tokyo":2,"shanghai":0,"moscow":6}},
+];
+
+const cities = ['newyork','london','paris','dubai','capetown','mexicocity','saopaulo','tokyo','shanghai'];
+const cityNames = {newyork:'NYC',london:'LDN',paris:'PAR',dubai:'DXB',capetown:'CPT',mexicocity:'MEX',saopaulo:'SAO',tokyo:'TYO',shanghai:'SHA',moscow:'MOS'};
+
+const cityData = {
+  start:{name:'START',pop:0,x:400,y:550,abbr:'START',connections:['saopaulo','capetown']},
+  saopaulo:{name:'SAO PAULO',pop:750000,x:300,y:480,abbr:'SAO',connections:['mexicocity','start','capetown']},
+  mexicocity:{name:'MEXICO CITY',pop:600000,x:180,y:350,abbr:'MEX',connections:['newyork','saopaulo']},
+  newyork:{name:'NEW YORK',pop:1500000,x:250,y:200,abbr:'NYC',connections:['london','paris','mexicocity']},
+  london:{name:'LONDON',pop:1200000,x:480,y:140,abbr:'LDN',connections:['newyork','paris']},
+  paris:{name:'PARIS',pop:1000000,x:520,y:220,abbr:'PAR',connections:['dubai','capetown','newyork','london']},
+  capetown:{name:'CAPE TOWN',pop:700000,x:580,y:450,abbr:'CPT',connections:['start','dubai','shanghai','paris','saopaulo']},
+  moscow:{name:'MOSCOW',pop:1000000,x:650,y:100,abbr:'MOS',connections:['shanghai','dubai']},
+  dubai:{name:'DUBAI',pop:500000,x:700,y:280,abbr:'DXB',connections:['paris','capetown','moscow','shanghai']},
+  tokyo:{name:'TOKYO',pop:1200000,x:920,y:180,abbr:'TYO',connections:['shanghai']},
+  shanghai:{name:'SHANGHAI',pop:2000000,x:820,y:260,abbr:'SHA',connections:['tokyo','capetown','moscow','dubai']}
+};
+
+const teamColors = {
+  1:{bg:'#E94235',text:'#fff',name:'RED'},
+  2:{bg:'#FBBC04',text:'#000',name:'YELLOW'},
+  3:{bg:'#4285F4',text:'#fff',name:'BLUE'},
+  4:{bg:'#0F9D58',text:'#fff',name:'GREEN'}
+};
+
+let gameState = {
+  round:1,
+  maxRounds:8,
+  teams:{
+    1:{cash:0,city:'start',artworks:[],soldTo:{}},
+    2:{cash:0,city:'start',artworks:[],soldTo:{}},
+    3:{cash:0,city:'start',artworks:[],soldTo:{}},
+    4:{cash:0,city:'start',artworks:[],soldTo:{}}
+  }
+};
+
+const auctionState = {
+  teams:{
+    1:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]},
+    2:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]},
+    3:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]},
+    4:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]}
+  },
+  currentBid:{team:null,amount:0},
+  history:[],
+  currentArtworkIdx:null
+};
+
+// ─── GALLERY ─────────────────────────────────────────────────────────────────
+
+function initGallery() {
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = artworks.map((art,idx) => `
+    <div class="art-card" data-category="${art.category}" data-idx="${idx}">
+      <div class="add-btn" data-idx="${idx}">+</div>
+      <div class="team-badge-container" data-idx="${idx}"></div>
+      <div class="card-header">
+        <div class="artwork-title">${art.title}</div>
+        <div class="artist-name">${art.artist}</div>
+        <div class="artwork-meta">${art.year}</div>
+      </div>
+      <div class="image-container">
+        <img src="${art.image}" alt="${art.title}">
+      </div>
+      <div class="card-footer">
+        <div class="category-row"><span class="category-tag">${art.category}</span></div>
+        <div class="ticket-grid">
+          ${Object.entries(art.cities).map(([city,price]) =>
+            `<div class="ticket-chip city-${city}"><span class="ticket-city">${cityNames[city]}</span><span class="ticket-price">$${price}</span></div>`
+          ).join('')}
+        </div>
+        <div style="text-align:center;margin-top:8px;padding-top:8px;border-top:1px solid #ddd">
+          <span style="font-size:0.7rem;color:#999;text-transform:uppercase;letter-spacing:0.05em">Total Value: </span>
+          <span style="font-size:0.9rem;font-weight:bold;color:#000">$${Object.values(art.cities).reduce((a,b)=>a+b,0)}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.idx);
+      showAssignModal(idx);
+    });
+  });
+}
+
+function showAssignModal(idx) {
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center';
+  modal.innerHTML = `
+    <div style="background:#fff;padding:30px;border-radius:8px;max-width:400px;width:90%">
+      <h3 style="margin:0 0 20px 0;font-size:1.2rem">Assign Artwork</h3>
+      <div style="margin-bottom:15px">
+        <label style="display:block;margin-bottom:5px;font-weight:600;font-size:0.9rem">Team:</label>
+        <select id="teamSelect" style="width:100%;padding:10px;font-size:1rem;border:2px solid #ddd">
+          <option value="">Select Team</option>
+          <option value="1">RED</option>
+          <option value="2">YELLOW</option>
+          <option value="3">BLUE</option>
+          <option value="4">GREEN</option>
+        </select>
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="display:block;margin-bottom:5px;font-weight:600;font-size:0.9rem">Purchase Price ($M):</label>
+        <div style="position:relative">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:1rem;color:#666">$</span>
+          <input type="text" id="priceInput" placeholder="0" style="width:100%;padding:10px 10px 10px 25px;font-size:1rem;border:2px solid #ddd">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button id="assignBtn" style="flex:1;padding:12px;background:#000;color:#fff;border:none;font-weight:600;cursor:pointer;font-size:1rem">ASSIGN</button>
+        <button id="cancelBtn" style="flex:1;padding:12px;background:#fff;color:#000;border:2px solid #ddd;font-weight:600;cursor:pointer;font-size:1rem">CANCEL</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const priceInput = modal.querySelector('#priceInput');
+  priceInput.focus();
+  priceInput.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/[^0-9]/g,'');
+    if(val) val = parseInt(val).toLocaleString();
+    e.target.value = val;
+  });
+
+  modal.querySelector('#cancelBtn').addEventListener('click', () => document.body.removeChild(modal));
+
+  modal.querySelector('#assignBtn').addEventListener('click', () => {
+    const teamNum = parseInt(modal.querySelector('#teamSelect').value);
+    const priceStr = priceInput.value.replace(/[,$]/g,'');
+    const price = priceStr === '' ? 0 : parseFloat(priceStr);
+    if(!teamNum) { alert('Please select a team'); return; }
+    if(isNaN(price) || price < 0) { alert('Please enter a valid price'); return; }
+
+    assignArtworkToTeam(idx, teamNum, price);
+    updateCompetitiveAnalysis();
+    document.body.removeChild(modal);
+  });
+
+  modal.addEventListener('click', (e) => { if(e.target === modal) document.body.removeChild(modal); });
+}
+
+function assignArtworkToTeam(artIdx, teamNum, price) {
+  gameState.teams[teamNum].artworks.push({idx:artIdx,price:price,title:artworks[artIdx].title,revenue:0,ticketsSold:0});
+  gameState.teams[teamNum].cash -= price * 1000000;
+
+  const card = document.querySelector(`.art-card[data-idx="${artIdx}"]`);
+  if(!card) return;
+  card.dataset.team = 'TEAM ' + teamNum;
+
+  const container = card.querySelector('.team-badge-container');
+  container.innerHTML = `
+    <div class="team-badge team-${teamNum}">
+      <span>${teamColors[teamNum].name}</span>
+      <span class="remove" data-idx="${artIdx}" data-team="${teamNum}">×</span>
+    </div>
+  `;
+  attachRemoveHandler(container.querySelector('.remove'), artIdx, teamNum);
+  updateTeamDisplay();
+}
+
+function attachRemoveHandler(removeEl, artIdx, teamNum) {
+  removeEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if(confirm(`Remove this artwork from ${teamColors[teamNum].name}?`)) {
+      const tNum = parseInt(removeEl.dataset.team);
+      const aIdx = parseInt(removeEl.dataset.idx);
+      const artI = gameState.teams[tNum].artworks.findIndex(a => a.idx === aIdx);
+      if(artI !== -1) {
+        gameState.teams[tNum].cash += gameState.teams[tNum].artworks[artI].price * 1000000;
+        gameState.teams[tNum].artworks.splice(artI, 1);
+      }
+      const card = document.querySelector(`.art-card[data-idx="${aIdx}"]`);
+      if(card) {
+        card.querySelector('.team-badge-container').innerHTML = '';
+        delete card.dataset.team;
+      }
+      updateTeamDisplay();
+      updateCompetitiveAnalysis();
+    }
+  });
+}
+
+// ─── FILTERS / SEARCH ────────────────────────────────────────────────────────
+
+document.querySelectorAll('.filter-tag').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const category = btn.dataset.category;
+    document.querySelectorAll('.art-card').forEach(card => {
+      card.classList.toggle('hidden', category !== 'all' && card.dataset.category !== category);
+    });
+    updateResultsCount();
+  });
+});
+
+function updateResultsCount() {
+  const visible = document.querySelectorAll('.art-card:not(.hidden)').length;
+  document.getElementById('resultsCount').textContent = visible + ' Works';
+}
+
+function applySortAndFilter() {
+  const city = document.getElementById('citySelect').value;
+  const direction = document.getElementById('sortDirection').value;
+  const teamFilter = document.getElementById('teamFilter').value;
+  const gallery = document.getElementById('gallery');
+  const cards = Array.from(document.querySelectorAll('.art-card'));
+
+  cards.forEach(card => {
+    const cardTeam = card.dataset.team ? card.dataset.team.replace('TEAM ','') : 'unassigned';
+    if(teamFilter === 'all') {
+      card.classList.remove('hidden');
+    } else if(teamFilter === 'unassigned') {
+      card.classList.toggle('hidden', cardTeam !== 'unassigned');
+    } else {
+      card.classList.toggle('hidden', cardTeam !== teamFilter);
+    }
+  });
+
+  if(city) {
+    cards.sort((a,b) => {
+      const pa = artworks[parseInt(a.dataset.idx)].cities[city];
+      const pb = artworks[parseInt(b.dataset.idx)].cities[city];
+      return direction === 'high' ? pb - pa : pa - pb;
+    });
+  } else {
+    cards.sort((a,b) => parseInt(a.dataset.idx) - parseInt(b.dataset.idx));
+  }
+  cards.forEach(card => gallery.appendChild(card));
+  updateResultsCount();
+}
+
+document.getElementById('citySelect').addEventListener('change', applySortAndFilter);
+document.getElementById('sortDirection').addEventListener('change', applySortAndFilter);
+document.getElementById('teamFilter').addEventListener('change', applySortAndFilter);
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const search = e.target.value.toLowerCase();
+  document.querySelectorAll('.art-card').forEach(card => {
+    const idx = parseInt(card.dataset.idx);
+    const art = artworks[idx];
+    card.classList.toggle('hidden', !art.title.toLowerCase().includes(search) && !art.artist.toLowerCase().includes(search));
+  });
+  updateResultsCount();
+});
+
+// ─── COMPETITIVE ANALYSIS ────────────────────────────────────────────────────
+
+function updateCompetitiveAnalysis() {
+  const tv = getTeamTicketValues();
+  const allCities = ['newyork','london','paris','dubai','capetown','mexicocity','saopaulo','tokyo','shanghai','moscow'];
+  const cityDisplayNames = {newyork:'New York',london:'London',paris:'Paris',dubai:'Dubai',capetown:'Cape Town',mexicocity:'Mexico City',saopaulo:'São Paulo',tokyo:'Tokyo',shanghai:'Shanghai',moscow:'Moscow'};
+  const tableBody = document.getElementById('analysisTableBody');
+  const analysis = document.getElementById('competitiveAnalysis');
+  const hasArtworks = [1,2,3,4].some(t => gameState.teams[t].artworks.length > 0);
+  if(!hasArtworks) { analysis.style.display='none'; return; }
+  analysis.style.display='block';
+
+  tableBody.innerHTML = allCities.map(city => {
+    const values = [tv[1][city]||0, tv[2][city]||0, tv[3][city]||0, tv[4][city]||0];
+    const maxValue = Math.max(...values);
+    if(!values.some(v=>v>0)) return '';
+    const cells = values.map((val,idx) => {
+      if(!val) return '<td style="padding:12px;text-align:center;color:#ccc">—</td>';
+      const isMax = val === maxValue && maxValue > 0;
+      const tc = [teamColors[1],teamColors[2],teamColors[3],teamColors[4]][idx];
+      return `<td style="padding:12px;text-align:center;background:${isMax ? tc.bg+'22' : 'transparent'};font-weight:${isMax?'bold':'normal'}">
+        <div style="color:${tc.bg};font-size:1rem">$${val}</div>
+      </td>`;
+    }).join('');
+    return `<tr style="border-bottom:1px solid #eee"><td style="padding:12px;font-weight:bold">${cityDisplayNames[city]}</td>${cells}</tr>`;
+  }).filter(r=>r).join('');
+}
+
+// ─── MAP ─────────────────────────────────────────────────────────────────────
+
+function initMap() {
+  drawConnections();
+  drawCities();
+  drawTeams();
+}
+
+function drawConnections() {
+  const linesGroup = document.getElementById('connectionLines');
+  linesGroup.innerHTML = '';
+  Object.entries(cityData).forEach(([cityKey,city]) => {
+    city.connections.forEach(targetKey => {
+      const target = cityData[targetKey];
+      if(city.x < target.x || (city.x === target.x && city.y < target.y)) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',city.x); line.setAttribute('y1',city.y);
+        line.setAttribute('x2',target.x); line.setAttribute('y2',target.y);
+        line.setAttribute('class','connection-line');
+        linesGroup.appendChild(line);
+      }
+    });
+  });
+}
+
+function drawCities() {
+  const citiesGroup = document.getElementById('citiesGroup');
+  citiesGroup.innerHTML = '';
+  Object.entries(cityData).forEach(([cityKey,city]) => {
+    if(cityKey === 'start') {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx',city.x); circle.setAttribute('cy',city.y); circle.setAttribute('r',37.5);
+      circle.setAttribute('class','starting-position'); citiesGroup.appendChild(circle);
+      const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+      label.setAttribute('x',city.x); label.setAttribute('y',city.y+5);
+      label.setAttribute('class','city-label'); label.textContent=city.name;
+      citiesGroup.appendChild(label);
+    } else {
+      const radius = Math.sqrt(city.pop/10000)*3;
+      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx',city.x); circle.setAttribute('cy',city.y); circle.setAttribute('r',radius);
+      circle.setAttribute('fill','#ffffff'); circle.setAttribute('class','city-circle');
+      citiesGroup.appendChild(circle);
+      const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+      label.setAttribute('x',city.x); label.setAttribute('y',city.y-radius-8);
+      label.setAttribute('class','city-label'); label.textContent=city.name;
+      citiesGroup.appendChild(label);
+      const popLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+      popLabel.setAttribute('x',city.x); popLabel.setAttribute('y',city.y+5);
+      popLabel.setAttribute('class','city-pop-label'); popLabel.textContent=(city.pop/1000000).toFixed(1)+'M';
+      citiesGroup.appendChild(popLabel);
+    }
+  });
+}
+
+function drawTeams() {
+  const teamsGroup = document.getElementById('teamsGroup');
+  teamsGroup.innerHTML = '';
+  for(let i=1;i<=4;i++) {
+    const cityPos = cityData[gameState.teams[i].city];
+    const offset = (i-2.5)*24;
+    const marker = document.createElementNS('http://www.w3.org/2000/svg','g');
+    marker.setAttribute('class',`team-marker team-${i}`);
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',cityPos.x+offset); circle.setAttribute('cy',cityPos.y);
+    circle.setAttribute('r',12); circle.setAttribute('fill',teamColors[i].bg);
+    circle.setAttribute('stroke','#000'); circle.setAttribute('stroke-width','2');
+    marker.appendChild(circle);
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x',cityPos.x+offset); text.setAttribute('y',cityPos.y+5);
+    text.setAttribute('text-anchor','middle'); text.setAttribute('font-size','16');
+    text.setAttribute('font-weight','bold'); text.setAttribute('fill',teamColors[i].text);
+    text.textContent=i; marker.appendChild(text);
+    teamsGroup.appendChild(marker);
+  }
+}
+
+// ─── GAME LOGIC ───────────────────────────────────────────────────────────────
+
+function getTeamTicketValues() {
+  const values = {1:{},2:{},3:{},4:{}};
+  [...cities, 'moscow'].forEach(city => { [1,2,3,4].forEach(t => values[t][city]=0); });
+  document.querySelectorAll('.art-card').forEach(card => {
+    const team = card.dataset.team;
+    if(team) {
+      const teamNum = parseInt(team.replace('TEAM ',''));
+      const art = artworks[parseInt(card.dataset.idx)];
+      [...cities,'moscow'].forEach(city => { values[teamNum][city] += art.cities[city]||0; });
+    }
+  });
+  return values;
+}
+
+function populateDestinationDropdowns() {
+  for(let i=1;i<=4;i++) {
+    const select = document.getElementById(`dest${i}`);
+    const currentCity = gameState.teams[i].city;
+    const available = cityData[currentCity].connections;
+    select.innerHTML = '<option value="">Stay Here</option>' +
+      available.filter(c=>c!=='start').map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
+  }
+}
+
+function updateTeamDisplay() {
+  const tv = getTeamTicketValues();
+  for(let i=1;i<=4;i++) {
+    const dest = document.getElementById(`dest${i}`).value || gameState.teams[i].city;
+    const ticketVal = dest !== 'start' ? tv[i][dest]||0 : 0;
+    document.getElementById(`tv${i}`).textContent = '$'+ticketVal;
+    const cash = gameState.teams[i].cash;
+    const cashEl = document.getElementById(`cash${i}`);
+    cashEl.textContent = '$'+cash.toLocaleString();
+    cashEl.style.color = cash < 0 ? '#E94235' : '#0F9D58';
+    document.getElementById(`artcount${i}`).textContent = gameState.teams[i].artworks.length;
+  }
+
+  const sorted = [1,2,3,4].map(n=>({n,cash:gameState.teams[n].cash})).sort((a,b)=>b.cash-a.cash);
+  document.getElementById('scoreboard').innerHTML = sorted.map((t,i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:#1a1a1a;margin-bottom:6px;border-radius:4px;border-left:4px solid ${teamColors[t.n].bg}">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:#666;font-weight:bold">#${i+1}</span>
+        <span style="color:${teamColors[t.n].bg};font-weight:bold">${teamColors[t.n].name}</span>
+      </div>
+      <span style="color:${t.cash>=0?'#0F9D58':'#E94235'};font-weight:bold">$${t.cash.toLocaleString()}</span>
+    </div>`).join('');
+
+  document.getElementById('roundsRemaining').textContent = Math.max(0, gameState.maxRounds - gameState.round + 1);
+}
+
+function calculateRevenue() {
+  const tv = getTeamTicketValues();
+  const destinations = {};
+  const results = [];
+
+  for(let i=1;i<=4;i++) {
+    const dest = document.getElementById(`dest${i}`).value;
+    const actualDest = dest || gameState.teams[i].city;
+    if(actualDest && actualDest !== 'start') {
+      if(!destinations[actualDest]) destinations[actualDest] = [];
+      destinations[actualDest].push({team:i, value:tv[i][actualDest]||0});
+      gameState.teams[i].city = actualDest;
+    }
+  }
+
+  Object.keys(destinations).forEach(cityKey => {
+    const teams = destinations[cityKey];
+    const pop = cityData[cityKey].pop;
+    const cityName = cityData[cityKey].name;
+    teams.sort((a,b) => b.value - a.value);
+
+    let idealSplits;
+    if(teams.length===1) idealSplits=[1.0];
+    else if(teams.length===2) idealSplits = teams[0].value===teams[1].value ? [0.5,0.5] : [0.6,0.4];
+    else if(teams.length===3) {
+      if(teams[0].value===teams[1].value&&teams[1].value===teams[2].value) idealSplits=[0.333,0.333,0.334];
+      else if(teams[0].value===teams[1].value) idealSplits=[0.45,0.45,0.1];
+      else if(teams[1].value===teams[2].value) idealSplits=[0.6,0.2,0.2];
+      else idealSplits=[0.6,0.3,0.1];
+    } else {
+      if(teams[0].value===teams[1].value&&teams[2].value===teams[3].value) idealSplits=[0.4,0.4,0.1,0.1];
+      else if(teams[0].value===teams[1].value) idealSplits=[0.4,0.4,0.1,0.1];
+      else idealSplits=[0.6,0.2,0.1,0.1];
+    }
+
+    const cityResult = {city:cityName,population:pop,teams:[]};
+
+    teams.forEach((t,idx) => {
+      const teamNum = t.team;
+      if(!gameState.teams[teamNum].soldTo[cityKey]) gameState.teams[teamNum].soldTo[cityKey]=0;
+      const alreadySold = gameState.teams[teamNum].soldTo[cityKey];
+      const canSell = 1.0 - alreadySold;
+      const actualShare = Math.min(idealSplits[idx], canSell);
+      const revenue = Math.round(pop * t.value * actualShare);
+      gameState.teams[teamNum].cash += revenue;
+      gameState.teams[teamNum].soldTo[cityKey] += actualShare;
+
+      const teamArts = gameState.teams[teamNum].artworks;
+      if(teamArts.length>0 && revenue>0) {
+        const totalTV = teamArts.reduce((sum,art)=>sum+(artworks[art.idx].cities[cityKey]||0),0);
+        const ticketsSold = Math.round(pop*actualShare);
+        if(totalTV>0) {
+          teamArts.forEach(art => {
+            const fraction = (artworks[art.idx].cities[cityKey]||0)/totalTV;
+            art.revenue += Math.round(revenue*fraction);
+            art.ticketsSold += Math.round(ticketsSold*fraction);
+          });
+        }
+      }
+
+      cityResult.teams.push({teamNum,ticketPrice:t.value,idealShare:idealSplits[idx],actualShare,alreadySold,canSell,revenue});
+    });
+    results.push(cityResult);
+  });
+  return results;
+}
+
+function nextRound() {
+  const currentRound = gameState.round;
+  const results = calculateRevenue();
+
+  let popupContent = `
+    <div style="background:#fff;padding:0;border-radius:8px;max-width:700px;width:95%;max-height:90vh;overflow:auto">
+      <div style="background:#000;color:#fff;padding:20px;position:sticky;top:0;z-index:10">
+        <h2 style="margin:0;font-size:1.5rem">Year ${currentRound} Results</h2>
+      </div>
+      <div style="padding:20px">`;
+
+  if(results.length===0) {
+    popupContent += '<p style="text-align:center;color:#666;padding:40px">All teams stayed at START (no revenue)</p>';
+  } else {
+    results.forEach(cr => {
+      popupContent += `<div style="margin-bottom:30px;border:2px solid #000;border-radius:4px;overflow:hidden">
+        <div style="background:#000;color:#fff;padding:12px 15px;font-weight:bold">${cr.city} — Pop: ${(cr.population/1000000).toFixed(1)}M</div>
+        <div style="padding:15px">`;
+      cr.teams.forEach(t => {
+        const soldOut = t.actualShare === 0;
+        const partial = t.alreadySold > 0;
+        const tc = teamColors[t.teamNum];
+        popupContent += `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:${soldOut?'#fff5f5':'#f5f5f5'};border-left:4px solid ${tc.bg}">
+            <div style="display:flex;align-items:center;gap:15px;flex:1">
+              <div style="background:${tc.bg};color:${tc.text};padding:6px 12px;border-radius:4px;font-weight:bold;min-width:80px;text-align:center">${tc.name}</div>
+              <div><div style="font-size:0.85rem;color:#666">Ticket Price</div><div style="font-size:1.1rem;font-weight:bold">$${t.ticketPrice}</div></div>
+            </div>
+            <div style="display:flex;gap:20px;align-items:center">
+              <div style="text-align:right">
+                <div style="font-size:0.85rem;color:#666">Market Share</div>
+                <div style="font-size:1.1rem;font-weight:bold;color:${soldOut?'#E94235':tc.bg}">${Math.round(t.actualShare*100)}%${soldOut?' (SOLD OUT)':''}</div>
+                ${partial?`<div style="font-size:0.75rem;color:#999">Already sold: ${Math.round(t.alreadySold*100)}%</div>`:''}
+              </div>
+              <div style="text-align:right;min-width:120px">
+                <div style="font-size:0.85rem;color:#666">Revenue</div>
+                <div style="font-size:1.2rem;font-weight:bold;color:${soldOut?'#E94235':'#0F9D58'}">$${t.revenue.toLocaleString()}</div>
+              </div>
+            </div>
+          </div>`;
+      });
+      popupContent += '</div></div>';
+    });
+  }
+  popupContent += `<button id="closeResultsBtn" style="width:100%;padding:15px;background:#000;color:#fff;border:none;font-weight:bold;font-size:1rem;cursor:pointer;margin-top:10px">CONTINUE</button></div></div>`;
+
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = popupContent;
+  document.body.appendChild(modal);
+  modal.querySelector('#closeResultsBtn').addEventListener('click', () => document.body.removeChild(modal));
+
+  const logDiv = document.getElementById('logEntries');
+  const logLines = results.flatMap(cr =>
+    cr.teams.map(t => `${teamColors[t.teamNum].name} in ${cr.city}: $${t.revenue.toLocaleString()} (${Math.round(t.actualShare*100)}%)`)
+  );
+  logDiv.innerHTML = `<div class="log-entry"><strong>Year ${currentRound}:</strong></div>` +
+    logLines.map(l=>`<div class="log-entry">${l}</div>`).join('') + logDiv.innerHTML;
+
+  gameState.round++;
+  drawTeams();
+  populateDestinationDropdowns();
+  updateTeamDisplay();
+
+  if(gameState.round > gameState.maxRounds) showEndGameScreen();
+}
+
+// ─── SAVE / LOAD ─────────────────────────────────────────────────────────────
+
+function saveGame() {
+  const saveData = {
+    version:'1.0',
+    timestamp:new Date().toISOString(),
+    gameState:gameState,
+    auctionState:{teams:auctionState.teams, history:auctionState.history},
+    artworkAssignments:[]
+  };
+  document.querySelectorAll('.art-card').forEach(card => {
+    const team = card.dataset.team;
+    if(team) {
+      const teamNum = parseInt(team.replace('TEAM ',''));
+      const artIdx = parseInt(card.dataset.idx);
+      const artwork = gameState.teams[teamNum].artworks.find(a=>a.idx===artIdx);
+      if(artwork) saveData.artworkAssignments.push({idx:artIdx,team:teamNum,price:artwork.price});
+    }
+  });
+  const blob = new Blob([JSON.stringify(saveData,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url;
+  a.download=`art-for-all-save-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert('Game saved!');
+}
+
+function loadGame() {
+  const input = document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const saveData = JSON.parse(event.target.result);
+        if(!saveData.version || !saveData.gameState) { alert('Invalid save file'); return; }
+
+        // Restore game state
+        gameState = saveData.gameState;
+        // Ensure all teams have soldTo
+        [1,2,3,4].forEach(t => { if(!gameState.teams[t].soldTo) gameState.teams[t].soldTo={}; });
+
+        // Restore auction state
+        if(saveData.auctionState) {
+          auctionState.teams = saveData.auctionState.teams;
+          auctionState.history = saveData.auctionState.history;
+        }
+
+        // Clear all current assignments
+        document.querySelectorAll('.team-badge-container').forEach(c => c.innerHTML='');
+        document.querySelectorAll('.art-card').forEach(card => delete card.dataset.team);
+
+        // Restore artwork assignments
+        saveData.artworkAssignments.forEach(assignment => {
+          const card = document.querySelector(`.art-card[data-idx="${assignment.idx}"]`);
+          if(!card) return;
+
+          const teamNum = parseInt(assignment.team);
+          // FIX: always use 'TEAM X' format for dataset.team
+          card.dataset.team = 'TEAM ' + teamNum;
+
+          const container = card.querySelector('.team-badge-container');
+          container.innerHTML = `
+            <div class="team-badge team-${teamNum}">
+              <span>${teamColors[teamNum].name}</span>
+              <span class="remove" data-idx="${assignment.idx}" data-team="${teamNum}">×</span>
+            </div>
+          `;
+          attachRemoveHandler(container.querySelector('.remove'), assignment.idx, teamNum);
+        });
+
+        // Restore map rounds setting
+        if(document.getElementById('totalRounds')) {
+          document.getElementById('totalRounds').value = gameState.maxRounds;
+        }
+
+        // Update all displays
+        drawTeams();
+        populateDestinationDropdowns();
+        updateTeamDisplay();
+        updateCompetitiveAnalysis();
+        updateAuctionHistory();
+
+        // Clear log
+        document.getElementById('logEntries').innerHTML = '';
+
+        alert(`Game loaded! Round ${gameState.round} of ${gameState.maxRounds}`);
+      } catch(err) {
+        alert('Error loading save file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  });
+  input.click();
+}
+
+function resetGame() {
+  if(!confirm('Reset game? All progress will be lost.')) return;
+  gameState = {
+    round:1,
+    maxRounds:parseInt(document.getElementById('totalRounds').value)||8,
+    teams:{
+      1:{cash:0,city:'start',artworks:[],soldTo:{}},
+      2:{cash:0,city:'start',artworks:[],soldTo:{}},
+      3:{cash:0,city:'start',artworks:[],soldTo:{}},
+      4:{cash:0,city:'start',artworks:[],soldTo:{}}
+    }
+  };
+  // Reset auction state
+  [1,2,3,4].forEach(t => {
+    auctionState.teams[t] = {chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]};
+  });
+  auctionState.history = [];
+
+  document.getElementById('logEntries').innerHTML = '';
+  document.querySelectorAll('.team-badge-container').forEach(c => c.innerHTML='');
+  document.querySelectorAll('.art-card').forEach(card => delete card.dataset.team);
+  drawTeams();
+  populateDestinationDropdowns();
+  updateTeamDisplay();
+  updateCompetitiveAnalysis();
+  updateAuctionHistory();
+}
+
+// ─── MAP BUTTON WIRING ───────────────────────────────────────────────────────
+
+document.getElementById('mapBtn').addEventListener('click', () => {
+  document.getElementById('mapModal').classList.add('show');
+  gameState.maxRounds = parseInt(document.getElementById('totalRounds').value)||8;
+  initMap();
+  populateDestinationDropdowns();
+  updateTeamDisplay();
+});
+document.getElementById('mapClose').addEventListener('click', () => document.getElementById('mapModal').classList.remove('show'));
+document.getElementById('nextRound').addEventListener('click', nextRound);
+document.getElementById('resetGame').addEventListener('click', resetGame);
+document.getElementById('saveGame').addEventListener('click', saveGame);
+document.getElementById('loadGame').addEventListener('click', loadGame);
+document.getElementById('auctionBtn').addEventListener('click', openAuctionModal);
+document.getElementById('totalRounds').addEventListener('change', (e) => {
+  gameState.maxRounds = parseInt(e.target.value)||8;
+  updateTeamDisplay();
+});
+for(let i=1;i<=4;i++) document.getElementById(`dest${i}`).addEventListener('change', updateTeamDisplay);
+
+// ─── AUCTION ─────────────────────────────────────────────────────────────────
+
+function refreshAuctionDropdown() {
+  const select = document.getElementById('auctionArtworkSelect');
+  const current = select.value;
+  select.innerHTML = '<option value="">-- Choose Artwork --</option>';
+  artworks.forEach((art,idx) => {
+    const isAssigned = Object.values(gameState.teams).some(team=>team.artworks.some(a=>a.idx===idx));
+    const isAuctioned = auctionState.history.some(h=>h.artworkIdx===idx);
+    if(!isAssigned && !isAuctioned) {
+      const total = Object.values(art.cities).reduce((a,b)=>a+b,0);
+      select.innerHTML += `<option value="${idx}">${art.title} — ${art.artist} (Total: $${total})</option>`;
+    }
+  });
+  if(current && Array.from(select.options).some(o=>o.value===current)) select.value=current;
+}
+
+function openAuctionModal() {
+  refreshAuctionDropdown();
+  document.getElementById('auctionModal').style.display='block';
+  initializeAuctionTeams();
+}
+
+function closeAuctionModal() {
+  document.getElementById('auctionModal').style.display='none';
+}
+
+function selectArtworkForAuction() {
+  const idx = parseInt(document.getElementById('auctionArtworkSelect').value);
+  if(isNaN(idx)) {
+    document.getElementById('auctionInterface').style.display='none';
+    document.getElementById('auctionArtworkCard').innerHTML='<div style="text-align:center;color:#666;padding:40px 20px;">Select an artwork to auction</div>';
+    return;
+  }
+  auctionState.currentArtworkIdx = idx;
+  const art = artworks[idx];
+  const total = Object.values(art.cities).reduce((a,b)=>a+b,0);
+  const citiesHTML = Object.entries(art.cities).map(([city,price])=>
+    `<div style="background:#f5f5f5;padding:5px;border-radius:4px;text-align:center">
+      <div style="font-weight:bold;text-transform:uppercase;font-size:0.7rem">${cityNames[city]}</div>
+      <div style="color:#0F9D58;font-weight:bold">$${price}</div>
+    </div>`).join('');
+
+  document.getElementById('auctionArtworkCard').innerHTML =
+    `<img src="${art.image}" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin-bottom:10px">
+    <div style="text-align:center;margin-bottom:10px">
+      <div style="font-size:1.2rem;font-weight:bold;margin-bottom:5px">${art.title}</div>
+      <div style="font-size:0.9rem;color:#666">${art.artist}, ${art.year}</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #ddd">
+        <span style="font-size:0.8rem;color:#999">TOTAL VALUE: </span>
+        <span style="font-size:1.1rem;font-weight:bold">$${total}</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;font-size:0.65rem">${citiesHTML}</div>`;
+
+  document.getElementById('auctionInterface').style.display='block';
+  resetAuctionBids();
+}
+
+function resetAuctionBids() {
+  auctionState.currentBid = {team:null,amount:0};
+  Object.values(auctionState.teams).forEach(t=>t.selectedChips=[]);
+  updateAuctionBidDisplay();
+  [1,2,3,4].forEach(t=>renderAuctionChips(t));
+}
+
+function initializeAuctionTeams() {
+  const sections = {1:'redTeamAuction',2:'yellowTeamAuction',3:'blueTeamAuction',4:'greenTeamAuction'};
+  [1,2,3,4].forEach(tn => {
+    const team = auctionState.teams[tn];
+    const remaining = team.chips.reduce((s,v)=>s+v,0);
+    const section = document.getElementById(sections[tn]);
+    section.innerHTML = `
+      <div class="auction-team-header" style="justify-content:center">
+        <div class="auction-team-circle" style="background:${teamColors[tn].bg}"></div>
+        <strong style="color:${teamColors[tn].bg}">${teamColors[tn].name}</strong>
+      </div>
+      <div id="team${tn}TicketPrices" style="margin-bottom:12px;font-size:0.75rem;padding:10px;background:#f8f8f8;border-radius:5px;border:1px solid #e0e0e0"></div>
+      <div class="auction-team-stats">
+        <div><span style="opacity:0.6">Spent:</span> <strong>$${team.spent}M</strong></div>
+        <div><span style="opacity:0.6">Remaining:</span> <strong>$${remaining}M</strong></div>
+      </div>
+      <div class="auction-chip-container" id="chips-team${tn}"></div>`;
+    renderAuctionChips(tn);
+    updateTeamTicketPrices(tn);
+  });
+}
+
+function renderAuctionChips(teamNum) {
+  const container = document.getElementById(`chips-team${teamNum}`);
+  if(!container) return;
+  const team = auctionState.teams[teamNum];
+  container.innerHTML = team.chips.map((value,idx) => {
+    const isSelected = team.selectedChips.includes(idx);
+    return `<div class="auction-chip ${isSelected?'selected':''}"
+      style="background:${teamColors[teamNum].bg};color:${teamColors[teamNum].text}"
+      onclick="toggleChip(${teamNum},${idx})">$${value}</div>`;
+  }).join('');
+}
+
+function toggleChip(teamNum, chipIdx) {
+  // Clear other teams' selections
+  [1,2,3,4].forEach(t => {
+    if(t!==teamNum) { auctionState.teams[t].selectedChips=[]; renderAuctionChips(t); }
+  });
+  const team = auctionState.teams[teamNum];
+  const i = team.selectedChips.indexOf(chipIdx);
+  if(i>-1) team.selectedChips.splice(i,1); else team.selectedChips.push(chipIdx);
+  renderAuctionChips(teamNum);
+  const amount = team.selectedChips.reduce((s,i)=>s+team.chips[i],0);
+  auctionState.currentBid = {team:teamNum, amount};
+  updateAuctionBidDisplay();
+}
+
+function updateAuctionBidDisplay() {
+  document.getElementById('currentBidAmount').textContent = '$'+auctionState.currentBid.amount+'M';
+  if(auctionState.currentBid.team) {
+    const tn = auctionState.currentBid.team;
+    document.getElementById('currentBidTeam').textContent = teamColors[tn].name;
+    document.getElementById('currentBidTeam').style.color = teamColors[tn].bg;
+  } else {
+    document.getElementById('currentBidTeam').textContent = 'No bids yet';
+    document.getElementById('currentBidTeam').style.color = '#666';
+  }
+}
+
+function clearAllBids() {
+  [1,2,3,4].forEach(t=>{ auctionState.teams[t].selectedChips=[]; renderAuctionChips(t); });
+  auctionState.currentBid = {team:null,amount:0};
+  updateAuctionBidDisplay();
+}
+
+function finishAuction() {
+  if(!auctionState.currentBid.team || auctionState.currentBid.amount===0) {
+    alert('No bids placed yet!'); return;
+  }
+  const winningTeam = auctionState.currentBid.team;
+  const price = auctionState.currentBid.amount;
+  const artIdx = auctionState.currentArtworkIdx;
+  const artwork = artworks[artIdx];
+
+  // Remove chips permanently
+  const winTeam = auctionState.teams[winningTeam];
+  const toRemove = [...winTeam.selectedChips].sort((a,b)=>b-a);
+  toRemove.forEach(i=>winTeam.chips.splice(i,1));
+  winTeam.selectedChips = [];
+  winTeam.spent += price;
+
+  // Add to game state
+  gameState.teams[winningTeam].cash -= price * 1000000;
+  gameState.teams[winningTeam].artworks.push({idx:artIdx,title:artwork.title,price,revenue:0,ticketsSold:0});
+
+  // Update gallery card
+  const card = document.querySelector(`.art-card[data-idx="${artIdx}"]`);
+  if(card) {
+    card.dataset.team = 'TEAM ' + winningTeam;
+    const container = card.querySelector('.team-badge-container');
+    container.innerHTML = `
+      <div class="team-badge team-${winningTeam}">
+        <span>${teamColors[winningTeam].name}</span>
+        <span class="remove" data-idx="${artIdx}" data-team="${winningTeam}">×</span>
+      </div>`;
+    attachRemoveHandler(container.querySelector('.remove'), artIdx, winningTeam);
+  }
+
+  auctionState.history.push({artworkIdx:artIdx,artwork:artwork.title,team:winningTeam,price});
+  updateAuctionHistory();
+  updateTeamDisplay();
+  updateCompetitiveAnalysis();
+  initializeAuctionTeams();
+  refreshAuctionDropdown();
+  document.getElementById('auctionArtworkSelect').value='';
+  selectArtworkForAuction();
+  alert(`${teamColors[winningTeam].name} won "${artwork.title}" for $${price}M!`);
+}
+
+function updateTeamTicketPrices(teamNum) {
+  const container = document.getElementById(`team${teamNum}TicketPrices`);
+  if(!container) return;
+  const team = gameState.teams[teamNum];
+  if(team.artworks.length===0) {
+    container.innerHTML='<div style="text-align:center;opacity:0.4;padding:8px;font-size:0.7rem">No artworks yet</div>';
+    return;
+  }
+  const allCities = [...cities,'moscow'];
+  const cityAbbrev = {...cityNames};
+  const teamPrices = {};
+  allCities.forEach(city => {
+    teamPrices[city] = team.artworks.reduce((s,art)=>s+(artworks[art.idx].cities[city]||0),0);
+  });
+  const maxPrices = {};
+  allCities.forEach(city => {
+    maxPrices[city] = Math.max(...[1,2,3,4].map(t=>
+      gameState.teams[t].artworks.reduce((s,art)=>s+(artworks[art.idx].cities[city]||0),0)
+    ));
+  });
+
+  let html = '<div style="font-weight:bold;margin-bottom:6px;font-size:0.7rem;text-align:center;text-transform:uppercase;opacity:0.6;letter-spacing:0.05em">Ticket Prices</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-size:0.7rem">';
+  allCities.forEach(city => {
+    const val = teamPrices[city];
+    const isHighest = val>0 && val===maxPrices[city] && [1,2,3,4].filter(t=>
+      gameState.teams[t].artworks.reduce((s,art)=>s+(artworks[art.idx].cities[city]||0),0)>0
+    ).length>1;
+    html += `<div style="background:#fff;padding:4px;border-radius:4px;text-align:center;border:1px solid #e0e0e0">
+      <div style="font-weight:bold;font-size:0.65rem;opacity:0.6">${cityAbbrev[city]}</div>
+      <div style="color:#000;font-weight:bold;font-size:0.85rem">$${val}${isHighest?' ★':''}</div>
+    </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function updateAuctionHistory() {
+  const histDiv = document.getElementById('auctionHistory');
+  if(!auctionState.history.length) {
+    histDiv.innerHTML='<p style="text-align:center;opacity:0.5">No artworks sold yet</p>'; return;
+  }
+  const sorted = [...auctionState.history].sort((a,b)=>b.price-a.price);
+  histDiv.innerHTML = sorted.map(h =>
+    `<div style="padding:10px;margin-bottom:5px;background:#f5f5f5;border-radius:5px;display:flex;justify-content:space-between;align-items:center">
+      <span><strong>${h.artwork}</strong></span>
+      <span style="display:flex;align-items:center;gap:8px">
+        <div style="width:20px;height:20px;border-radius:50%;background:${teamColors[h.team].bg};border:2px solid rgba(0,0,0,0.2)"></div>
+        <strong style="color:${teamColors[h.team].bg}">$${h.price}M</strong>
+      </span>
+    </div>`).join('');
+}
+
+// ─── END GAME ─────────────────────────────────────────────────────────────────
+
+function showEndGameScreen() {
+  const teamStats = {};
+  [1,2,3,4].forEach(teamNum => {
+    const team = gameState.teams[teamNum];
+    const totalCost = auctionState.teams[teamNum].spent * 1000000;
+    let totalRevenue=0, totalTickets=0;
+    if(team.soldTo) {
+      Object.keys(team.soldTo).forEach(cityKey => {
+        const pct = team.soldTo[cityKey];
+        const pop = cityData[cityKey].pop;
+        totalTickets += Math.round(pop*pct);
+        const avgPrice = team.artworks.length>0
+          ? team.artworks.reduce((s,art)=>s+(artworks[art.idx].cities[cityKey]||0),0)
+          : 0;
+        totalRevenue += Math.round(pop*pct*avgPrice);
+      });
+    }
+    teamStats[teamNum] = {teamNum,totalRevenue,totalCost,profit:totalRevenue-totalCost,ticketsSold:totalTickets,artworksOwned:team.artworks.length};
+  });
+  const rankings = Object.values(teamStats).sort((a,b)=>b.profit-a.profit);
+  const winner = rankings[0];
+  document.getElementById('winnerTeamName').textContent = teamColors[winner.teamNum].name;
+  document.getElementById('winnerTeamName').style.color = teamColors[winner.teamNum].bg;
+  document.getElementById('winnerProfit').textContent = `PROFIT: $${Math.round(winner.profit/1000000)}M`;
+
+  document.getElementById('finalStandings').innerHTML = '<div style="display:grid;gap:15px">' +
+    rankings.map((t,i) => {
+      const medal = ['🥇','🥈','🥉',i+1][i>2?3:i];
+      const tc = teamColors[t.teamNum];
+      return `<div style="display:grid;grid-template-columns:60px 200px 1fr 1fr 1fr;gap:15px;align-items:center;padding:20px;background:#f5f5f5;border-radius:10px;border-left:6px solid ${tc.bg}">
+        <div style="text-align:center;font-size:2rem">${medal}</div>
+        <div style="font-weight:bold;font-size:1.2rem">${tc.name}</div>
+        <div><div style="font-size:0.8rem;opacity:0.6">REVENUE</div><div style="font-size:1.1rem;font-weight:bold;color:#0F9D58">$${Math.round(t.totalRevenue/1000000)}M</div></div>
+        <div><div style="font-size:0.8rem;opacity:0.6">COSTS</div><div style="font-size:1.1rem;font-weight:bold;color:#E94235">$${Math.round(t.totalCost/1000000)}M</div></div>
+        <div><div style="font-size:0.8rem;opacity:0.6">PROFIT</div><div style="font-size:1.3rem;font-weight:bold;color:${t.profit>=0?'#0F9D58':'#E94235'}">$${Math.round(t.profit/1000000)}M</div></div>
+      </div>`;
+    }).join('') + '</div>';
+
+  document.getElementById('endGameModal').style.display='block';
+}
+
+function closeEndGameModal() {
+  document.getElementById('endGameModal').style.display='none';
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+initGallery();
+updateCompetitiveAnalysis();
+</script>
+</body>
+</html>
