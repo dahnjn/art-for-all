@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🎨 ART for ALL GAMEBOARD</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#fff;min-height:100vh;padding:40px 20px;color:#1a1a1a}
+.container{max-width:1400px;margin:0 auto}
+header{text-align:center;margin-bottom:50px;border-bottom:1px solid #e0e0e0;padding-bottom:30px}
+h1{font-size:2rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:25px;color:#000}
+.controls{display:flex;flex-direction:column;align-items:center;gap:20px}
+.search-box{position:relative;width:100%;max-width:400px}
+.search-box input{width:100%;padding:12px 15px 12px 40px;border:1px solid #ccc;background:#fafafa;color:#333;font-size:0.9rem;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;outline:none}
+.search-box input:focus{border-color:#000}
+.search-box::before{content:"⌕";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999;font-size:1.1rem}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.filter-tag{padding:8px 16px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;font-size:0.75rem;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:0.1em;transition:all 0.2s}
+.filter-tag:hover{border-color:#000;color:#000}
+.filter-tag.active{background:#000;color:#fff;border-color:#000}
+.sort-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.sort-row label{color:#999;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em}
+.sort-row select{padding:8px 12px;border:1px solid #ccc;background:#fff;color:#333;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.8rem}
+.results-count{color:#999;text-align:center;margin-bottom:20px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.art-card{background:#fff;border:6px solid #000;height:475px;display:flex;flex-direction:column;transition:box-shadow 0.3s;position:relative}
+.art-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.art-card.hidden{display:none}
+.card-header{padding:15px;background:#fff;border-bottom:1px solid #eee}
+.artwork-title{color:#000;font-size:0.85rem;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artist-name{color:#666;font-size:0.8rem;font-weight:400}
+.artwork-meta{color:#999;font-size:0.7rem;margin-top:4px;text-transform:uppercase;letter-spacing:0.05em}
+.image-container{flex:1;background:#f5f5f5;display:flex;align-items:center;justify-content:center;padding:15px;overflow:hidden}
+.image-container img{max-width:100%;max-height:100%;object-fit:contain}
+.card-footer{padding:10px 15px;background:#fafafa;border-top:1px solid #eee}
+.category-row{display:flex;justify-content:center;gap:5px;margin-bottom:8px}
+.category-tag{padding:4px 10px;background:#f0f0f0;color:#666;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em}
+.ticket-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.ticket-chip{display:flex;justify-content:space-between;padding:4px 8px;border-radius:2px;font-size:0.65rem}
+.ticket-city{font-weight:600;text-transform:uppercase}
+.ticket-price{font-weight:400}
+.city-newyork{background:#FFE5E5;color:#B91C1C}.city-london{background:#E0E7FF;color:#3730A3}.city-paris{background:#FEF3C7;color:#92400E}
+.city-dubai{background:#DBEAFE;color:#1E40AF}.city-capetown{background:#D1FAE5;color:#065F46}.city-mexicocity{background:#FCE7F3;color:#9F1239}
+.city-saopaulo{background:#F3E8FF;color:#6B21A8}.city-tokyo{background:#FED7AA;color:#9A3412}.city-shanghai{background:#E0F2FE;color:#075985}
+.add-btn{position:absolute;top:10px;right:10px;width:32px;height:32px;background:#000;color:#fff;border:none;font-size:1.5rem;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;border-radius:50%;line-height:1}
+.add-btn:hover{background:#333}
+.team-badge{position:absolute;top:10px;right:50px;padding:6px 12px;font-size:0.7rem;font-weight:700;border-radius:4px;z-index:2;display:flex;align-items:center;gap:6px;text-transform:uppercase}
+.team-badge.team-1{background:#E94235;color:#fff}
+.team-badge.team-2{background:#FBBC04;color:#000}
+.team-badge.team-3{background:#4285F4;color:#fff}
+.team-badge.team-4{background:#0F9D58;color:#fff}
+.team-badge .remove{cursor:pointer;font-weight:bold;opacity:0.7;padding:0 4px}
+.team-badge .remove:hover{opacity:1}
+.rounds-input{width:60px;padding:5px;margin-left:10px;border:1px solid #444;background:#222;color:#fff;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-content{background:#fff;max-width:600px;max-height:90vh;overflow:auto;position:relative;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
+.modal-close{position:absolute;top:10px;right:10px;width:30px;height:30px;border:2px solid #333;background:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:101}
+.modal-close:hover{background:#f0f0f0}
+.map-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:none;flex-direction:column}
+.map-modal.show{display:flex}
+.map-header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#111;border-bottom:1px solid #333}
+.map-title{color:#fff;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:1.2rem}
+.map-close{background:#333;color:#fff;border:none;padding:8px 16px;cursor:pointer;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.map-content{flex:1;display:flex;position:relative;overflow:hidden}
+.map-area{flex:1;position:relative;background:#000;display:flex;align-items:center;justify-content:center;padding:20px}
+.map-container{position:relative;width:100%;max-width:1200px;height:100%;max-height:800px}
+svg.map-svg{width:100%;height:100%}
+.city-circle{cursor:pointer;transition:all 0.3s}
+.city-circle:hover{filter:brightness(1.3)}
+.city-label { fill: #fff; font-size: 18px; font-weight: bold; text-anchor: middle; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+.city-pop-label { fill: #000; font-size: 16px; font-weight: bold; text-anchor: middle; }
+.connection-line { stroke: #999; stroke-width: 3; }
+.team-marker{transition:all 0.3s;cursor:pointer}
+.team-marker:hover{opacity:0.8}
+.starting-position { fill: #4CAF50; stroke: #000; stroke-width: 4; opacity: 0.3; }
+.sidebar{width:320px;background:#111;padding:20px;overflow-y:auto;border-left:1px solid #333}
+.sidebar h3{color:#fff;font-size:0.9rem;margin-bottom:15px;text-transform:uppercase;letter-spacing:0.1em}
+.round-info{background:#222;padding:15px;margin-bottom:15px;border-radius:4px}
+.round-info label{color:#888;font-size:0.75rem;display:block;margin-bottom:5px}
+.round-info span{color:#fff;font-size:1.2rem;font-weight:bold}
+.team-panel{background:#222;padding:15px;margin-bottom:10px;border-radius:4px;border-left:4px solid}
+.team-panel.team-1{border-left-color:#E94235}
+.team-panel.team-2{border-left-color:#FBBC04}
+.team-panel.team-3{border-left-color:#4285F4}
+.team-panel.team-4{border-left-color:#0F9D58}
+.team-panel h4{color:#fff;font-size:0.85rem;margin-bottom:10px}
+.team-panel select{width:100%;padding:8px;background:#333;color:#fff;border:1px solid #444;margin-bottom:8px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.team-stat{display:flex;justify-content:space-between;color:#ccc;font-size:0.75rem;margin-top:5px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.game-controls{padding:15px;background:#222;border-radius:4px;margin-bottom:15px}
+.game-controls button{width:100%;padding:10px;margin-bottom:8px;background:#0F9D58;color:#fff;border:none;cursor:pointer;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:bold;font-size:0.85rem}
+.game-controls button:hover{background:#0d8549}
+#resetGame{background:#E94235}
+#resetGame:hover{background:#c23629}
+#saveGame:hover{background:#3367d6}
+#loadGame:hover{background:#f9ab00}
+.log-container{background:#222;padding:15px;border-radius:4px;max-height:300px;overflow-y:auto}
+.log-container h3{color:#fff;font-size:0.85rem;margin-bottom:10px;text-transform:uppercase}
+.log-entry{color:#ccc;font-size:0.75rem;margin-bottom:5px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;padding:5px;background:#1a1a1a;border-radius:2px}
+.city-moscow {
+  background: #e0e0e0 !important;
+  color: #000 !important;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🎨 ART for ALL</h1>
+<div class="controls">
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search artworks...">
+</div>
+<div class="filter-row">
+<button class="filter-tag active" data-category="all">All</button>
+<button class="filter-tag" data-category="painting">Painting</button>
+<button class="filter-tag" data-category="sculpture">Sculpture</button>
+<button class="filter-tag" data-category="installation">Installation</button>
+<button class="filter-tag" data-category="photography">Photography</button>
+</div>
+<div class="sort-row">
+<label>Sort by City:</label>
+<select id="citySelect">
+<option value="">None</option>
+<option value="newyork">NYC</option>
+<option value="london">LDN</option>
+<option value="paris">PAR</option>
+<option value="dubai">DXB</option>
+<option value="capetown">CPT</option>
+<option value="mexicocity">MEX</option>
+<option value="saopaulo">SAO</option>
+<option value="tokyo">TYO</option>
+<option value="shanghai">SHA</option>
+<option value="moscow">MOS</option>
+</select>
+<select id="sortDirection">
+<option value="high">High to Low</option>
+<option value="low">Low to High</option>
+</select>
+</div>
+<div class="sort-row">
+<label>Filter by Team:</label>
+<select id="teamFilter">
+<option value="all">All Teams</option>
+<option value="1">RED</option>
+<option value="2">YELLOW</option>
+<option value="3">BLUE</option>
+<option value="4">GREEN</option>
+<option value="unassigned">Unassigned</option>
+</select>
+</div>
+</div>
+<button id="mapBtn" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer">MAP</button>
+<button id="auctionBtn" onclick="openAuctionModal()" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer">AUCTIONS</button>
+</header>
+<div id="competitiveAnalysis" style="margin-bottom:30px;display:none">
+<h2 style="text-align:center;font-size:1.2rem;margin-bottom:20px;text-transform:uppercase;letter-spacing:0.1em">Competitive Analysis</h2>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:0.85rem;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif">
+<thead>
+<tr style="background:#000;color:#fff">
+<th style="padding:12px;text-align:left">CITY</th>
+<th style="padding:12px;text-align:center">RED</th>
+<th style="padding:12px;text-align:center">YELLOW</th>
+<th style="padding:12px;text-align:center">BLUE</th>
+<th style="padding:12px;text-align:center">GREEN</th>
+</tr>
+</thead>
+<tbody id="analysisTableBody">
+</tbody>
+</table>
+</div>
+</div>
+<div class="results-count" id="resultsCount">24 Works</div>
+<div class="gallery" id="gallery"></div>
+</div>
+
+<div class="map-modal" id="mapModal">
+<div class="map-header">
+<div class="map-title">🎨 ART for ALL - TRAVEL MAP</div>
+<div style="display:flex;align-items:center;gap:20px">
+<label style="color:#888;font-size:0.8rem">Rounds:<input type="number" id="totalRounds" class="rounds-input" value="8" min="1" max="20"></label>
+<button class="map-close" id="mapClose">✕ CLOSE</button>
+</div>
+</div>
+<div class="map-content">
+<div class="map-area" id="mapArea">
+<div class="map-container">
+<svg class="map-svg" id="mapSvg" viewBox="0 0 1000 600">
+<g id="connectionLines"></g>
+<g id="citiesGroup"></g>
+<g id="teamsGroup"></g>
+</svg>
+</div>
+</div>
+<div class="sidebar">
+<div class="round-info">
+<label>Rounds Remaining</label>
+<span id="roundsRemaining">8</span>
+</div>
+<div class="scoreboard-container" style="background:#222;padding:15px;border-radius:4px;margin-bottom:20px">
+<h3 style="color:#fff;font-size:0.9rem;margin-bottom:15px;text-transform:uppercase;letter-spacing:0.1em">Scoreboard</h3>
+<div id="scoreboard"></div>
+</div>
+<div class="game-controls">
+<button id="nextRound">NEXT YEAR →</button>
+<button id="resetGame">⟲ RESET GAME</button>
+<button id="saveGame" style="background:#4285F4">💾 SAVE GAME</button>
+<button id="loadGame" style="background:#FBBC04;color:#000">📂 LOAD GAME</button>
+</div>
+<h3>Team Destinations</h3>
+<div class="team-panel team-1">
+<h4>RED</h4>
+<select id="dest1"></select>
+<div class="team-stat"><span>Ticket Value:</span><span id="tv1">$0</span></div>
+<div class="team-stat"><span>Cash:</span><span id="cash1" style="font-weight:bold">$0</span></div>
+<div class="team-stat"><span>Artworks:</span><span id="artcount1">0</span></div>
+</div>
+<div class="team-panel team-2">
+<h4>YELLOW</h4>
+<select id="dest2"></select>
+<div class="team-stat"><span>Ticket Value:</span><span id="tv2">$0</span></div>
+<div class="team-stat"><span>Cash:</span><span id="cash2" style="font-weight:bold">$0</span></div>
+<div class="team-stat"><span>Artworks:</span><span id="artcount2">0</span></div>
+</div>
+<div class="team-panel team-3">
+<h4>BLUE</h4>
+<select id="dest3"></select>
+<div class="team-stat"><span>Ticket Value:</span><span id="tv3">$0</span></div>
+<div class="team-stat"><span>Cash:</span><span id="cash3" style="font-weight:bold">$0</span></div>
+<div class="team-stat"><span>Artworks:</span><span id="artcount3">0</span></div>
+</div>
+<div class="team-panel team-4">
+<h4>GREEN</h4>
+<select id="dest4"></select>
+<div class="team-stat"><span>Ticket Value:</span><span id="tv4">$0</span></div>
+<div class="team-stat"><span>Cash:</span><span id="cash4" style="font-weight:bold">$0</span></div>
+<div class="team-stat"><span>Artworks:</span><span id="artcount4">0</span></div>
+</div>
+<div class="log-container">
+<h3>Game Log</h3>
+<div id="logEntries"></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// Artwork data
+const artworks = [
+  {title:"Infinity Mirrored Room",artist:"Yayoi Kusama",year:"2013",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_4.jpg",cities:{"newyork": 12, "london": 12, "paris": 12, "dubai": 12, "capetown": 12, "mexicocity": 12, "saopaulo": 12, "tokyo": 12, "shanghai": 12, "moscow": 12}},
+  {title:"Cloud Gate",artist:"Anish Kapoor",year:"2006",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_1.jpg",cities:{"newyork": 12, "london": 12, "paris": 11, "dubai": 11, "capetown": 11, "mexicocity": 10, "saopaulo": 10, "tokyo": 10, "shanghai": 8, "moscow": 0}},
+  {title:"The Scream",artist:"Edvard Munch",year:"1893",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_1.jpg",cities:{"newyork": 12, "london": 12, "paris": 12, "dubai": 11, "capetown": 10, "mexicocity": 8, "saopaulo": 6, "tokyo": 4, "shanghai": 5, "moscow": 0}},
+  {title:"Forever Bicycles",artist:"Ai Weiwei",year:"2011",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_3.webp",cities:{"newyork": 8, "london": 8, "paris": 9, "dubai": 9, "capetown": 8, "mexicocity": 7, "saopaulo": 6, "tokyo": 12, "shanghai": 12, "moscow": 0}},
+  {title:"The Persistence of Memory",artist:"Salvador Dalí",year:"1931",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_5.jpg",cities:{"newyork": 12, "london": 12, "paris": 11, "dubai": 10, "capetown": 9, "mexicocity": 7, "saopaulo": 5, "tokyo": 3, "shanghai": 3, "moscow": 0}},
+  {title:"The Physical Impossibility",artist:"Damien Hirst",year:"1991",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_4.jpg",cities:{"newyork": 12, "london": 12, "paris": 11, "dubai": 10, "capetown": 8, "mexicocity": 7, "saopaulo": 6, "tokyo": 3, "shanghai": 3, "moscow": 0}},
+  {title:"Earth Globe",artist:"Mona Hatoum",year:"2007",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_2.jpg",cities:{"newyork": 10, "london": 10, "paris": 10, "dubai": 9, "capetown": 8, "mexicocity": 8, "saopaulo": 7, "tokyo": 6, "shanghai": 6, "moscow": 0}},
+  {title:"The Weather Project",artist:"Olafur Eliasson",year:"2003",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_6.jpg",cities:{"newyork": 11, "london": 11, "paris": 10, "dubai": 9, "capetown": 8, "mexicocity": 7, "saopaulo": 5, "tokyo": 3, "shanghai": 2, "moscow": 0}},
+  {title:"Composition",artist:"Piet Mondrian",year:"1921",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_3.jpg",cities:{"newyork": 11, "london": 11, "paris": 10, "dubai": 9, "capetown": 8, "mexicocity": 6, "saopaulo": 5, "tokyo": 3, "shanghai": 2, "moscow": 0}},
+  {title:"Balloon Dog",artist:"Jeff Koons",year:"1994",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_1.png",cities:{"newyork": 10, "london": 10, "paris": 9, "dubai": 8, "capetown": 7, "mexicocity": 6, "saopaulo": 5, "tokyo": 5, "shanghai": 6, "moscow": 0}},
+  {title:"727-727",artist:"Takashi Murakami",year:"2006",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_4.webp",cities:{"newyork": 5, "london": 4, "paris": 5, "dubai": 6, "capetown": 5, "mexicocity": 4, "saopaulo": 4, "tokyo": 12, "shanghai": 15, "moscow": 0}},
+  {title:"Sunflower Seeds",artist:"Ai Weiwei",year:"2010",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_5.jpg",cities:{"newyork": 8, "london": 8, "paris": 8, "dubai": 7, "capetown": 6, "mexicocity": 10, "saopaulo": 11, "tokyo": 4, "shanghai": 4, "moscow": 6}},
+  {title:"The Two Fridas",artist:"Frida Kahlo",year:"1939",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_6.jpg",cities:{"newyork": 4, "london": 4, "paris": 4, "dubai": 3, "capetown": 3, "mexicocity": 12, "saopaulo": 12, "tokyo": 5, "shanghai": 5, "moscow": 0}},
+  {title:"Pumpkin",artist:"Yayoi Kusama",year:"2022",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_2.jpg",cities:{"newyork": 3, "london": 3, "paris": 3, "dubai": 4, "capetown": 3, "mexicocity": 2, "saopaulo": 2, "tokyo": 12, "shanghai": 15, "moscow": 3}},
+  {title:"A Bigger Splash",artist:"David Hockney",year:"1967",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_2.jpg",cities:{"newyork": 8, "london": 11, "paris": 10, "dubai": 8, "capetown": 6, "mexicocity": 4, "saopaulo": 3, "tokyo": 2, "shanghai": 0, "moscow": 0}},
+  {title:"Maman",artist:"Louise Bourgeois",year:"1999",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_3_.jpg",cities:{"newyork": 10, "london": 11, "paris": 10, "dubai": 8, "capetown": 6, "mexicocity": 3, "saopaulo": 2, "tokyo": 0, "shanghai": 0, "moscow": 0}},
+  {title:"Mobile",artist:"Alexander Calder",year:"1958",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_6.jpg",cities:{"newyork": 9, "london": 9, "paris": 9, "dubai": 8, "capetown": 7, "mexicocity": 5, "saopaulo": 3, "tokyo": 2, "shanghai": 0, "moscow": 0}},
+  {title:"Migrant Mother",artist:"Dorothea Lange",year:"1936",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_5.jpg",cities:{"newyork": 10, "london": 9, "paris": 8, "dubai": 7, "capetown": 5, "mexicocity": 2, "saopaulo": 0, "tokyo": 0, "shanghai": 0, "moscow": 0}},
+  {title:"Earthrise",artist:"William Anders",year:"1968",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_6.jpg",cities:{"newyork": 11, "london": 10, "paris": 9, "dubai": 7, "capetown": 3, "mexicocity": 0, "saopaulo": 0, "tokyo": 0, "shanghai": 0, "moscow": 0}},
+  {title:"Atmosphere and Environment XII",artist:"Louise Nevelson",year:"1970",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_5_.jpg",cities:{"newyork": 9, "london": 9, "paris": 8, "dubai": 7, "capetown": 5, "mexicocity": 2, "saopaulo": 0, "tokyo": 0, "shanghai": 0, "moscow": 0}},
+  {title:"Einstein Tongue",artist:"Arthur Sasse",year:"1951",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_3.jpg",cities:{"newyork": 8, "london": 8, "paris": 7, "dubai": 5, "capetown": 2, "mexicocity": 0, "saopaulo": 0, "tokyo": 0, "shanghai": 0, "moscow": 0}},
+  {title:"Last Barbary Lion",artist:"Unknown",year:"1925",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_4.webp",cities:{"newyork": 7, "london": 7, "paris": 6, "dubai": 5, "capetown": 3, "mexicocity": 2, "saopaulo": 0, "tokyo": 0, "shanghai": 0, "moscow": 0}},
+  {title:"First Flight",artist:"Wright Brothers",year:"1903",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_1.jpg",cities:{"newyork": 6, "london": 6, "paris": 5, "dubai": 3, "capetown": 2, "mexicocity": 0, "saopaulo": 0, "tokyo": 0, "shanghai": 0, "moscow": 0}},
+  {title:"Abbey Road",artist:"Iain Macmillan",year:"1969",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_2.jpg",cities:{"newyork": 1, "london": 9, "paris": 1, "dubai": 1, "capetown": 0, "mexicocity": 0, "saopaulo": 0, "tokyo": 2, "shanghai": 0, "moscow": 6}},
+];
+
+const cityAbbrs = {newyork:'NYC',london:'LDN',paris:'PAR',dubai:'DXB',capetown:'CPT',mexicocity:'MEX',saopaulo:'SAO',tokyo:'TYO',shanghai:'SHA',moscow:'MOS'};
+
+const cityData = {
+  start: {name: 'START', pop: 0, x: 400, y: 550, abbr: 'START', connections: ['saopaulo', 'capetown']},
+  saopaulo: {name: 'SAO PAULO', pop: 750000, x: 300, y: 480, abbr: 'SAO', connections: ['mexicocity', 'start']},
+  mexicocity: {name: 'MEXICO CITY', pop: 600000, x: 180, y: 350, abbr: 'MEX', connections: ['newyork', 'saopaulo']},
+  newyork: {name: 'NEW YORK', pop: 1500000, x: 250, y: 200, abbr: 'NYC', connections: ['london', 'paris', 'mexicocity']},
+  london: {name: 'LONDON', pop: 1200000, x: 480, y: 140, abbr: 'LDN', connections: ['newyork', 'paris']},
+  paris: {name: 'PARIS', pop: 1000000, x: 520, y: 220, abbr: 'PAR', connections: ['dubai', 'capetown', 'newyork', 'london']},
+  capetown: {name: 'CAPE TOWN', pop: 700000, x: 580, y: 450, abbr: 'CPT', connections: ['start', 'dubai', 'shanghai', 'paris']},
+  moscow: {name: 'MOSCOW', pop: 1000000, x: 650, y: 100, abbr: 'MOS', connections: ['shanghai', 'dubai']},
+  dubai: {name: 'DUBAI', pop: 500000, x: 700, y: 280, abbr: 'DXB', connections: ['paris', 'capetown', 'moscow', 'shanghai']},
+  tokyo: {name: 'TOKYO', pop: 1200000, x: 920, y: 180, abbr: 'TYO', connections: ['shanghai']},
+  shanghai: {name: 'SHANGHAI', pop: 2000000, x: 820, y: 260, abbr: 'SHA', connections: ['tokyo', 'capetown', 'moscow', 'dubai']}
+};
+
+let gameState = {
+  round: 1,
+  maxRounds: 8,
+  teams: {
+    1: {cash: 0, city: 'start', artworks: [], soldTo: {}},
+    2: {cash: 0, city: 'start', artworks: [], soldTo: {}},
+    3: {cash: 0, city: 'start', artworks: [], soldTo: {}},
+    4: {cash: 0, city: 'start', artworks: [], soldTo: {}}
+  }
+};
+
+const auctionState = {
+  teams: {
+    1: { chips: [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20], spent: 0, wonArtworks: [], selectedChips: [] },
+    2: { chips: [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20], spent: 0, wonArtworks: [], selectedChips: [] },
+    3: { chips: [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20], spent: 0, wonArtworks: [], selectedChips: [] },
+    4: { chips: [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20], spent: 0, wonArtworks: [], selectedChips: [] }
+  },
+  currentBid: { team: null, amount: 0 },
+  history: [],
+  currentArtworkIdx: null
+};
+
+const teamColors = { 1: '#E94235', 2: '#FBBC04', 3: '#4285F4', 4: '#0F9D58' };
+
+// GALLERY INITIALIZATION
+function initGallery() {
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = artworks.map((art, idx) => `
+    <div class="art-card" data-category="${art.category}" data-idx="${idx}">
+      <div class="add-btn" data-idx="${idx}">+</div>
+      <div class="team-badge-container" data-idx="${idx}"></div>
+      <div class="card-header">
+        <div class="artwork-title">${art.title}</div>
+        <div class="artist-name">${art.artist}</div>
+        <div class="artwork-meta">${art.year}</div>
+      </div>
+      <div class="image-container"><img src="${art.image}"></div>
+      <div class="card-footer">
+        <div class="category-row"><span class="category-tag">${art.category}</span></div>
+        <div class="ticket-grid">
+          ${Object.entries(art.cities).map(([c,p]) => `<div class="ticket-chip city-${c}"><span class="ticket-city">${cityAbbrs[c]}</span><span class="ticket-price">$${p}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.idx);
+      const teamNum = prompt("Assign to Team (1-4):");
+      const price = prompt("Purchase Price ($M):");
+      if (teamNum && price) {
+        gameState.teams[teamNum].artworks.push({idx, price: parseFloat(price), title: artworks[idx].title, revenue: 0, ticketsSold: 0});
+        gameState.teams[teamNum].cash -= (parseFloat(price) * 1000000);
+        updateDisplay();
+      }
+    };
+  });
+}
+
+// MATH AND LOGIC
+function getTeamTicketValues() {
+  const values = {1:{},2:{},3:{},4:{}};
+  Object.keys(cityAbbrs).forEach(c => [1,2,3,4].forEach(t => values[t][c] = 0));
+  document.querySelectorAll('.art-card').forEach(card => {
+    if (card.dataset.team) {
+      const tNum = parseInt(card.dataset.team.replace('TEAM ', ''));
+      const art = artworks[parseInt(card.dataset.idx)];
+      Object.keys(cityAbbrs).forEach(c => values[tNum][c] += (art.cities[c] || 0));
+    }
+  });
+  return values;
+}
+
+function updateDisplay() {
+  const tv = getTeamTicketValues();
+  for (let i = 1; i <= 4; i++) {
+    const team = gameState.teams[i];
+    document.getElementById(`tv${i}`).textContent = '$' + (tv[i][team.city] || 0);
+    const cashEl = document.getElementById(`cash${i}`);
+    cashEl.textContent = '$' + team.cash.toLocaleString();
+    cashEl.style.color = team.cash < 0 ? '#E94235' : '#0F9D58';
+    document.getElementById(`artcount${i}`).textContent = team.artworks.length;
+    
+    // Refresh badges
+    document.querySelectorAll(`.team-badge-container[data-idx]`).forEach(container => {
+      const idx = parseInt(container.dataset.idx);
+      const card = container.closest('.art-card');
+      if (team.artworks.some(a => a.idx === idx)) {
+        card.dataset.team = 'TEAM ' + i;
+        container.innerHTML = `<div class="team-badge team-${i}"><span>TEAM ${i}</span><span class="remove" data-idx="${idx}" data-team="${i}">×</span></div>`;
+        container.querySelector('.remove').onclick = () => {
+          const aIdx = team.artworks.findIndex(a => a.idx === idx);
+          team.cash += (team.artworks[aIdx].price * 1000000);
+          team.artworks.splice(aIdx, 1);
+          delete card.dataset.team;
+          container.innerHTML = '';
+          updateDisplay();
+        };
+      }
+    });
+  }
+
+  // Scoreboard
+  const scores = [1,2,3,4].map(n => ({n, cash: gameState.teams[n].cash})).sort((a,b) => b.cash - a.cash);
+  document.getElementById('scoreboard').innerHTML = scores.map((s, idx) => `
+    <div style="display:flex;justify-content:space-between;padding:8px;background:#1a1a1a;margin-bottom:6px;border-left:4px solid ${teamColors[s.n]}">
+      <span>#${idx+1} TEAM ${s.n}</span><span>$${s.cash.toLocaleString()}</span>
+    </div>`).join('');
+  document.getElementById('roundsRemaining').textContent = Math.max(0, gameState.maxRounds - gameState.round + 1);
+  updateCompetitiveAnalysis();
+  drawTeams();
+}
+
+function updateCompetitiveAnalysis() {
+  const tv = getTeamTicketValues();
+  const citiesAnalysis = ['newyork', 'london', 'paris', 'dubai', 'capetown', 'mexicocity', 'saopaulo', 'tokyo', 'shanghai'];
+  const tableBody = document.getElementById('analysisTableBody');
+  const analysis = document.getElementById('competitiveAnalysis');
+  const hasArtworks = [1,2,3,4].some(t => gameState.teams[t].artworks.length > 0);
+  if (!hasArtworks) { analysis.style.display = 'none'; return; }
+  analysis.style.display = 'block';
+  tableBody.innerHTML = citiesAnalysis.map(city => {
+    const values = [tv[1][city]||0, tv[2][city]||0, tv[3][city]||0, tv[4][city]||0];
+    const maxValue = Math.max(...values);
+    if (!values.some(v => v > 0)) return '';
+    const cells = values.map((val, idx) => {
+      if (val === 0) return '<td style="padding:12px;text-align:center;color:#ccc">—</td>';
+      const isMax = val === maxValue && maxValue > 0;
+      const rank = values.filter(v => v > val).length + 1;
+      return `<td style="padding:12px;text-align:center;background:${teamColors[idx+1] + '22'};font-weight:${isMax ? 'bold' : 'normal'}">
+        <div style="color:${teamColors[idx+1]};font-size:1rem">$${val}</div>
+        <div style="color:#999;font-size:0.75rem">${rank}${['st','nd','rd','th'][rank>3?3:rank-1]}</div></td>`;
+    }).join('');
+    return `<tr style="border-bottom:1px solid #eee"><td style="padding:12px;font-weight:bold">${cityData[city].name}</td>${cells}</tr>`;
+  }).filter(row => row).join('');
+}
+
+// MAP DRAWING
+function drawConnections() {
+  const g = document.getElementById('connectionLines');
+  g.innerHTML = '';
+  Object.entries(cityData).forEach(([id, city]) => {
+    city.connections.forEach(target => {
+      const t = cityData[target];
+      if (city.x < t.x || (city.x === t.x && city.y < t.y)) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', city.x); line.setAttribute('y1', city.y);
+        line.setAttribute('x2', t.x); line.setAttribute('y2', t.y);
+        line.setAttribute('class', 'connection-line'); g.appendChild(line);
+      }
+    });
+  });
+}
+
+function drawCities() {
+  const g = document.getElementById('citiesGroup');
+  g.innerHTML = '';
+  Object.entries(cityData).forEach(([id, c]) => {
+    const radius = id === 'start' ? 35 : Math.sqrt(c.pop / 10000) * 3;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', c.x); circle.setAttribute('cy', c.y);
+    circle.setAttribute('r', radius);
+    circle.setAttribute('class', id === 'start' ? 'starting-position' : 'city-circle');
+    circle.setAttribute('fill', '#fff'); circle.setAttribute('stroke', '#000'); circle.setAttribute('stroke-width', '2');
+    g.appendChild(circle);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', c.x); text.setAttribute('y', c.y - radius - 10);
+    text.setAttribute('class', 'city-label'); text.textContent = c.abbr || c.name;
+    g.appendChild(text);
+  });
+}
+
+function drawTeams() {
+  const g = document.getElementById('teamsGroup');
+  g.innerHTML = '';
+  for (let i = 1; i <= 4; i++) {
+    const pos = cityData[gameState.teams[i].city];
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', pos.x + (i-2.5)*18); circle.setAttribute('cy', pos.y);
+    circle.setAttribute('r', 10); circle.setAttribute('fill', teamColors[i]);
+    circle.setAttribute('stroke', '#000'); circle.setAttribute('stroke-width', '2');
+    g.appendChild(circle);
+  }
+}
+
+function populateDestinationDropdowns() {
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById(`dest${i}`);
+    s.innerHTML = '<option value="">Stay</option>' + cityData[gameState.teams[i].city].connections.map(c => `<option value="${c}">${cityData[c].name}</option>`).join('');
+  }
+}
+
+// LOADING LOGIC
+function loadGame() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = (e) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        gameState = data.gameState;
+        if (data.auctionState) {
+          auctionState.teams = data.auctionState.teams;
+          auctionState.history = data.auctionState.history;
+        }
+        document.querySelectorAll('.art-card').forEach(c => {
+          delete c.dataset.team;
+          c.querySelector('.team-badge-container').innerHTML = '';
+        });
+        if (data.artworkAssignments) {
+          data.artworkAssignments.forEach(a => {
+            const card = document.querySelector(`.art-card[data-idx="${a.idx}"]`);
+            if (card) card.dataset.team = 'TEAM ' + a.team;
+          });
+        }
+        document.getElementById('totalRounds').value = gameState.maxRounds;
+        drawConnections(); drawCities(); drawTeams();
+        populateDestinationDropdowns();
+        updateDisplay();
+        alert(`Loaded successfully! Round ${gameState.round}`);
+      } catch (err) { alert("Error: " + err.message); }
+    };
+    reader.readAsText(e.target.files[0]);
+  };
+  input.click();
+}
+
+// INITIALIZATION
+document.getElementById('mapBtn').onclick = () => {
+  document.getElementById('mapModal').classList.add('show');
+  drawConnections(); drawCities(); drawTeams(); populateDestinationDropdowns(); updateDisplay();
+};
+document.getElementById('mapClose').onclick = () => document.getElementById('mapModal').classList.remove('show');
+document.getElementById('loadGame').onclick = loadGame;
+document.getElementById('saveGame').onclick = () => {
+  const data = { version: "1.0", gameState, auctionState: {teams: auctionState.teams, history: auctionState.history}, artworkAssignments: [] };
+  document.querySelectorAll('.art-card[data-team]').forEach(card => {
+    const tNum = parseInt(card.dataset.team.replace('TEAM ',''));
+    const art = gameState.teams[tNum].artworks.find(a => a.idx === parseInt(card.dataset.idx));
+    data.artworkAssignments.push({idx: parseInt(card.dataset.idx), team: tNum, price: art.price});
+  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `art-save-${new Date().toISOString().slice(0,10)}.json`; a.click();
+};
+
+initGallery();
+</script>
+</body>
+</html>
