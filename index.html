@@ -251,106 +251,106 @@ svg.map-svg{width:100%;height:100%}
 </div>
 
 <!-- AUCTION MODAL - NOMINATION SCREEN -->
-<div id="auctionModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.97);z-index:10000;overflow-y:auto;">
-  <div style="max-width:1500px;margin:0 auto;padding:20px;position:relative;">
-    <button onclick="closeAuctionModal()" style="position:absolute;top:20px;right:20px;background:#E94235;color:#fff;border:none;padding:10px 20px;font-size:1.2rem;cursor:pointer;border-radius:4px;font-weight:bold;">✕ CLOSE</button>
+<div id="auctionModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#f0f0ed;z-index:10000;overflow-y:auto;">
+  <div style="max-width:1400px;margin:0 auto;padding:30px 24px;position:relative;">
+    <button onclick="closeAuctionModal()" style="position:absolute;top:24px;right:24px;background:#222;color:#fff;border:none;padding:10px 20px;font-size:0.9rem;cursor:pointer;border-radius:6px;font-weight:bold;letter-spacing:0.05em;">✕ CLOSE</button>
 
     <!-- NOMINATION SCREEN -->
     <div id="nominationScreen">
-      <h1 style="text-align:center;color:#fff;margin-bottom:8px;font-size:2.5rem;letter-spacing:0.15em;">🎨 AUCTION HOUSE</h1>
-      <p style="text-align:center;color:#666;margin-bottom:30px;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em">Select a work, choose your auction type, then launch</p>
+      <h1 style="text-align:center;color:#111;margin-bottom:6px;font-size:2rem;letter-spacing:0.2em;font-weight:300;text-transform:uppercase;">🎨 Auction House</h1>
+      <p style="text-align:center;color:#999;margin-bottom:32px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.12em">Select a work · Choose your auction type · Launch</p>
 
-      <div style="display:grid;grid-template-columns:340px 1fr;gap:30px;margin-bottom:30px;">
+      <div style="display:grid;grid-template-columns:320px 1fr;gap:24px;margin-bottom:24px;align-items:start;">
         <!-- Left: artwork card preview -->
-        <div id="nominationArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;min-height:320px;display:flex;align-items:center;justify-content:center;">
-          <div style="text-align:center;color:#555;font-size:0.9rem;">Select an artwork →</div>
+        <div id="nominationArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;min-height:300px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+          <div style="text-align:center;color:#bbb;font-size:0.9rem;padding:40px;">Select an artwork →</div>
         </div>
 
         <!-- Right: controls -->
-        <div>
+        <div style="background:#fff;border-radius:12px;padding:24px;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
           <div style="margin-bottom:20px;">
-            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Artwork</label>
-            <select id="nominationArtSelect" style="width:100%;padding:12px 16px;background:#1a1a1a;color:#fff;border:2px solid #333;font-size:1rem;border-radius:8px;">
+            <label style="color:#999;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.12em;display:block;margin-bottom:8px;">Artwork</label>
+            <select id="nominationArtSelect" style="width:100%;padding:11px 14px;background:#fff;color:#111;border:1px solid #ddd;font-size:0.95rem;border-radius:8px;outline:none;">
               <option value="">-- Choose Artwork --</option>
             </select>
           </div>
 
           <div style="margin-bottom:20px;">
-            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Nominating Team</label>
+            <label style="color:#999;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.12em;display:block;margin-bottom:8px;">Nominating Team</label>
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" id="nominatingTeamBtns">
-              <button onclick="setNominatingTeam(1)" class="nom-team-btn" data-team="1" style="padding:12px;border:2px solid #E94235;color:#E94235;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">RED</button>
-              <button onclick="setNominatingTeam(2)" class="nom-team-btn" data-team="2" style="padding:12px;border:2px solid #FBBC04;color:#FBBC04;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">YELLOW</button>
-              <button onclick="setNominatingTeam(3)" class="nom-team-btn" data-team="3" style="padding:12px;border:2px solid #4285F4;color:#4285F4;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">BLUE</button>
-              <button onclick="setNominatingTeam(4)" class="nom-team-btn" data-team="4" style="padding:12px;border:2px solid #0F9D58;color:#0F9D58;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">GREEN</button>
+              <button onclick="setNominatingTeam(1)" class="nom-team-btn" data-team="1" style="padding:11px;border:1.5px solid #E94235;color:#E94235;background:#fff;font-weight:700;cursor:pointer;border-radius:8px;font-size:0.85rem;transition:all 0.15s;">RED</button>
+              <button onclick="setNominatingTeam(2)" class="nom-team-btn" data-team="2" style="padding:11px;border:1.5px solid #d4a017;color:#b8860b;background:#fff;font-weight:700;cursor:pointer;border-radius:8px;font-size:0.85rem;transition:all 0.15s;">YELLOW</button>
+              <button onclick="setNominatingTeam(3)" class="nom-team-btn" data-team="3" style="padding:11px;border:1.5px solid #4285F4;color:#4285F4;background:#fff;font-weight:700;cursor:pointer;border-radius:8px;font-size:0.85rem;transition:all 0.15s;">BLUE</button>
+              <button onclick="setNominatingTeam(4)" class="nom-team-btn" data-team="4" style="padding:11px;border:1.5px solid #0F9D58;color:#0F9D58;background:#fff;font-weight:700;cursor:pointer;border-radius:8px;font-size:0.85rem;transition:all 0.15s;">GREEN</button>
             </div>
           </div>
 
           <!-- Auction type cards -->
           <div style="margin-bottom:20px;">
-            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Auction Type</label>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-              <div class="auction-type-card" data-type="opencry" onclick="selectAuctionType('opencry')" style="background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;">
-                <div style="font-size:1.8rem;margin-bottom:8px;">🔨</div>
-                <div style="color:#fff;font-weight:bold;font-size:0.9rem;margin-bottom:6px;">OPEN CRY</div>
-                <div style="color:#666;font-size:0.75rem;line-height:1.4">Nominating team sets opening bid. Teams raise in +$5M increments or pass. 3 raises each, reset per auction.</div>
+            <label style="color:#999;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.12em;display:block;margin-bottom:8px;">Auction Type</label>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+              <div class="auction-type-card" data-type="opencry" onclick="selectAuctionType('opencry')" style="background:#fafafa;border:1.5px solid #ddd;border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;">
+                <div style="font-size:1.5rem;margin-bottom:6px;">🔨</div>
+                <div style="color:#111;font-weight:700;font-size:0.85rem;margin-bottom:5px;">OPEN CRY</div>
+                <div style="color:#999;font-size:0.72rem;line-height:1.45">Nominating team sets opening bid. Teams raise +$5M or pass. 3 raises each, reset per auction.</div>
               </div>
-              <div class="auction-type-card" data-type="dutch" onclick="selectAuctionType('dutch')" style="background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;">
-                <div style="font-size:1.8rem;margin-bottom:8px;">⏱️</div>
-                <div style="color:#fff;font-weight:bold;font-size:0.9rem;margin-bottom:6px;">DUTCH</div>
-                <div style="color:#666;font-size:0.75rem;line-height:1.4">Price starts at $100M and drops $1M every 0.5s. First team to click BUY NOW wins at that price.</div>
+              <div class="auction-type-card" data-type="dutch" onclick="selectAuctionType('dutch')" style="background:#fafafa;border:1.5px solid #ddd;border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;">
+                <div style="font-size:1.5rem;margin-bottom:6px;">⏱️</div>
+                <div style="color:#111;font-weight:700;font-size:0.85rem;margin-bottom:5px;">DUTCH</div>
+                <div style="color:#999;font-size:0.72rem;line-height:1.45">Starts at $100M, drops $1M every 0.5s. First team to click BUY NOW wins at that price.</div>
               </div>
-              <div class="auction-type-card" data-type="lottery" onclick="selectAuctionType('lottery')" style="background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;">
-                <div style="font-size:1.8rem;margin-bottom:8px;">🎟️</div>
-                <div style="color:#fff;font-weight:bold;font-size:0.9rem;margin-bottom:6px;">LOTTERY</div>
-                <div style="color:#666;font-size:0.75rem;line-height:1.4">Teams buy $1M tickets in turn order. Winner drawn by weighted odds. More tickets = better chance.</div>
+              <div class="auction-type-card" data-type="lottery" onclick="selectAuctionType('lottery')" style="background:#fafafa;border:1.5px solid #ddd;border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;">
+                <div style="font-size:1.5rem;margin-bottom:6px;">🎟️</div>
+                <div style="color:#111;font-weight:700;font-size:0.85rem;margin-bottom:5px;">LOTTERY</div>
+                <div style="color:#999;font-size:0.72rem;line-height:1.45">Each team commits any amount, then passes. Winner drawn by weighted odds.</div>
               </div>
             </div>
           </div>
 
           <!-- Open Cry: opening bid input -->
           <div id="openingBidRow" style="display:none;margin-bottom:20px;">
-            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Nominating Team's Opening Bid ($M)</label>
+            <label style="color:#999;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.12em;display:block;margin-bottom:8px;">Nominating Team's Opening Bid ($M)</label>
             <div style="display:flex;align-items:center;gap:10px;">
-              <span style="color:#fff;font-size:1.2rem;">$</span>
-              <input type="number" id="openingBidInput" min="1" value="10" style="background:#1a1a1a;color:#fff;border:2px solid #333;padding:10px 14px;font-size:1.2rem;border-radius:8px;width:120px;">
-              <span style="color:#888;font-size:0.9rem;">M</span>
+              <span style="color:#111;font-size:1.2rem;font-weight:300;">$</span>
+              <input type="number" id="openingBidInput" min="1" value="10" style="background:#fff;color:#111;border:1.5px solid #ddd;padding:10px 14px;font-size:1.2rem;border-radius:8px;width:120px;outline:none;">
+              <span style="color:#999;font-size:0.9rem;">M</span>
             </div>
           </div>
 
-          <button id="launchAuctionBtn" onclick="launchAuction()" style="width:100%;padding:16px;background:#fff;color:#000;border:none;font-size:1.1rem;font-weight:bold;cursor:pointer;border-radius:10px;letter-spacing:0.05em;opacity:0.3;pointer-events:none;">LAUNCH AUCTION →</button>
+          <button id="launchAuctionBtn" onclick="launchAuction()" style="width:100%;padding:15px;background:#111;color:#fff;border:none;font-size:1rem;font-weight:700;cursor:pointer;border-radius:8px;letter-spacing:0.08em;opacity:0.2;pointer-events:none;transition:opacity 0.2s;">LAUNCH AUCTION →</button>
         </div>
       </div>
 
-      <!-- Auction History -->
-      <div style="background:#111;border-radius:12px;padding:20px;border:1px solid #222;">
-        <h3 style="color:#fff;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:15px;">Auction Ledger</h3>
-        <div id="auctionHistory"><p style="text-align:center;color:#555;font-size:0.85rem;">No works sold yet</p></div>
+      <!-- Auction Ledger -->
+      <div style="background:#fff;border-radius:12px;padding:20px;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <h3 style="color:#111;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:14px;font-weight:600;">Auction Ledger</h3>
+        <div id="auctionHistory"><p style="text-align:center;color:#bbb;font-size:0.85rem;padding:16px 0;">No works sold yet</p></div>
       </div>
     </div>
 
     <!-- ═══ OPEN CRY SCREEN ═══ -->
     <div id="openCryScreen" style="display:none;">
-      <div style="display:grid;grid-template-columns:300px 1fr;gap:30px;min-height:80vh;">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;min-height:80vh;">
         <!-- Art card -->
-        <div id="ocArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;"></div>
+        <div id="ocArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
 
         <!-- Bidding arena -->
         <div>
           <!-- Current bid display -->
-          <div style="background:#111;border-radius:16px;padding:30px;text-align:center;margin-bottom:20px;border:2px solid #333;">
-            <div style="color:#666;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Current High Bid</div>
-            <div id="ocCurrentBid" style="font-size:5rem;font-weight:bold;color:#fff;line-height:1;">$<span id="ocBidNum">—</span>M</div>
-            <div id="ocCurrentLeader" style="font-size:1.3rem;margin-top:10px;color:#888;">Waiting for opening bid...</div>
+          <div style="background:#fff;border-radius:12px;padding:28px;text-align:center;margin-bottom:16px;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+            <div style="color:#aaa;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">Current High Bid</div>
+            <div style="font-size:5rem;font-weight:700;color:#111;line-height:1;">$<span id="ocBidNum">—</span>M</div>
+            <div id="ocCurrentLeader" style="font-size:1.1rem;margin-top:10px;color:#aaa;">Waiting for opening bid...</div>
           </div>
 
           <!-- Team bidding panels -->
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px;" id="ocTeamPanels"></div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;" id="ocTeamPanels"></div>
 
           <!-- Controls -->
-          <div style="display:flex;gap:12px;justify-content:center;">
-            <button onclick="backToNomination()" style="padding:14px 28px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:1rem;">← BACK</button>
-            <button onclick="ocSoldClick()" id="ocSoldBtn" style="padding:14px 40px;background:#0F9D58;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:1.1rem;">🔨 SOLD</button>
-            <button onclick="ocNoSaleClick()" style="padding:14px 28px;background:#E94235;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:1rem;">NO SALE</button>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button onclick="backToNomination()" style="padding:13px 24px;background:#eee;color:#333;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.9rem;">← BACK</button>
+            <button onclick="ocSoldClick()" id="ocSoldBtn" style="padding:13px 36px;background:#0F9D58;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:1rem;">🔨 SOLD</button>
+            <button onclick="ocNoSaleClick()" style="padding:13px 24px;background:#E94235;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.9rem;">NO SALE</button>
           </div>
         </div>
       </div>
@@ -358,29 +358,29 @@ svg.map-svg{width:100%;height:100%}
 
     <!-- ═══ DUTCH AUCTION SCREEN ═══ -->
     <div id="dutchScreen" style="display:none;">
-      <div style="display:grid;grid-template-columns:300px 1fr;gap:30px;min-height:80vh;">
-        <div id="dutchArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;">
-          <div style="text-align:center;">
-            <div style="color:#888;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;">Price Dropping...</div>
-            <div id="dutchPrice" style="font-size:9rem;font-weight:bold;color:#fff;line-height:1;font-variant-numeric:tabular-nums;">$<span id="dutchNum">100</span>M</div>
-            <div id="dutchStatus" style="color:#666;margin-top:10px;font-size:0.9rem;">Press START to begin countdown</div>
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;min-height:80vh;">
+        <div id="dutchArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;">
+          <div style="background:#fff;border-radius:12px;padding:40px 60px;text-align:center;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);width:100%;max-width:600px;">
+            <div style="color:#aaa;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;">Price Dropping...</div>
+            <div style="font-size:8rem;font-weight:700;color:#111;line-height:1;font-variant-numeric:tabular-nums;">$<span id="dutchNum">100</span>M</div>
+            <div id="dutchStatus" style="color:#aaa;margin-top:12px;font-size:0.9rem;">Press START to begin countdown</div>
           </div>
           <div id="dutchBuyNowArea" style="display:none;width:100%;max-width:500px;">
-            <div style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;margin-bottom:15px;">
-              <div style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Who bought it?</div>
+            <div style="background:#fff;border-radius:12px;padding:20px;border:1px solid #ddd;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+              <div style="color:#aaa;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;">Who bought it?</div>
               <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
-                <button onclick="dutchBuy(1)" style="padding:16px;background:#E94235;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">RED</button>
-                <button onclick="dutchBuy(2)" style="padding:16px;background:#FBBC04;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">YELLOW</button>
-                <button onclick="dutchBuy(3)" style="padding:16px;background:#4285F4;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">BLUE</button>
-                <button onclick="dutchBuy(4)" style="padding:16px;background:#0F9D58;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">GREEN</button>
+                <button onclick="dutchBuy(1)" style="padding:15px;background:#E94235;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;">RED</button>
+                <button onclick="dutchBuy(2)" style="padding:15px;background:#FBBC04;color:#000;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;">YELLOW</button>
+                <button onclick="dutchBuy(3)" style="padding:15px;background:#4285F4;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;">BLUE</button>
+                <button onclick="dutchBuy(4)" style="padding:15px;background:#0F9D58;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;">GREEN</button>
               </div>
             </div>
           </div>
-          <div style="display:flex;gap:15px;">
-            <button onclick="backToNomination()" style="padding:14px 28px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">← BACK</button>
-            <button onclick="dutchStart()" id="dutchStartBtn" style="padding:14px 50px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.3rem;font-weight:bold;cursor:pointer;">START</button>
-            <button onclick="dutchBuyNow()" id="dutchBuyNowBtn" style="display:none;padding:14px 50px;background:#E94235;color:#fff;border:none;border-radius:10px;font-size:1.3rem;font-weight:bold;cursor:pointer;animation:pulse 0.8s ease-in-out infinite alternate;">BUY NOW</button>
+          <div style="display:flex;gap:12px;">
+            <button onclick="backToNomination()" style="padding:13px 24px;background:#eee;color:#333;border:none;border-radius:8px;font-weight:700;cursor:pointer;">← BACK</button>
+            <button onclick="dutchStart()" id="dutchStartBtn" style="padding:13px 48px;background:#111;color:#fff;border:none;border-radius:8px;font-size:1.2rem;font-weight:700;cursor:pointer;">START</button>
+            <button onclick="dutchBuyNow()" id="dutchBuyNowBtn" style="display:none;padding:13px 48px;background:#E94235;color:#fff;border:none;border-radius:8px;font-size:1.2rem;font-weight:700;cursor:pointer;animation:pulse 0.8s ease-in-out infinite alternate;">BUY NOW</button>
           </div>
         </div>
       </div>
@@ -388,40 +388,44 @@ svg.map-svg{width:100%;height:100%}
 
     <!-- ═══ LOTTERY SCREEN ═══ -->
     <div id="lotteryScreen" style="display:none;">
-      <div style="display:grid;grid-template-columns:300px 1fr;gap:30px;min-height:80vh;">
-        <div id="lotteryArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;"></div>
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;min-height:80vh;">
+        <div id="lotteryArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
         <div>
-          <!-- Ticket pool -->
-          <div style="background:#111;border-radius:16px;padding:24px;margin-bottom:20px;border:2px solid #333;">
+          <!-- Per-team ticket commitment panels -->
+          <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-              <div style="color:#fff;font-weight:bold;font-size:1.1rem;">TICKET POOL</div>
-              <div style="color:#888;font-size:0.85rem;">Total: <span id="lotteryTotal" style="color:#fff;font-weight:bold;">$0M</span></div>
+              <div style="color:#111;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:0.05em;">Ticket Commitments</div>
+              <div style="color:#999;font-size:0.85rem;">Pool Total: <span id="lotteryTotal" style="color:#111;font-weight:700;">$0M</span></div>
             </div>
+            <!-- 4 team rows, always visible -->
+            <div id="lotteryTeamRows" style="display:grid;gap:10px;margin-bottom:16px;"></div>
             <!-- Odds bars -->
-            <div id="lotteryOddsBars" style="display:grid;gap:10px;margin-bottom:16px;"></div>
-            <!-- Current turn indicator -->
-            <div style="background:#1a1a1a;border-radius:8px;padding:12px;text-align:center;border:1px solid #333;">
-              <div style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Current Turn</div>
-              <div id="lotteryTurnTeam" style="font-size:1.3rem;font-weight:bold;color:#fff;">—</div>
-            </div>
+            <div style="color:#aaa;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;margin-top:4px;">Odds</div>
+            <div id="lotteryOddsBars" style="display:grid;gap:8px;"></div>
           </div>
 
-          <!-- Ticket buy controls -->
-          <div style="background:#111;border-radius:16px;padding:20px;margin-bottom:20px;border:2px solid #333;">
-            <div style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Buy Tickets (current team)</div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button onclick="lotteryBuyTickets(1)" style="padding:12px 20px;background:#1a1a1a;color:#fff;border:2px solid #333;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer;">+$1M</button>
-              <button onclick="lotteryBuyTickets(5)" style="padding:12px 20px;background:#1a1a1a;color:#fff;border:2px solid #333;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer;">+$5M</button>
-              <button onclick="lotteryBuyTickets(10)" style="padding:12px 20px;background:#1a1a1a;color:#fff;border:2px solid #333;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer;">+$10M</button>
-              <button onclick="lotteryPassTurn()" style="padding:12px 20px;background:#333;color:#aaa;border:2px solid #444;border-radius:8px;font-size:1rem;cursor:pointer;">PASS</button>
+          <!-- Turn indicator + action -->
+          <div style="background:#fff;border-radius:12px;padding:18px 20px;margin-bottom:16px;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div>
+                <div style="color:#aaa;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Active Team</div>
+                <div id="lotteryTurnTeam" style="font-size:1.4rem;font-weight:700;color:#111;">—</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button onclick="lotteryAddTickets(1)" class="lottery-add-btn" style="padding:12px 18px;background:#f5f5f5;color:#111;border:1.5px solid #ddd;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.15s;">+$1M</button>
+                <button onclick="lotteryAddTickets(5)" class="lottery-add-btn" style="padding:12px 18px;background:#f5f5f5;color:#111;border:1.5px solid #ddd;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.15s;">+$5M</button>
+                <button onclick="lotteryAddTickets(10)" class="lottery-add-btn" style="padding:12px 18px;background:#f5f5f5;color:#111;border:1.5px solid #ddd;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.15s;">+$10M</button>
+                <button onclick="lotteryRemoveTicket()" class="lottery-add-btn" style="padding:12px 18px;background:#fff;color:#E94235;border:1.5px solid #E94235;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;">−$1M</button>
+                <button onclick="lotteryPassTurn()" style="padding:12px 18px;background:#fff;color:#aaa;border:1.5px solid #ddd;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;">PASS →</button>
+              </div>
             </div>
-            <div style="color:#555;font-size:0.8rem;margin-top:10px;">Tickets go in round-robin turn order starting from nominating team. Click PASS to skip your turn.</div>
+            <div style="color:#bbb;font-size:0.75rem;margin-top:10px;">Add any amount, then click PASS to hand to next team. If all teams pass in a row, draw is triggered.</div>
           </div>
 
           <!-- Draw controls -->
-          <div style="display:flex;gap:12px;">
-            <button onclick="backToNomination()" style="padding:14px 28px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">← BACK</button>
-            <button onclick="lotteryDraw()" id="lotteryDrawBtn" style="flex:1;padding:14px;background:#FBBC04;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">🎟️ DRAW WINNER</button>
+          <div style="display:flex;gap:10px;">
+            <button onclick="backToNomination()" style="padding:13px 24px;background:#eee;color:#333;border:none;border-radius:8px;font-weight:700;cursor:pointer;">← BACK</button>
+            <button onclick="lotteryDraw()" id="lotteryDrawBtn" style="flex:1;padding:13px;background:#111;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;">🎟️ DRAW WINNER</button>
           </div>
         </div>
       </div>
@@ -431,21 +435,25 @@ svg.map-svg{width:100%;height:100%}
 </div>
 
 <style>
-@keyframes pulse { from { opacity:1; transform:scale(1); } to { opacity:0.85; transform:scale(1.02); } }
-@keyframes tickerFlash { 0%,100%{color:#fff} 50%{color:#E94235} }
-.auction-type-card:hover { border-color:#666 !important; transform:translateY(-2px); }
-.auction-type-card.selected { border-color:#fff !important; background:#222 !important; }
-.nom-team-btn.selected { color:#000 !important; }
-.oc-team-panel { background:#1a1a1a; border-radius:12px; padding:16px; border:2px solid #333; }
-.oc-raise-btn { padding:10px 18px; border:none; border-radius:8px; font-size:0.95rem; font-weight:bold; cursor:pointer; transition:all 0.15s; }
-.oc-raise-btn:disabled { opacity:0.3; cursor:not-allowed; }
-.oc-pass-btn { padding:10px 18px; background:#2a2a2a; color:#888; border:1px solid #444; border-radius:8px; font-size:0.95rem; cursor:pointer; }
-.oc-pass-btn:hover:not(:disabled) { background:#333; color:#ccc; }
-.raises-pip { display:inline-block; width:12px; height:12px; border-radius:50%; background:#444; margin:0 2px; transition:background 0.2s; }
+@keyframes pulse { from { opacity:1; transform:scale(1); } to { opacity:0.85; transform:scale(1.03); } }
+@keyframes tickerFlash { 0%,100%{color:#111} 50%{color:#E94235} }
+.auction-type-card:hover { border-color:#aaa !important; transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.auction-type-card.selected { border-color:#111 !important; background:#fff !important; box-shadow:0 4px 16px rgba(0,0,0,0.1); }
+.nom-team-btn:hover { opacity:0.8; }
+.oc-team-panel { background:#fff; border-radius:10px; padding:16px; border:1px solid #ddd; box-shadow:0 1px 6px rgba(0,0,0,0.05); }
+.oc-raise-btn { padding:10px 16px; border:none; border-radius:7px; font-size:0.9rem; font-weight:700; cursor:pointer; transition:all 0.15s; }
+.oc-raise-btn:disabled { opacity:0.25; cursor:not-allowed; }
+.oc-pass-btn { padding:10px 14px; background:#f5f5f5; color:#666; border:1px solid #ddd; border-radius:7px; font-size:0.9rem; cursor:pointer; transition:background 0.15s; }
+.oc-pass-btn:hover:not([disabled]) { background:#eee; color:#333; }
+.oc-pass-btn[disabled] { opacity:0.25; cursor:not-allowed; }
+.raises-pip { display:inline-block; width:11px; height:11px; border-radius:50%; background:#ddd; margin:0 2px; transition:background 0.2s; }
 .raises-pip.used { background:#E94235; }
-.lottery-bar-wrap { display:flex; align-items:center; gap:10px; }
-.lottery-bar-bg { flex:1; height:28px; background:#222; border-radius:6px; overflow:hidden; position:relative; }
-.lottery-bar-fill { height:100%; border-radius:6px; transition:width 0.4s ease; }
+.lottery-bar-wrap { display:flex; align-items:center; gap:8px; }
+.lottery-bar-bg { flex:1; height:22px; background:#f0f0f0; border-radius:5px; overflow:hidden; }
+.lottery-bar-fill { height:100%; border-radius:5px; transition:width 0.4s ease; }
+.lottery-add-btn:hover { border-color:#999 !important; background:#eee !important; }
+.lottery-team-row { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; border:1.5px solid #eee; }
+.lottery-team-row.active-turn { border-color:#111; background:#fafafa; }
 </style>
 
 <!-- END GAME MODAL -->
@@ -1214,25 +1222,24 @@ const auctionLive = {
 
 // ── Shared helpers ───────────────────────────────────────────
 
-function artCardHTML(artIdx, dark=true) {
+function artCardHTML(artIdx) {
   const art = artworks[artIdx];
   const total = Object.values(art.cities).reduce((a,b)=>a+b,0);
-  const bg = dark ? '#222' : '#f5f5f5';
-  const txt = dark ? '#fff' : '#000';
-  const sub = dark ? '#aaa' : '#666';
   const citiesHTML = Object.entries(art.cities).map(([city,price])=>
-    `<div style="background:${dark?'#333':'#eee'};padding:4px;border-radius:4px;text-align:center">
-      <div style="font-size:0.6rem;font-weight:bold;text-transform:uppercase;color:${sub}">${cityNames[city]}</div>
-      <div style="font-size:0.85rem;font-weight:bold;color:${dark?'#0F9D58':'#000'}">$${price}</div>
+    `<div style="background:#f5f5f5;padding:4px;border-radius:4px;text-align:center">
+      <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:#999">${cityNames[city]}</div>
+      <div style="font-size:0.82rem;font-weight:700;color:#0a7a40">$${price}</div>
     </div>`).join('');
-  return `<img src="${art.image}" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:12px">
-    <div style="color:${txt};font-weight:bold;font-size:1.1rem;margin-bottom:4px">${art.title}</div>
-    <div style="color:${sub};font-size:0.85rem;margin-bottom:12px">${art.artist}, ${art.year}</div>
-    <div style="background:${dark?'#111':'#fff'};border-radius:8px;padding:8px;margin-bottom:12px;text-align:center">
-      <span style="color:${sub};font-size:0.75rem">TOTAL VALUE </span>
-      <span style="color:${txt};font-weight:bold;font-size:1.1rem">$${total}</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">${citiesHTML}</div>`;
+  return `<img src="${art.image}" style="width:100%;height:180px;object-fit:cover;display:block;">
+    <div style="padding:14px;">
+      <div style="color:#111;font-weight:700;font-size:1rem;margin-bottom:3px">${art.title}</div>
+      <div style="color:#999;font-size:0.82rem;margin-bottom:10px">${art.artist}, ${art.year}</div>
+      <div style="background:#f8f8f8;border-radius:6px;padding:7px 10px;margin-bottom:10px;text-align:center;border:1px solid #eee;">
+        <span style="color:#aaa;font-size:0.72rem">TOTAL VALUE </span>
+        <span style="color:#111;font-weight:700;font-size:1rem">$${total}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">${citiesHTML}</div>
+    </div>`;
 }
 
 function recordSale(artIdx, winningTeam, price, auctionType) {
@@ -1315,7 +1322,7 @@ document.getElementById('nominationArtSelect').addEventListener('change', functi
     auctionLive.artIdx=null;
   } else {
     auctionLive.artIdx=idx;
-    document.getElementById('nominationArtCard').innerHTML=artCardHTML(idx,true);
+    document.getElementById('nominationArtCard').innerHTML=artCardHTML(idx);
   }
   checkLaunchReady();
 });
@@ -1377,7 +1384,7 @@ function launchOpenCry() {
   auctionLive.oc.turnIdx = 0;
 
   // Populate art card
-  document.getElementById('ocArtCard').innerHTML = artCardHTML(auctionLive.artIdx, true);
+  document.getElementById('ocArtCard').innerHTML = artCardHTML(auctionLive.artIdx);
 
   showScreen('openCryScreen');
   renderOcDisplay();
@@ -1410,15 +1417,15 @@ function renderOcDisplay() {
       `<span class="raises-pip ${i >= raises ? 'used' : ''}"></span>`
     ).join('');
 
-    return `<div class="oc-team-panel" style="border:2px solid ${isNext ? tc.bg : (isLeader ? tc.bg+'55' : '#333')}">
+    return `<div class="oc-team-panel" style="border:1.5px solid ${isNext ? tc.bg : (isLeader ? tc.bg+'66' : '#eee')}">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="color:${tc.bg};font-weight:bold;font-size:1.1rem">${tc.name}</div>
-        ${isLeader ? `<div style="background:${tc.bg};color:${tc.text};font-size:0.7rem;padding:3px 8px;border-radius:4px;font-weight:bold">LEADING</div>` : ''}
-        ${isNext && !isLeader ? `<div style="background:#fff;color:#000;font-size:0.7rem;padding:3px 8px;border-radius:4px;font-weight:bold">YOUR TURN</div>` : ''}
-        ${tn===nomTeam && !isLeader ? `<div style="background:#444;color:#aaa;font-size:0.7rem;padding:3px 8px;border-radius:4px">NOMINATED</div>` : ''}
+        <div style="color:${tc.bg};font-weight:700;font-size:1rem">${tc.name}</div>
+        ${isLeader ? `<div style="background:${tc.bg};color:${tc.text};font-size:0.65rem;padding:3px 8px;border-radius:4px;font-weight:700">LEADING</div>` : ''}
+        ${isNext && !isLeader ? `<div style="background:#111;color:#fff;font-size:0.65rem;padding:3px 8px;border-radius:4px;font-weight:700">YOUR TURN</div>` : ''}
+        ${tn===nomTeam && !isLeader ? `<div style="background:#f0f0f0;color:#999;font-size:0.65rem;padding:3px 8px;border-radius:4px">NOMINATED</div>` : ''}
       </div>
       <div style="margin-bottom:12px">
-        <div style="color:#666;font-size:0.7rem;margin-bottom:4px">RAISES REMAINING</div>
+        <div style="color:#bbb;font-size:0.68rem;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em">Raises Remaining</div>
         <div>${pipsHTML}</div>
       </div>
       <div style="display:flex;gap:8px">
@@ -1426,7 +1433,7 @@ function renderOcDisplay() {
           onclick="ocRaise(${tn})" ${!isNext||!canRaise||isLeader ? 'disabled' : ''}>
           RAISE +$5M
         </button>
-        <button class="oc-pass-btn" onclick="ocPass(${tn})" ${!isNext||isLeader ? 'disabled' : ''}>PASS</button>
+        <button class="oc-pass-btn" onclick="ocPass(${tn})" ${(!isNext||isLeader) ? 'disabled' : ''}>PASS</button>
       </div>
     </div>`;
   }).join('');
@@ -1509,7 +1516,7 @@ function animateBidFlash() {
 
 function launchDutch() {
   auctionLive.dutch = {price:100, timer:null, frozen:false, frozenPrice:null};
-  document.getElementById('dutchArtCard').innerHTML = artCardHTML(auctionLive.artIdx, true);
+  document.getElementById('dutchArtCard').innerHTML = artCardHTML(auctionLive.artIdx);
   document.getElementById('dutchNum').textContent = '100';
   document.getElementById('dutchStatus').textContent = 'Press START to begin countdown';
   document.getElementById('dutchStartBtn').style.display='inline-block';
@@ -1568,40 +1575,45 @@ function launchLottery() {
   const nomTeam = auctionLive.nominatingTeam;
   const all = [1,2,3,4];
   const startIdx = all.indexOf(nomTeam);
-  // Turn order starts with nominating team
   auctionLive.lottery = {
-    tickets: {1:0,2:0,3:0,4:0},
+    tickets: {1:0, 2:0, 3:0, 4:0},
     turnOrder: [...all.slice(startIdx), ...all.slice(0,startIdx)],
     turnIdx: 0,
     passStreak: 0
   };
-  document.getElementById('lotteryArtCard').innerHTML = artCardHTML(auctionLive.artIdx, true);
+  document.getElementById('lotteryArtCard').innerHTML = artCardHTML(auctionLive.artIdx);
   showScreen('lotteryScreen');
   renderLotteryDisplay();
 }
 
-function lotteryBuyTickets(amount) {
+function lotteryAddTickets(amount) {
+  // Adds to current team's running total — does NOT advance turn
   const lot = auctionLive.lottery;
   const currentTeam = lot.turnOrder[lot.turnIdx % lot.turnOrder.length];
-  lot.tickets[currentTeam] += amount;
-  lot.passStreak = 0;
-  // Advance turn
-  lot.turnIdx++;
+  lot.tickets[currentTeam] = Math.max(0, lot.tickets[currentTeam] + amount);
+  lot.passStreak = 0; // buying resets pass streak
+  renderLotteryDisplay();
+}
+
+function lotteryRemoveTicket() {
+  const lot = auctionLive.lottery;
+  const currentTeam = lot.turnOrder[lot.turnIdx % lot.turnOrder.length];
+  lot.tickets[currentTeam] = Math.max(0, lot.tickets[currentTeam] - 1);
   renderLotteryDisplay();
 }
 
 function lotteryPassTurn() {
+  // PASS advances to next team
   const lot = auctionLive.lottery;
   lot.passStreak++;
   lot.turnIdx++;
-  // If all 4 teams pass in a row, auto-draw
   if(lot.passStreak >= 4) {
     const total = Object.values(lot.tickets).reduce((a,b)=>a+b,0);
     if(total === 0) { alert('No tickets purchased — no sale.'); backToNomination(); return; }
     lotteryDraw();
-  } else {
-    renderLotteryDisplay();
+    return;
   }
+  renderLotteryDisplay();
 }
 
 function renderLotteryDisplay() {
@@ -1615,20 +1627,33 @@ function renderLotteryDisplay() {
   turnEl.textContent = teamColors[currentTeam].name;
   turnEl.style.color = teamColors[currentTeam].bg;
 
+  // Team rows
+  const rowsEl = document.getElementById('lotteryTeamRows');
+  rowsEl.innerHTML = [1,2,3,4].map(tn => {
+    const tc = teamColors[tn];
+    const amt = lot.tickets[tn];
+    const isCurrent = tn===currentTeam;
+    return `<div class="lottery-team-row ${isCurrent?'active-turn':''}">
+      <div style="width:10px;height:10px;border-radius:50%;background:${tc.bg};flex-shrink:0"></div>
+      <div style="color:${tc.bg};font-weight:700;font-size:0.9rem;width:68px">${tc.name}</div>
+      <div style="flex:1;height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden;">
+        <div style="height:100%;background:${tc.bg};border-radius:5px;width:${total>0?(amt/total*100).toFixed(1):0}%;transition:width 0.3s"></div>
+      </div>
+      <div style="color:#111;font-weight:700;font-size:0.9rem;min-width:44px;text-align:right">$${amt}M</div>
+      <div style="color:#aaa;font-size:0.8rem;min-width:42px;text-align:right">${total>0?(amt/total*100).toFixed(0):'0'}%</div>
+      ${isCurrent ? '<div style="background:#111;color:#fff;font-size:0.65rem;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:0.05em">ACTIVE</div>' : '<div style="width:52px"></div>'}
+    </div>`;
+  }).join('');
+
+  // Odds bars (compact)
   const barsEl = document.getElementById('lotteryOddsBars');
   barsEl.innerHTML = [1,2,3,4].map(tn => {
-    const t = lot.tickets[tn];
-    const pct = total > 0 ? (t/total*100).toFixed(1) : 0;
     const tc = teamColors[tn];
-    const isCurrent = tn===currentTeam;
+    const pct = total > 0 ? (lot.tickets[tn]/total*100).toFixed(1) : 0;
     return `<div class="lottery-bar-wrap">
-      <div style="width:70px;color:${tc.bg};font-weight:bold;font-size:0.9rem">${tc.name}</div>
-      <div class="lottery-bar-bg">
-        <div class="lottery-bar-fill" style="width:${pct}%;background:${tc.bg}"></div>
-      </div>
-      <div style="width:80px;text-align:right;color:#fff;font-size:0.9rem;font-weight:bold">$${t}M</div>
-      <div style="width:55px;text-align:right;color:#888;font-size:0.85rem">${pct}%</div>
-      ${isCurrent ? '<div style="color:#fff;font-size:0.75rem;background:#333;padding:2px 6px;border-radius:4px">TURN</div>' : '<div style="width:50px"></div>'}
+      <div style="width:64px;color:${tc.bg};font-weight:700;font-size:0.8rem">${tc.name}</div>
+      <div class="lottery-bar-bg"><div class="lottery-bar-fill" style="width:${pct}%;background:${tc.bg}"></div></div>
+      <div style="width:36px;text-align:right;color:#999;font-size:0.8rem">${pct}%</div>
     </div>`;
   }).join('');
 }
@@ -1701,14 +1726,14 @@ function updateAuctionHistory() {
   }
   const typeIcons = {'Open Cry':'🔨','Dutch':'⏱️','Lottery':'🎟️'};
   histDiv.innerHTML = [...auctionState.history].reverse().map(h =>
-    `<div style="padding:10px 14px;margin-bottom:6px;background:#1a1a1a;border-radius:8px;display:flex;justify-content:space-between;align-items:center;border-left:3px solid ${teamColors[h.team].bg}">
+    `<div style="padding:10px 14px;margin-bottom:6px;background:#fafafa;border-radius:8px;display:flex;justify-content:space-between;align-items:center;border:1px solid #eee;border-left:3px solid ${teamColors[h.team].bg}">
       <div>
-        <div style="color:#fff;font-weight:bold;font-size:0.9rem">${h.artwork}</div>
-        <div style="color:#555;font-size:0.75rem">${typeIcons[h.type]||'🎨'} ${h.type}</div>
+        <div style="color:#111;font-weight:700;font-size:0.9rem">${h.artwork}</div>
+        <div style="color:#bbb;font-size:0.75rem">${typeIcons[h.type]||'🎨'} ${h.type}</div>
       </div>
       <div style="text-align:right">
-        <div style="color:${teamColors[h.team].bg};font-weight:bold">${teamColors[h.team].name}</div>
-        <div style="color:#0F9D58;font-weight:bold;font-size:1.1rem">$${h.price}M</div>
+        <div style="color:${teamColors[h.team].bg};font-weight:700">${teamColors[h.team].name}</div>
+        <div style="color:#0a7a40;font-weight:700;font-size:1rem">$${h.price}M</div>
       </div>
     </div>`).join('');
 }
