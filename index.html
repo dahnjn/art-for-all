@@ -250,46 +250,203 @@ svg.map-svg{width:100%;height:100%}
   </div>
 </div>
 
-<!-- AUCTION MODAL -->
-<div id="auctionModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;overflow-y:auto;">
-  <div style="max-width:1400px;margin:0 auto;padding:20px;position:relative;">
-    <button onclick="closeAuctionModal()" style="position:absolute;top:20px;right:20px;background:#E94235;color:#fff;border:none;padding:10px 20px;font-size:1.2rem;cursor:pointer;border-radius:4px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:bold;">✕ CLOSE</button>
-    <h1 style="text-align:center;color:#fff;margin-bottom:30px;font-size:2.5rem;">🎨 ART AUCTION</h1>
-    <div style="display:grid;grid-template-columns:1fr 2fr;gap:30px;">
-      <div id="auctionArtworkCard" style="background:#fff;border-radius:20px;padding:20px;border:6px solid #000;">
-        <div style="text-align:center;color:#666;padding:40px 20px;">Select an artwork to auction</div>
-      </div>
-      <div style="background:#f5f5f5;border-radius:20px;padding:20px;border:2px solid #e0e0e0;">
-        <div style="text-align:center;margin-bottom:20px;">
-          <select id="auctionArtworkSelect" onchange="selectArtworkForAuction()" style="font-size:1.1rem;padding:10px 20px;border-radius:10px;border:2px solid #ccc;background:#fff;width:100%;max-width:500px;">
-            <option value="">-- Choose Artwork --</option>
-          </select>
+<!-- AUCTION MODAL - NOMINATION SCREEN -->
+<div id="auctionModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.97);z-index:10000;overflow-y:auto;">
+  <div style="max-width:1500px;margin:0 auto;padding:20px;position:relative;">
+    <button onclick="closeAuctionModal()" style="position:absolute;top:20px;right:20px;background:#E94235;color:#fff;border:none;padding:10px 20px;font-size:1.2rem;cursor:pointer;border-radius:4px;font-weight:bold;">✕ CLOSE</button>
+
+    <!-- NOMINATION SCREEN -->
+    <div id="nominationScreen">
+      <h1 style="text-align:center;color:#fff;margin-bottom:8px;font-size:2.5rem;letter-spacing:0.15em;">🎨 AUCTION HOUSE</h1>
+      <p style="text-align:center;color:#666;margin-bottom:30px;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em">Select a work, choose your auction type, then launch</p>
+
+      <div style="display:grid;grid-template-columns:340px 1fr;gap:30px;margin-bottom:30px;">
+        <!-- Left: artwork card preview -->
+        <div id="nominationArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;min-height:320px;display:flex;align-items:center;justify-content:center;">
+          <div style="text-align:center;color:#555;font-size:0.9rem;">Select an artwork →</div>
         </div>
-        <div id="auctionInterface" style="display:none;">
-          <div style="background:#fff;padding:20px;border-radius:15px;margin-bottom:20px;text-align:center;border:3px solid #000;">
-            <div style="font-size:0.9rem;opacity:0.6;margin-bottom:5px;">CURRENT BID</div>
-            <div id="currentBidAmount" style="font-size:3rem;font-weight:bold;margin-bottom:5px;">$0M</div>
-            <div id="currentBidTeam" style="font-size:1.2rem;opacity:0.7;">No bids yet</div>
+
+        <!-- Right: controls -->
+        <div>
+          <div style="margin-bottom:20px;">
+            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Artwork</label>
+            <select id="nominationArtSelect" style="width:100%;padding:12px 16px;background:#1a1a1a;color:#fff;border:2px solid #333;font-size:1rem;border-radius:8px;">
+              <option value="">-- Choose Artwork --</option>
+            </select>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;">
-            <div id="redTeamAuction" class="auction-team-section"></div>
-            <div id="yellowTeamAuction" class="auction-team-section"></div>
-            <div id="blueTeamAuction" class="auction-team-section"></div>
-            <div id="greenTeamAuction" class="auction-team-section"></div>
+
+          <div style="margin-bottom:20px;">
+            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Nominating Team</label>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" id="nominatingTeamBtns">
+              <button onclick="setNominatingTeam(1)" class="nom-team-btn" data-team="1" style="padding:12px;border:2px solid #E94235;color:#E94235;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">RED</button>
+              <button onclick="setNominatingTeam(2)" class="nom-team-btn" data-team="2" style="padding:12px;border:2px solid #FBBC04;color:#FBBC04;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">YELLOW</button>
+              <button onclick="setNominatingTeam(3)" class="nom-team-btn" data-team="3" style="padding:12px;border:2px solid #4285F4;color:#4285F4;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">BLUE</button>
+              <button onclick="setNominatingTeam(4)" class="nom-team-btn" data-team="4" style="padding:12px;border:2px solid #0F9D58;color:#0F9D58;background:transparent;font-weight:bold;cursor:pointer;border-radius:8px;font-size:0.9rem;">GREEN</button>
+            </div>
           </div>
-          <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;">
-            <button onclick="clearAllBids()" style="background:#666;color:#fff;border:none;padding:15px 30px;font-size:1.1rem;cursor:pointer;border-radius:10px;font-weight:bold;">CLEAR ALL BIDS</button>
-            <button onclick="finishAuction()" style="background:#0F9D58;color:#fff;border:none;padding:15px 30px;font-size:1.1rem;cursor:pointer;border-radius:10px;font-weight:bold;">FINISH AUCTION</button>
+
+          <!-- Auction type cards -->
+          <div style="margin-bottom:20px;">
+            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Auction Type</label>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+              <div class="auction-type-card" data-type="opencry" onclick="selectAuctionType('opencry')" style="background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;">
+                <div style="font-size:1.8rem;margin-bottom:8px;">🔨</div>
+                <div style="color:#fff;font-weight:bold;font-size:0.9rem;margin-bottom:6px;">OPEN CRY</div>
+                <div style="color:#666;font-size:0.75rem;line-height:1.4">Nominating team sets opening bid. Teams raise in +$5M increments or pass. 3 raises each, reset per auction.</div>
+              </div>
+              <div class="auction-type-card" data-type="dutch" onclick="selectAuctionType('dutch')" style="background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;">
+                <div style="font-size:1.8rem;margin-bottom:8px;">⏱️</div>
+                <div style="color:#fff;font-weight:bold;font-size:0.9rem;margin-bottom:6px;">DUTCH</div>
+                <div style="color:#666;font-size:0.75rem;line-height:1.4">Price starts at $100M and drops $1M every 0.5s. First team to click BUY NOW wins at that price.</div>
+              </div>
+              <div class="auction-type-card" data-type="lottery" onclick="selectAuctionType('lottery')" style="background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;">
+                <div style="font-size:1.8rem;margin-bottom:8px;">🎟️</div>
+                <div style="color:#fff;font-weight:bold;font-size:0.9rem;margin-bottom:6px;">LOTTERY</div>
+                <div style="color:#666;font-size:0.75rem;line-height:1.4">Teams buy $1M tickets in turn order. Winner drawn by weighted odds. More tickets = better chance.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Open Cry: opening bid input -->
+          <div id="openingBidRow" style="display:none;margin-bottom:20px;">
+            <label style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Nominating Team's Opening Bid ($M)</label>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="color:#fff;font-size:1.2rem;">$</span>
+              <input type="number" id="openingBidInput" min="1" value="10" style="background:#1a1a1a;color:#fff;border:2px solid #333;padding:10px 14px;font-size:1.2rem;border-radius:8px;width:120px;">
+              <span style="color:#888;font-size:0.9rem;">M</span>
+            </div>
+          </div>
+
+          <button id="launchAuctionBtn" onclick="launchAuction()" style="width:100%;padding:16px;background:#fff;color:#000;border:none;font-size:1.1rem;font-weight:bold;cursor:pointer;border-radius:10px;letter-spacing:0.05em;opacity:0.3;pointer-events:none;">LAUNCH AUCTION →</button>
+        </div>
+      </div>
+
+      <!-- Auction History -->
+      <div style="background:#111;border-radius:12px;padding:20px;border:1px solid #222;">
+        <h3 style="color:#fff;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:15px;">Auction Ledger</h3>
+        <div id="auctionHistory"><p style="text-align:center;color:#555;font-size:0.85rem;">No works sold yet</p></div>
+      </div>
+    </div>
+
+    <!-- ═══ OPEN CRY SCREEN ═══ -->
+    <div id="openCryScreen" style="display:none;">
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:30px;min-height:80vh;">
+        <!-- Art card -->
+        <div id="ocArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;"></div>
+
+        <!-- Bidding arena -->
+        <div>
+          <!-- Current bid display -->
+          <div style="background:#111;border-radius:16px;padding:30px;text-align:center;margin-bottom:20px;border:2px solid #333;">
+            <div style="color:#666;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Current High Bid</div>
+            <div id="ocCurrentBid" style="font-size:5rem;font-weight:bold;color:#fff;line-height:1;">$<span id="ocBidNum">—</span>M</div>
+            <div id="ocCurrentLeader" style="font-size:1.3rem;margin-top:10px;color:#888;">Waiting for opening bid...</div>
+          </div>
+
+          <!-- Team bidding panels -->
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px;" id="ocTeamPanels"></div>
+
+          <!-- Controls -->
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button onclick="backToNomination()" style="padding:14px 28px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:1rem;">← BACK</button>
+            <button onclick="ocSoldClick()" id="ocSoldBtn" style="padding:14px 40px;background:#0F9D58;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:1.1rem;">🔨 SOLD</button>
+            <button onclick="ocNoSaleClick()" style="padding:14px 28px;background:#E94235;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:1rem;">NO SALE</button>
           </div>
         </div>
       </div>
     </div>
-    <div style="background:#fff;border-radius:15px;padding:20px;margin-top:20px;">
-      <h2 style="margin-bottom:15px;">Auction Results</h2>
-      <div id="auctionHistory"><p style="text-align:center;opacity:0.5;">No artworks sold yet</p></div>
+
+    <!-- ═══ DUTCH AUCTION SCREEN ═══ -->
+    <div id="dutchScreen" style="display:none;">
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:30px;min-height:80vh;">
+        <div id="dutchArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;">
+          <div style="text-align:center;">
+            <div style="color:#888;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;">Price Dropping...</div>
+            <div id="dutchPrice" style="font-size:9rem;font-weight:bold;color:#fff;line-height:1;font-variant-numeric:tabular-nums;">$<span id="dutchNum">100</span>M</div>
+            <div id="dutchStatus" style="color:#666;margin-top:10px;font-size:0.9rem;">Press START to begin countdown</div>
+          </div>
+          <div id="dutchBuyNowArea" style="display:none;width:100%;max-width:500px;">
+            <div style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;margin-bottom:15px;">
+              <div style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Who bought it?</div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+                <button onclick="dutchBuy(1)" style="padding:16px;background:#E94235;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">RED</button>
+                <button onclick="dutchBuy(2)" style="padding:16px;background:#FBBC04;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">YELLOW</button>
+                <button onclick="dutchBuy(3)" style="padding:16px;background:#4285F4;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">BLUE</button>
+                <button onclick="dutchBuy(4)" style="padding:16px;background:#0F9D58;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">GREEN</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:15px;">
+            <button onclick="backToNomination()" style="padding:14px 28px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">← BACK</button>
+            <button onclick="dutchStart()" id="dutchStartBtn" style="padding:14px 50px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.3rem;font-weight:bold;cursor:pointer;">START</button>
+            <button onclick="dutchBuyNow()" id="dutchBuyNowBtn" style="display:none;padding:14px 50px;background:#E94235;color:#fff;border:none;border-radius:10px;font-size:1.3rem;font-weight:bold;cursor:pointer;animation:pulse 0.8s ease-in-out infinite alternate;">BUY NOW</button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- ═══ LOTTERY SCREEN ═══ -->
+    <div id="lotteryScreen" style="display:none;">
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:30px;min-height:80vh;">
+        <div id="lotteryArtCard" style="background:#111;border-radius:16px;padding:20px;border:2px solid #333;"></div>
+        <div>
+          <!-- Ticket pool -->
+          <div style="background:#111;border-radius:16px;padding:24px;margin-bottom:20px;border:2px solid #333;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div style="color:#fff;font-weight:bold;font-size:1.1rem;">TICKET POOL</div>
+              <div style="color:#888;font-size:0.85rem;">Total: <span id="lotteryTotal" style="color:#fff;font-weight:bold;">$0M</span></div>
+            </div>
+            <!-- Odds bars -->
+            <div id="lotteryOddsBars" style="display:grid;gap:10px;margin-bottom:16px;"></div>
+            <!-- Current turn indicator -->
+            <div style="background:#1a1a1a;border-radius:8px;padding:12px;text-align:center;border:1px solid #333;">
+              <div style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Current Turn</div>
+              <div id="lotteryTurnTeam" style="font-size:1.3rem;font-weight:bold;color:#fff;">—</div>
+            </div>
+          </div>
+
+          <!-- Ticket buy controls -->
+          <div style="background:#111;border-radius:16px;padding:20px;margin-bottom:20px;border:2px solid #333;">
+            <div style="color:#888;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Buy Tickets (current team)</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button onclick="lotteryBuyTickets(1)" style="padding:12px 20px;background:#1a1a1a;color:#fff;border:2px solid #333;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer;">+$1M</button>
+              <button onclick="lotteryBuyTickets(5)" style="padding:12px 20px;background:#1a1a1a;color:#fff;border:2px solid #333;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer;">+$5M</button>
+              <button onclick="lotteryBuyTickets(10)" style="padding:12px 20px;background:#1a1a1a;color:#fff;border:2px solid #333;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer;">+$10M</button>
+              <button onclick="lotteryPassTurn()" style="padding:12px 20px;background:#333;color:#aaa;border:2px solid #444;border-radius:8px;font-size:1rem;cursor:pointer;">PASS</button>
+            </div>
+            <div style="color:#555;font-size:0.8rem;margin-top:10px;">Tickets go in round-robin turn order starting from nominating team. Click PASS to skip your turn.</div>
+          </div>
+
+          <!-- Draw controls -->
+          <div style="display:flex;gap:12px;">
+            <button onclick="backToNomination()" style="padding:14px 28px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">← BACK</button>
+            <button onclick="lotteryDraw()" id="lotteryDrawBtn" style="flex:1;padding:14px;background:#FBBC04;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;">🎟️ DRAW WINNER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<style>
+@keyframes pulse { from { opacity:1; transform:scale(1); } to { opacity:0.85; transform:scale(1.02); } }
+@keyframes tickerFlash { 0%,100%{color:#fff} 50%{color:#E94235} }
+.auction-type-card:hover { border-color:#666 !important; transform:translateY(-2px); }
+.auction-type-card.selected { border-color:#fff !important; background:#222 !important; }
+.nom-team-btn.selected { color:#000 !important; }
+.oc-team-panel { background:#1a1a1a; border-radius:12px; padding:16px; border:2px solid #333; }
+.oc-raise-btn { padding:10px 18px; border:none; border-radius:8px; font-size:0.95rem; font-weight:bold; cursor:pointer; transition:all 0.15s; }
+.oc-raise-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.oc-pass-btn { padding:10px 18px; background:#2a2a2a; color:#888; border:1px solid #444; border-radius:8px; font-size:0.95rem; cursor:pointer; }
+.oc-pass-btn:hover:not(:disabled) { background:#333; color:#ccc; }
+.raises-pip { display:inline-block; width:12px; height:12px; border-radius:50%; background:#444; margin:0 2px; transition:background 0.2s; }
+.raises-pip.used { background:#E94235; }
+.lottery-bar-wrap { display:flex; align-items:center; gap:10px; }
+.lottery-bar-bg { flex:1; height:28px; background:#222; border-radius:6px; overflow:hidden; position:relative; }
+.lottery-bar-fill { height:100%; border-radius:6px; transition:width 0.4s ease; }
+</style>
 
 <!-- END GAME MODAL -->
 <div id="endGameModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:20000;overflow-y:auto;">
@@ -382,15 +539,7 @@ let gameState = {
 };
 
 const auctionState = {
-  teams:{
-    1:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]},
-    2:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]},
-    3:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]},
-    4:{chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]}
-  },
-  currentBid:{team:null,amount:0},
-  history:[],
-  currentArtworkIdx:null
+  history: []
 };
 
 // ─── GALLERY ─────────────────────────────────────────────────────────────────
@@ -891,7 +1040,7 @@ function saveGame() {
     version:'1.0',
     timestamp:new Date().toISOString(),
     gameState:gameState,
-    auctionState:{teams:auctionState.teams, history:auctionState.history},
+    auctionState:{history:auctionState.history},
     artworkAssignments:[]
   };
   document.querySelectorAll('.art-card').forEach(card => {
@@ -931,8 +1080,7 @@ function loadGame() {
 
         // Restore auction state
         if(saveData.auctionState) {
-          auctionState.teams = saveData.auctionState.teams;
-          auctionState.history = saveData.auctionState.history;
+          auctionState.history = saveData.auctionState.history || [];
         }
 
         // Clear all current assignments
@@ -995,10 +1143,6 @@ function resetGame() {
       4:{cash:0,city:'start',artworks:[],soldTo:{}}
     }
   };
-  // Reset auction state
-  [1,2,3,4].forEach(t => {
-    auctionState.teams[t] = {chips:[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,10,10,10,10,10,10,20,50],spent:0,wonArtworks:[],selectedChips:[]};
-  });
   auctionState.history = [];
 
   document.getElementById('logEntries').innerHTML = '';
@@ -1032,18 +1176,99 @@ document.getElementById('totalRounds').addEventListener('change', (e) => {
 });
 for(let i=1;i<=4;i++) document.getElementById(`dest${i}`).addEventListener('change', updateTeamDisplay);
 
-// ─── AUCTION ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+// AUCTION SYSTEM — THREE MODES
+// ═══════════════════════════════════════════════════════════
+
+const auctionLive = {
+  artIdx: null,
+  nominatingTeam: null,
+  auctionType: null,    // 'opencry' | 'dutch' | 'lottery'
+
+  // Open Cry state
+  oc: {
+    currentBid: 0,
+    leadingTeam: null,
+    raises: {1:3, 2:3, 3:3, 4:3},   // resets each auction
+    turnOrder: [],
+    turnIdx: 0,
+    passCount: 0
+  },
+
+  // Dutch state
+  dutch: {
+    price: 100,
+    timer: null,
+    frozen: false,
+    frozenPrice: null
+  },
+
+  // Lottery state
+  lottery: {
+    tickets: {1:0, 2:0, 3:0, 4:0},
+    turnOrder: [],
+    turnIdx: 0,
+    passStreak: 0
+  }
+};
+
+// ── Shared helpers ───────────────────────────────────────────
+
+function artCardHTML(artIdx, dark=true) {
+  const art = artworks[artIdx];
+  const total = Object.values(art.cities).reduce((a,b)=>a+b,0);
+  const bg = dark ? '#222' : '#f5f5f5';
+  const txt = dark ? '#fff' : '#000';
+  const sub = dark ? '#aaa' : '#666';
+  const citiesHTML = Object.entries(art.cities).map(([city,price])=>
+    `<div style="background:${dark?'#333':'#eee'};padding:4px;border-radius:4px;text-align:center">
+      <div style="font-size:0.6rem;font-weight:bold;text-transform:uppercase;color:${sub}">${cityNames[city]}</div>
+      <div style="font-size:0.85rem;font-weight:bold;color:${dark?'#0F9D58':'#000'}">$${price}</div>
+    </div>`).join('');
+  return `<img src="${art.image}" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:12px">
+    <div style="color:${txt};font-weight:bold;font-size:1.1rem;margin-bottom:4px">${art.title}</div>
+    <div style="color:${sub};font-size:0.85rem;margin-bottom:12px">${art.artist}, ${art.year}</div>
+    <div style="background:${dark?'#111':'#fff'};border-radius:8px;padding:8px;margin-bottom:12px;text-align:center">
+      <span style="color:${sub};font-size:0.75rem">TOTAL VALUE </span>
+      <span style="color:${txt};font-weight:bold;font-size:1.1rem">$${total}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">${citiesHTML}</div>`;
+}
+
+function recordSale(artIdx, winningTeam, price, auctionType) {
+  const artwork = artworks[artIdx];
+  gameState.teams[winningTeam].cash -= price * 1000000;
+  gameState.teams[winningTeam].artworks.push({idx:artIdx,title:artwork.title,price,revenue:0,ticketsSold:0});
+
+  auctionState.history.push({artworkIdx:artIdx,artwork:artwork.title,team:winningTeam,price,type:auctionType});
+
+  const card = document.querySelector(`.art-card[data-idx="${artIdx}"]`);
+  if(card) {
+    card.dataset.team = 'TEAM ' + winningTeam;
+    const container = card.querySelector('.team-badge-container');
+    container.innerHTML = `<div class="team-badge team-${winningTeam}">
+      <span>${teamColors[winningTeam].name}</span>
+      <span class="remove" data-idx="${artIdx}" data-team="${winningTeam}">×</span>
+    </div>`;
+    attachRemoveHandler(container.querySelector('.remove'), artIdx, winningTeam);
+  }
+
+  updateTeamDisplay();
+  updateCompetitiveAnalysis();
+  updateAuctionHistory();
+  backToNomination();
+}
 
 function refreshAuctionDropdown() {
-  const select = document.getElementById('auctionArtworkSelect');
+  const select = document.getElementById('nominationArtSelect');
   const current = select.value;
   select.innerHTML = '<option value="">-- Choose Artwork --</option>';
   artworks.forEach((art,idx) => {
-    const isAssigned = Object.values(gameState.teams).some(team=>team.artworks.some(a=>a.idx===idx));
+    const isAssigned = Object.values(gameState.teams).some(t=>t.artworks.some(a=>a.idx===idx));
     const isAuctioned = auctionState.history.some(h=>h.artworkIdx===idx);
     if(!isAssigned && !isAuctioned) {
       const total = Object.values(art.cities).reduce((a,b)=>a+b,0);
-      select.innerHTML += `<option value="${idx}">${art.title} — ${art.artist} (Total: $${total})</option>`;
+      select.innerHTML += `<option value="${idx}">${art.title} — ${art.artist} ($${total} total)</option>`;
     }
   });
   if(current && Array.from(select.options).some(o=>o.value===current)) select.value=current;
@@ -1051,213 +1276,440 @@ function refreshAuctionDropdown() {
 
 function openAuctionModal() {
   refreshAuctionDropdown();
+  showScreen('nominationScreen');
   document.getElementById('auctionModal').style.display='block';
-  initializeAuctionTeams();
 }
 
 function closeAuctionModal() {
+  dutchStop();
   document.getElementById('auctionModal').style.display='none';
 }
 
-function selectArtworkForAuction() {
-  const idx = parseInt(document.getElementById('auctionArtworkSelect').value);
-  if(isNaN(idx)) {
-    document.getElementById('auctionInterface').style.display='none';
-    document.getElementById('auctionArtworkCard').innerHTML='<div style="text-align:center;color:#666;padding:40px 20px;">Select an artwork to auction</div>';
-    return;
-  }
-  auctionState.currentArtworkIdx = idx;
-  const art = artworks[idx];
-  const total = Object.values(art.cities).reduce((a,b)=>a+b,0);
-  const citiesHTML = Object.entries(art.cities).map(([city,price])=>
-    `<div style="background:#f5f5f5;padding:5px;border-radius:4px;text-align:center">
-      <div style="font-weight:bold;text-transform:uppercase;font-size:0.7rem">${cityNames[city]}</div>
-      <div style="color:#0F9D58;font-weight:bold">$${price}</div>
-    </div>`).join('');
-
-  document.getElementById('auctionArtworkCard').innerHTML =
-    `<img src="${art.image}" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin-bottom:10px">
-    <div style="text-align:center;margin-bottom:10px">
-      <div style="font-size:1.2rem;font-weight:bold;margin-bottom:5px">${art.title}</div>
-      <div style="font-size:0.9rem;color:#666">${art.artist}, ${art.year}</div>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #ddd">
-        <span style="font-size:0.8rem;color:#999">TOTAL VALUE: </span>
-        <span style="font-size:1.1rem;font-weight:bold">$${total}</span>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;font-size:0.65rem">${citiesHTML}</div>`;
-
-  document.getElementById('auctionInterface').style.display='block';
-  resetAuctionBids();
-}
-
-function resetAuctionBids() {
-  auctionState.currentBid = {team:null,amount:0};
-  Object.values(auctionState.teams).forEach(t=>t.selectedChips=[]);
-  updateAuctionBidDisplay();
-  [1,2,3,4].forEach(t=>renderAuctionChips(t));
-}
-
-function initializeAuctionTeams() {
-  const sections = {1:'redTeamAuction',2:'yellowTeamAuction',3:'blueTeamAuction',4:'greenTeamAuction'};
-  [1,2,3,4].forEach(tn => {
-    const team = auctionState.teams[tn];
-    const remaining = team.chips.reduce((s,v)=>s+v,0);
-    const section = document.getElementById(sections[tn]);
-    section.innerHTML = `
-      <div class="auction-team-header" style="justify-content:center">
-        <div class="auction-team-circle" style="background:${teamColors[tn].bg}"></div>
-        <strong style="color:${teamColors[tn].bg}">${teamColors[tn].name}</strong>
-      </div>
-      <div id="team${tn}TicketPrices" style="margin-bottom:12px;font-size:0.75rem;padding:10px;background:#f8f8f8;border-radius:5px;border:1px solid #e0e0e0"></div>
-      <div class="auction-team-stats">
-        <div><span style="opacity:0.6">Spent:</span> <strong>$${team.spent}M</strong></div>
-        <div><span style="opacity:0.6">Remaining:</span> <strong>$${remaining}M</strong></div>
-      </div>
-      <div class="auction-chip-container" id="chips-team${tn}"></div>`;
-    renderAuctionChips(tn);
-    updateTeamTicketPrices(tn);
+function showScreen(id) {
+  ['nominationScreen','openCryScreen','dutchScreen','lotteryScreen'].forEach(s => {
+    document.getElementById(s).style.display = s===id ? 'block' : 'none';
   });
 }
 
-function renderAuctionChips(teamNum) {
-  const container = document.getElementById(`chips-team${teamNum}`);
-  if(!container) return;
-  const team = auctionState.teams[teamNum];
-  container.innerHTML = team.chips.map((value,idx) => {
-    const isSelected = team.selectedChips.includes(idx);
-    return `<div class="auction-chip ${isSelected?'selected':''}"
-      style="background:${teamColors[teamNum].bg};color:${teamColors[teamNum].text}"
-      onclick="toggleChip(${teamNum},${idx})">$${value}</div>`;
+function backToNomination() {
+  dutchStop();
+  showScreen('nominationScreen');
+  refreshAuctionDropdown();
+  // Reset nomination UI
+  document.getElementById('nominationArtSelect').value = '';
+  document.getElementById('nominationArtCard').innerHTML = '<div style="text-align:center;color:#555;font-size:0.9rem;padding:60px 20px;">Select an artwork →</div>';
+  document.querySelectorAll('.nom-team-btn').forEach(b=>{ b.style.background='transparent'; b.style.color=b.style.borderColor; });
+  document.querySelectorAll('.auction-type-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('openingBidRow').style.display='none';
+  document.getElementById('launchAuctionBtn').style.opacity='0.3';
+  document.getElementById('launchAuctionBtn').style.pointerEvents='none';
+  auctionLive.artIdx=null; auctionLive.nominatingTeam=null; auctionLive.auctionType=null;
+}
+
+// ── Nomination UI ────────────────────────────────────────────
+
+document.getElementById('nominationArtSelect').addEventListener('change', function() {
+  const idx = parseInt(this.value);
+  if(isNaN(idx)) {
+    document.getElementById('nominationArtCard').innerHTML='<div style="text-align:center;color:#555;font-size:0.9rem;padding:60px 20px;">Select an artwork →</div>';
+    auctionLive.artIdx=null;
+  } else {
+    auctionLive.artIdx=idx;
+    document.getElementById('nominationArtCard').innerHTML=artCardHTML(idx,true);
+  }
+  checkLaunchReady();
+});
+
+function setNominatingTeam(tn) {
+  auctionLive.nominatingTeam=tn;
+  document.querySelectorAll('.nom-team-btn').forEach(b=>{
+    const bt = parseInt(b.dataset.team);
+    if(bt===tn) { b.style.background=teamColors[tn].bg; b.style.color=teamColors[tn].text; }
+    else { b.style.background='transparent'; b.style.color=b.style.borderColor; }
+  });
+  checkLaunchReady();
+}
+
+function selectAuctionType(type) {
+  auctionLive.auctionType=type;
+  document.querySelectorAll('.auction-type-card').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.type===type);
+  });
+  document.getElementById('openingBidRow').style.display = type==='opencry' ? 'block' : 'none';
+  checkLaunchReady();
+}
+
+function checkLaunchReady() {
+  const ready = auctionLive.artIdx!==null && auctionLive.nominatingTeam && auctionLive.auctionType;
+  const btn = document.getElementById('launchAuctionBtn');
+  btn.style.opacity = ready ? '1' : '0.3';
+  btn.style.pointerEvents = ready ? 'auto' : 'none';
+}
+
+function launchAuction() {
+  if(!auctionLive.artIdx!==null && !auctionLive.nominatingTeam && !auctionLive.auctionType) return;
+  if(auctionLive.auctionType==='opencry') launchOpenCry();
+  else if(auctionLive.auctionType==='dutch') launchDutch();
+  else if(auctionLive.auctionType==='lottery') launchLottery();
+}
+
+// ══════════════════════════════════════════════════════════════
+// OPEN CRY AUCTION
+// ══════════════════════════════════════════════════════════════
+
+function launchOpenCry() {
+  const openingBid = parseInt(document.getElementById('openingBidInput').value)||10;
+  const nomTeam = auctionLive.nominatingTeam;
+
+  // Reset raises for this auction
+  auctionLive.oc.raises = {1:3,2:3,3:3,4:3};
+  auctionLive.oc.currentBid = openingBid;
+  auctionLive.oc.leadingTeam = nomTeam;
+  auctionLive.oc.passCount = 0;
+
+  // Turn order: starts with team AFTER nominating team, cycles
+  const allTeams = [1,2,3,4];
+  const startIdx = allTeams.indexOf(nomTeam);
+  auctionLive.oc.turnOrder = [
+    ...allTeams.slice(startIdx+1),
+    ...allTeams.slice(0, startIdx+1)
+  ].filter(t => t !== nomTeam); // nominating team opened, now others go
+  auctionLive.oc.turnIdx = 0;
+
+  // Populate art card
+  document.getElementById('ocArtCard').innerHTML = artCardHTML(auctionLive.artIdx, true);
+
+  showScreen('openCryScreen');
+  renderOcDisplay();
+}
+
+function renderOcDisplay() {
+  const oc = auctionLive.oc;
+  const bidEl = document.getElementById('ocBidNum');
+  bidEl.textContent = oc.currentBid;
+  const leaderEl = document.getElementById('ocCurrentLeader');
+  if(oc.leadingTeam) {
+    leaderEl.textContent = teamColors[oc.leadingTeam].name + ' is leading';
+    leaderEl.style.color = teamColors[oc.leadingTeam].bg;
+  }
+
+  // Who is next to act?
+  const nextTeam = oc.turnOrder[oc.turnIdx % oc.turnOrder.length];
+
+  // Build panels
+  const panels = document.getElementById('ocTeamPanels');
+  panels.innerHTML = [1,2,3,4].map(tn => {
+    const tc = teamColors[tn];
+    const raises = oc.raises[tn];
+    const isLeader = oc.leadingTeam===tn;
+    const isNext = nextTeam===tn;
+    const canRaise = raises>0 && tn!==oc.leadingTeam;
+    const nomTeam = auctionLive.nominatingTeam;
+
+    const pipsHTML = [0,1,2].map(i=>
+      `<span class="raises-pip ${i >= raises ? 'used' : ''}"></span>`
+    ).join('');
+
+    return `<div class="oc-team-panel" style="border:2px solid ${isNext ? tc.bg : (isLeader ? tc.bg+'55' : '#333')}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="color:${tc.bg};font-weight:bold;font-size:1.1rem">${tc.name}</div>
+        ${isLeader ? `<div style="background:${tc.bg};color:${tc.text};font-size:0.7rem;padding:3px 8px;border-radius:4px;font-weight:bold">LEADING</div>` : ''}
+        ${isNext && !isLeader ? `<div style="background:#fff;color:#000;font-size:0.7rem;padding:3px 8px;border-radius:4px;font-weight:bold">YOUR TURN</div>` : ''}
+        ${tn===nomTeam && !isLeader ? `<div style="background:#444;color:#aaa;font-size:0.7rem;padding:3px 8px;border-radius:4px">NOMINATED</div>` : ''}
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="color:#666;font-size:0.7rem;margin-bottom:4px">RAISES REMAINING</div>
+        <div>${pipsHTML}</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="oc-raise-btn" style="background:${tc.bg};color:${tc.text};flex:1"
+          onclick="ocRaise(${tn})" ${!isNext||!canRaise||isLeader ? 'disabled' : ''}>
+          RAISE +$5M
+        </button>
+        <button class="oc-pass-btn" onclick="ocPass(${tn})" ${!isNext||isLeader ? 'disabled' : ''}>PASS</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
-function toggleChip(teamNum, chipIdx) {
-  // Clear other teams' selections
-  [1,2,3,4].forEach(t => {
-    if(t!==teamNum) { auctionState.teams[t].selectedChips=[]; renderAuctionChips(t); }
-  });
-  const team = auctionState.teams[teamNum];
-  const i = team.selectedChips.indexOf(chipIdx);
-  if(i>-1) team.selectedChips.splice(i,1); else team.selectedChips.push(chipIdx);
-  renderAuctionChips(teamNum);
-  const amount = team.selectedChips.reduce((s,i)=>s+team.chips[i],0);
-  auctionState.currentBid = {team:teamNum, amount};
-  updateAuctionBidDisplay();
+function ocRaise(teamNum) {
+  const oc = auctionLive.oc;
+  const nextTeam = oc.turnOrder[oc.turnIdx % oc.turnOrder.length];
+  if(teamNum!==nextTeam || oc.raises[teamNum]<=0 || teamNum===oc.leadingTeam) return;
+
+  oc.raises[teamNum]--;
+  oc.currentBid += 5;
+  oc.leadingTeam = teamNum;
+  oc.passCount = 0;
+
+  // Advance turn — skip the new leader, who now "owns" the bid
+  // Rebuild turn order from the team AFTER the raiser, excluding the current leader
+  const all = [1,2,3,4];
+  const raiserIdx = all.indexOf(teamNum);
+  oc.turnOrder = [
+    ...all.slice(raiserIdx+1),
+    ...all.slice(0, raiserIdx)
+  ].filter(t => t!==teamNum); // exclude new leader from turn cycle
+  oc.turnIdx = 0;
+
+  animateBidFlash();
+  renderOcDisplay();
 }
 
-function updateAuctionBidDisplay() {
-  document.getElementById('currentBidAmount').textContent = '$'+auctionState.currentBid.amount+'M';
-  if(auctionState.currentBid.team) {
-    const tn = auctionState.currentBid.team;
-    document.getElementById('currentBidTeam').textContent = teamColors[tn].name;
-    document.getElementById('currentBidTeam').style.color = teamColors[tn].bg;
-  } else {
-    document.getElementById('currentBidTeam').textContent = 'No bids yet';
-    document.getElementById('currentBidTeam').style.color = '#666';
-  }
-}
+function ocPass(teamNum) {
+  const oc = auctionLive.oc;
+  const nextTeam = oc.turnOrder[oc.turnIdx % oc.turnOrder.length];
+  if(teamNum!==nextTeam) return;
 
-function clearAllBids() {
-  [1,2,3,4].forEach(t=>{ auctionState.teams[t].selectedChips=[]; renderAuctionChips(t); });
-  auctionState.currentBid = {team:null,amount:0};
-  updateAuctionBidDisplay();
-}
+  oc.passCount++;
+  oc.turnIdx++;
 
-function finishAuction() {
-  if(!auctionState.currentBid.team || auctionState.currentBid.amount===0) {
-    alert('No bids placed yet!'); return;
-  }
-  const winningTeam = auctionState.currentBid.team;
-  const price = auctionState.currentBid.amount;
-  const artIdx = auctionState.currentArtworkIdx;
-  const artwork = artworks[artIdx];
-
-  // Remove chips permanently
-  const winTeam = auctionState.teams[winningTeam];
-  const toRemove = [...winTeam.selectedChips].sort((a,b)=>b-a);
-  toRemove.forEach(i=>winTeam.chips.splice(i,1));
-  winTeam.selectedChips = [];
-  winTeam.spent += price;
-
-  // Add to game state
-  gameState.teams[winningTeam].cash -= price * 1000000;
-  gameState.teams[winningTeam].artworks.push({idx:artIdx,title:artwork.title,price,revenue:0,ticketsSold:0});
-
-  // Update gallery card
-  const card = document.querySelector(`.art-card[data-idx="${artIdx}"]`);
-  if(card) {
-    card.dataset.team = 'TEAM ' + winningTeam;
-    const container = card.querySelector('.team-badge-container');
-    container.innerHTML = `
-      <div class="team-badge team-${winningTeam}">
-        <span>${teamColors[winningTeam].name}</span>
-        <span class="remove" data-idx="${artIdx}" data-team="${winningTeam}">×</span>
-      </div>`;
-    attachRemoveHandler(container.querySelector('.remove'), artIdx, winningTeam);
-  }
-
-  auctionState.history.push({artworkIdx:artIdx,artwork:artwork.title,team:winningTeam,price});
-  updateAuctionHistory();
-  updateTeamDisplay();
-  updateCompetitiveAnalysis();
-  initializeAuctionTeams();
-  refreshAuctionDropdown();
-  document.getElementById('auctionArtworkSelect').value='';
-  selectArtworkForAuction();
-  alert(`${teamColors[winningTeam].name} won "${artwork.title}" for $${price}M!`);
-}
-
-function updateTeamTicketPrices(teamNum) {
-  const container = document.getElementById(`team${teamNum}TicketPrices`);
-  if(!container) return;
-  const team = gameState.teams[teamNum];
-  if(team.artworks.length===0) {
-    container.innerHTML='<div style="text-align:center;opacity:0.4;padding:8px;font-size:0.7rem">No artworks yet</div>';
+  // If all non-leader teams have passed, the leader wins
+  const nonLeaders = [1,2,3,4].filter(t=>t!==oc.leadingTeam);
+  if(oc.passCount >= nonLeaders.length) {
+    ocSoldClick();
     return;
   }
-  const allCities = [...cities,'moscow'];
-  const cityAbbrev = {...cityNames};
-  const teamPrices = {};
-  allCities.forEach(city => {
-    teamPrices[city] = team.artworks.reduce((s,art)=>s+(artworks[art.idx].cities[city]||0),0);
-  });
-  const maxPrices = {};
-  allCities.forEach(city => {
-    maxPrices[city] = Math.max(...[1,2,3,4].map(t=>
-      gameState.teams[t].artworks.reduce((s,art)=>s+(artworks[art.idx].cities[city]||0),0)
-    ));
-  });
+  // Skip teams who are out of raises and can never raise
+  while(true) {
+    const next = oc.turnOrder[oc.turnIdx % oc.turnOrder.length];
+    if(next===oc.leadingTeam || oc.raises[next]>0) break;
+    oc.turnIdx++;
+    oc.passCount++;
+    if(oc.passCount >= nonLeaders.length) { ocSoldClick(); return; }
+  }
 
-  let html = '<div style="font-weight:bold;margin-bottom:6px;font-size:0.7rem;text-align:center;text-transform:uppercase;opacity:0.6;letter-spacing:0.05em">Ticket Prices</div>';
-  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-size:0.7rem">';
-  allCities.forEach(city => {
-    const val = teamPrices[city];
-    const isHighest = val>0 && val===maxPrices[city] && [1,2,3,4].filter(t=>
-      gameState.teams[t].artworks.reduce((s,art)=>s+(artworks[art.idx].cities[city]||0),0)>0
-    ).length>1;
-    html += `<div style="background:#fff;padding:4px;border-radius:4px;text-align:center;border:1px solid #e0e0e0">
-      <div style="font-weight:bold;font-size:0.65rem;opacity:0.6">${cityAbbrev[city]}</div>
-      <div style="color:#000;font-weight:bold;font-size:0.85rem">$${val}${isHighest?' ★':''}</div>
-    </div>`;
-  });
-  html += '</div>';
-  container.innerHTML = html;
+  renderOcDisplay();
 }
+
+function ocSoldClick() {
+  const oc = auctionLive.oc;
+  if(!oc.leadingTeam || oc.currentBid===0) { alert('No bids yet.'); return; }
+  const tc = teamColors[oc.leadingTeam];
+  if(confirm(`SOLD — ${tc.name} wins "${artworks[auctionLive.artIdx].title}" for $${oc.currentBid}M?`)) {
+    recordSale(auctionLive.artIdx, oc.leadingTeam, oc.currentBid, 'Open Cry');
+  }
+}
+
+function ocNoSaleClick() {
+  if(confirm('Cancel this auction with no sale?')) backToNomination();
+}
+
+function animateBidFlash() {
+  const el = document.getElementById('ocBidNum');
+  if(!el) return;
+  el.style.animation='none';
+  el.offsetHeight; // reflow
+  el.style.animation='tickerFlash 0.4s ease 3';
+}
+
+// ══════════════════════════════════════════════════════════════
+// DUTCH AUCTION
+// ══════════════════════════════════════════════════════════════
+
+function launchDutch() {
+  auctionLive.dutch = {price:100, timer:null, frozen:false, frozenPrice:null};
+  document.getElementById('dutchArtCard').innerHTML = artCardHTML(auctionLive.artIdx, true);
+  document.getElementById('dutchNum').textContent = '100';
+  document.getElementById('dutchStatus').textContent = 'Press START to begin countdown';
+  document.getElementById('dutchStartBtn').style.display='inline-block';
+  document.getElementById('dutchBuyNowBtn').style.display='none';
+  document.getElementById('dutchBuyNowArea').style.display='none';
+  showScreen('dutchScreen');
+}
+
+function dutchStart() {
+  const d = auctionLive.dutch;
+  if(d.timer) return;
+  document.getElementById('dutchStartBtn').style.display='none';
+  document.getElementById('dutchBuyNowBtn').style.display='inline-block';
+  document.getElementById('dutchStatus').textContent = 'Dropping $1M every 0.5s...';
+
+  d.timer = setInterval(() => {
+    if(d.frozen) return;
+    d.price--;
+    document.getElementById('dutchNum').textContent = d.price;
+    if(d.price <= 1) {
+      dutchStop();
+      document.getElementById('dutchStatus').textContent = 'Reached $1M — no sale or buy now';
+    }
+  }, 500);
+}
+
+function dutchStop() {
+  const d = auctionLive.dutch;
+  if(d.timer) { clearInterval(d.timer); d.timer=null; }
+}
+
+function dutchBuyNow() {
+  const d = auctionLive.dutch;
+  d.frozen=true;
+  d.frozenPrice=d.price;
+  dutchStop();
+  document.getElementById('dutchBuyNowBtn').style.display='none';
+  document.getElementById('dutchBuyNowArea').style.display='block';
+  document.getElementById('dutchStatus').textContent = `Frozen at $${d.frozenPrice}M — select buying team`;
+}
+
+function dutchBuy(teamNum) {
+  const d = auctionLive.dutch;
+  const price = d.frozenPrice || d.price;
+  const art = artworks[auctionLive.artIdx];
+  if(confirm(`${teamColors[teamNum].name} buys "${art.title}" for $${price}M?`)) {
+    recordSale(auctionLive.artIdx, teamNum, price, 'Dutch');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// LOTTERY AUCTION
+// ══════════════════════════════════════════════════════════════
+
+function launchLottery() {
+  const nomTeam = auctionLive.nominatingTeam;
+  const all = [1,2,3,4];
+  const startIdx = all.indexOf(nomTeam);
+  // Turn order starts with nominating team
+  auctionLive.lottery = {
+    tickets: {1:0,2:0,3:0,4:0},
+    turnOrder: [...all.slice(startIdx), ...all.slice(0,startIdx)],
+    turnIdx: 0,
+    passStreak: 0
+  };
+  document.getElementById('lotteryArtCard').innerHTML = artCardHTML(auctionLive.artIdx, true);
+  showScreen('lotteryScreen');
+  renderLotteryDisplay();
+}
+
+function lotteryBuyTickets(amount) {
+  const lot = auctionLive.lottery;
+  const currentTeam = lot.turnOrder[lot.turnIdx % lot.turnOrder.length];
+  lot.tickets[currentTeam] += amount;
+  lot.passStreak = 0;
+  // Advance turn
+  lot.turnIdx++;
+  renderLotteryDisplay();
+}
+
+function lotteryPassTurn() {
+  const lot = auctionLive.lottery;
+  lot.passStreak++;
+  lot.turnIdx++;
+  // If all 4 teams pass in a row, auto-draw
+  if(lot.passStreak >= 4) {
+    const total = Object.values(lot.tickets).reduce((a,b)=>a+b,0);
+    if(total === 0) { alert('No tickets purchased — no sale.'); backToNomination(); return; }
+    lotteryDraw();
+  } else {
+    renderLotteryDisplay();
+  }
+}
+
+function renderLotteryDisplay() {
+  const lot = auctionLive.lottery;
+  const total = Object.values(lot.tickets).reduce((a,b)=>a+b,0);
+  const currentTeam = lot.turnOrder[lot.turnIdx % lot.turnOrder.length];
+
+  document.getElementById('lotteryTotal').textContent = '$'+total+'M';
+
+  const turnEl = document.getElementById('lotteryTurnTeam');
+  turnEl.textContent = teamColors[currentTeam].name;
+  turnEl.style.color = teamColors[currentTeam].bg;
+
+  const barsEl = document.getElementById('lotteryOddsBars');
+  barsEl.innerHTML = [1,2,3,4].map(tn => {
+    const t = lot.tickets[tn];
+    const pct = total > 0 ? (t/total*100).toFixed(1) : 0;
+    const tc = teamColors[tn];
+    const isCurrent = tn===currentTeam;
+    return `<div class="lottery-bar-wrap">
+      <div style="width:70px;color:${tc.bg};font-weight:bold;font-size:0.9rem">${tc.name}</div>
+      <div class="lottery-bar-bg">
+        <div class="lottery-bar-fill" style="width:${pct}%;background:${tc.bg}"></div>
+      </div>
+      <div style="width:80px;text-align:right;color:#fff;font-size:0.9rem;font-weight:bold">$${t}M</div>
+      <div style="width:55px;text-align:right;color:#888;font-size:0.85rem">${pct}%</div>
+      ${isCurrent ? '<div style="color:#fff;font-size:0.75rem;background:#333;padding:2px 6px;border-radius:4px">TURN</div>' : '<div style="width:50px"></div>'}
+    </div>`;
+  }).join('');
+}
+
+function lotteryDraw() {
+  const lot = auctionLive.lottery;
+  const total = Object.values(lot.tickets).reduce((a,b)=>a+b,0);
+  if(total===0) { alert('No tickets purchased yet!'); return; }
+
+  // Weighted random draw
+  let roll = Math.random() * total;
+  let winner = null;
+  for(const tn of [1,2,3,4]) {
+    roll -= lot.tickets[tn];
+    if(roll <= 0) { winner=tn; break; }
+  }
+  if(!winner) winner=4; // fallback
+
+  const price = total;
+  const tc = teamColors[winner];
+  const art = artworks[auctionLive.artIdx];
+
+  // Animated reveal
+  const overlay = document.createElement('div');
+  overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+  overlay.innerHTML=`
+    <div style="text-align:center">
+      <div style="font-size:1rem;color:#666;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:20px">🎟️ DRAWING WINNER</div>
+      <div id="lotterySpinner" style="font-size:4rem;font-weight:bold;color:#fff;margin-bottom:30px;min-height:80px">...</div>
+      <div id="lotteryResult" style="display:none">
+        <div style="font-size:2rem;color:#fff;margin-bottom:10px">"${art.title}"</div>
+        <div id="lotteryWinnerName" style="font-size:5rem;font-weight:bold;margin-bottom:10px"></div>
+        <div style="font-size:1.5rem;color:#888">paid <span style="color:#0F9D58;font-weight:bold">$${price}M</span> in tickets</div>
+        <button onclick="this.closest('div[style]').remove();recordSale(${auctionLive.artIdx},${winner},${price},'Lottery')"
+          style="margin-top:30px;padding:15px 40px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.2rem;font-weight:bold;cursor:pointer">
+          CONFIRM SALE
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  // Slot machine spin
+  const teams = [1,2,3,4];
+  let spins=0; const totalSpins=18;
+  const spinInterval = setInterval(() => {
+    const fake = teams[spins % 4];
+    document.getElementById('lotterySpinner').textContent = teamColors[fake].name;
+    document.getElementById('lotterySpinner').style.color = teamColors[fake].bg;
+    spins++;
+    if(spins >= totalSpins) {
+      clearInterval(spinInterval);
+      setTimeout(() => {
+        document.getElementById('lotterySpinner').style.display='none';
+        const res = document.getElementById('lotteryResult');
+        const wn = document.getElementById('lotteryWinnerName');
+        wn.textContent = tc.name;
+        wn.style.color = tc.bg;
+        res.style.display='block';
+      }, 200);
+    }
+  }, 80);
+}
+
+// ── Auction history ──────────────────────────────────────────
 
 function updateAuctionHistory() {
   const histDiv = document.getElementById('auctionHistory');
   if(!auctionState.history.length) {
-    histDiv.innerHTML='<p style="text-align:center;opacity:0.5">No artworks sold yet</p>'; return;
+    histDiv.innerHTML='<p style="text-align:center;color:#555;font-size:0.85rem">No works sold yet</p>'; return;
   }
-  const sorted = [...auctionState.history].sort((a,b)=>b.price-a.price);
-  histDiv.innerHTML = sorted.map(h =>
-    `<div style="padding:10px;margin-bottom:5px;background:#f5f5f5;border-radius:5px;display:flex;justify-content:space-between;align-items:center">
-      <span><strong>${h.artwork}</strong></span>
-      <span style="display:flex;align-items:center;gap:8px">
-        <div style="width:20px;height:20px;border-radius:50%;background:${teamColors[h.team].bg};border:2px solid rgba(0,0,0,0.2)"></div>
-        <strong style="color:${teamColors[h.team].bg}">$${h.price}M</strong>
-      </span>
+  const typeIcons = {'Open Cry':'🔨','Dutch':'⏱️','Lottery':'🎟️'};
+  histDiv.innerHTML = [...auctionState.history].reverse().map(h =>
+    `<div style="padding:10px 14px;margin-bottom:6px;background:#1a1a1a;border-radius:8px;display:flex;justify-content:space-between;align-items:center;border-left:3px solid ${teamColors[h.team].bg}">
+      <div>
+        <div style="color:#fff;font-weight:bold;font-size:0.9rem">${h.artwork}</div>
+        <div style="color:#555;font-size:0.75rem">${typeIcons[h.type]||'🎨'} ${h.type}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="color:${teamColors[h.team].bg};font-weight:bold">${teamColors[h.team].name}</div>
+        <div style="color:#0F9D58;font-weight:bold;font-size:1.1rem">$${h.price}M</div>
+      </div>
     </div>`).join('');
 }
 
@@ -1267,7 +1719,8 @@ function showEndGameScreen() {
   const teamStats = {};
   [1,2,3,4].forEach(teamNum => {
     const team = gameState.teams[teamNum];
-    const totalCost = auctionState.teams[teamNum].spent * 1000000;
+    // Cost = sum of purchase prices from artworks
+    const totalCost = team.artworks.reduce((s,a)=>s+a.price,0) * 1000000;
     let totalRevenue=0, totalTickets=0;
     if(team.soldTo) {
       Object.keys(team.soldTo).forEach(cityKey => {
