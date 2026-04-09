@@ -262,8 +262,8 @@ svg.map-svg{width:100%;height:100%}
 
       <div style="display:grid;grid-template-columns:320px 1fr;gap:24px;margin-bottom:24px;align-items:start;">
         <!-- Left: artwork card preview -->
-        <div id="nominationArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;min-height:300px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-          <div style="text-align:center;color:#bbb;font-size:0.9rem;padding:40px;">Select an artwork →</div>
+        <div id="nominationArtCard" style="background:#fff;border-radius:12px;border:1px solid #ddd;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+          <div style="height:220px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:0.9rem;">Select an artwork →</div>
         </div>
 
         <!-- Right: controls -->
@@ -332,7 +332,7 @@ svg.map-svg{width:100%;height:100%}
     <div id="openCryScreen" style="display:none;">
       <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;min-height:80vh;">
         <!-- Art card -->
-        <div id="ocArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
+        <div id="ocArtCard" style="background:#fff;border-radius:12px;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
 
         <!-- Bidding arena -->
         <div>
@@ -359,7 +359,7 @@ svg.map-svg{width:100%;height:100%}
     <!-- ═══ DUTCH AUCTION SCREEN ═══ -->
     <div id="dutchScreen" style="display:none;">
       <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;min-height:80vh;">
-        <div id="dutchArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
+        <div id="dutchArtCard" style="background:#fff;border-radius:12px;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;">
           <div style="background:#fff;border-radius:12px;padding:40px 60px;text-align:center;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);width:100%;max-width:600px;">
             <div style="color:#aaa;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;">Price Dropping...</div>
@@ -389,7 +389,7 @@ svg.map-svg{width:100%;height:100%}
     <!-- ═══ LOTTERY SCREEN ═══ -->
     <div id="lotteryScreen" style="display:none;">
       <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;min-height:80vh;">
-        <div id="lotteryArtCard" style="background:#fff;border-radius:12px;padding:0;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
+        <div id="lotteryArtCard" style="background:#fff;border-radius:12px;border:1px solid #ddd;overflow:hidden;align-self:start;box-shadow:0 2px 12px rgba(0,0,0,0.06);"></div>
         <div>
           <!-- Per-team ticket commitment panels -->
           <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
@@ -1226,16 +1226,16 @@ function artCardHTML(artIdx) {
   const art = artworks[artIdx];
   const total = Object.values(art.cities).reduce((a,b)=>a+b,0);
   const citiesHTML = Object.entries(art.cities).map(([city,price])=>
-    `<div style="background:#f5f5f5;padding:4px;border-radius:4px;text-align:center">
-      <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:#999">${cityNames[city]}</div>
+    `<div style="background:#f5f5f5;padding:4px 3px;border-radius:4px;text-align:center">
+      <div style="font-size:0.58rem;font-weight:700;text-transform:uppercase;color:#aaa;letter-spacing:0.04em">${cityNames[city]}</div>
       <div style="font-size:0.82rem;font-weight:700;color:#0a7a40">$${price}</div>
     </div>`).join('');
-  return `<img src="${art.image}" style="width:100%;height:180px;object-fit:cover;display:block;">
-    <div style="padding:14px;">
-      <div style="color:#111;font-weight:700;font-size:1rem;margin-bottom:3px">${art.title}</div>
-      <div style="color:#999;font-size:0.82rem;margin-bottom:10px">${art.artist}, ${art.year}</div>
-      <div style="background:#f8f8f8;border-radius:6px;padding:7px 10px;margin-bottom:10px;text-align:center;border:1px solid #eee;">
-        <span style="color:#aaa;font-size:0.72rem">TOTAL VALUE </span>
+  return `<img src="${art.image}" style="width:100%;height:220px;object-fit:cover;display:block;">
+    <div style="padding:14px 16px;">
+      <div style="color:#111;font-weight:700;font-size:1rem;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${art.title}</div>
+      <div style="color:#aaa;font-size:0.82rem;margin-bottom:10px">${art.artist}, ${art.year}</div>
+      <div style="background:#f8f8f8;border-radius:6px;padding:6px 10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid #eee;">
+        <span style="color:#aaa;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em">Total Value</span>
         <span style="color:#111;font-weight:700;font-size:1rem">$${total}</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">${citiesHTML}</div>
@@ -1304,7 +1304,7 @@ function backToNomination() {
   refreshAuctionDropdown();
   // Reset nomination UI
   document.getElementById('nominationArtSelect').value = '';
-  document.getElementById('nominationArtCard').innerHTML = '<div style="text-align:center;color:#555;font-size:0.9rem;padding:60px 20px;">Select an artwork →</div>';
+  document.getElementById('nominationArtCard').innerHTML = '<div style="height:220px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:0.9rem;">Select an artwork →</div>';
   document.querySelectorAll('.nom-team-btn').forEach(b=>{ b.style.background='transparent'; b.style.color=b.style.borderColor; });
   document.querySelectorAll('.auction-type-card').forEach(c=>c.classList.remove('selected'));
   document.getElementById('openingBidRow').style.display='none';
@@ -1318,7 +1318,7 @@ function backToNomination() {
 document.getElementById('nominationArtSelect').addEventListener('change', function() {
   const idx = parseInt(this.value);
   if(isNaN(idx)) {
-    document.getElementById('nominationArtCard').innerHTML='<div style="text-align:center;color:#555;font-size:0.9rem;padding:60px 20px;">Select an artwork →</div>';
+    document.getElementById('nominationArtCard').innerHTML='<div style="height:220px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:0.9rem;">Select an artwork →</div>';
     auctionLive.artIdx=null;
   } else {
     auctionLive.artIdx=idx;
