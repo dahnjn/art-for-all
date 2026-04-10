@@ -1673,49 +1673,70 @@ function lotteryDraw() {
     roll -= lot.tickets[tn];
     if(roll <= 0) { winner=tn; break; }
   }
-  if(!winner) winner=4; // fallback
+  if(!winner) winner=4;
 
   const price = total;
   const tc = teamColors[winner];
   const art = artworks[auctionLive.artIdx];
+  const capturedArtIdx = auctionLive.artIdx; // capture before async
 
-  // Animated reveal
+  // Build overlay with a stable JS reference (no inline onclick with fragile selectors)
   const overlay = document.createElement('div');
-  overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
-  overlay.innerHTML=`
-    <div style="text-align:center">
-      <div style="font-size:1rem;color:#666;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:20px">🎟️ DRAWING WINNER</div>
-      <div id="lotterySpinner" style="font-size:4rem;font-weight:bold;color:#fff;margin-bottom:30px;min-height:80px">...</div>
-      <div id="lotteryResult" style="display:none">
-        <div style="font-size:2rem;color:#fff;margin-bottom:10px">"${art.title}"</div>
-        <div id="lotteryWinnerName" style="font-size:5rem;font-weight:bold;margin-bottom:10px"></div>
-        <div style="font-size:1.5rem;color:#888">paid <span style="color:#0F9D58;font-weight:bold">$${price}M</span> in tickets</div>
-        <button onclick="this.closest('div[style]').remove();recordSale(${auctionLive.artIdx},${winner},${price},'Lottery')"
-          style="margin-top:30px;padding:15px 40px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.2rem;font-weight:bold;cursor:pointer">
-          CONFIRM SALE
-        </button>
-      </div>
+  overlay.id = 'lotteryOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.96);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+
+  const spinner = document.createElement('div');
+  spinner.id = 'lot-spinner';
+  spinner.style.cssText = 'font-size:4rem;font-weight:bold;color:#fff;margin-bottom:30px;min-height:90px;text-align:center;';
+  spinner.textContent = '...';
+
+  const resultDiv = document.createElement('div');
+  resultDiv.id = 'lot-result';
+  resultDiv.style.cssText = 'display:none;text-align:center;';
+  resultDiv.innerHTML = `
+    <div style="font-size:1.8rem;color:#fff;margin-bottom:8px;opacity:0.7">"${art.title}"</div>
+    <div style="font-size:5rem;font-weight:bold;color:${tc.bg};margin-bottom:8px;line-height:1">${tc.name}</div>
+    <div style="font-size:1.3rem;color:#888;margin-bottom:30px">won with $${price}M in tickets</div>
+    <button id="lot-confirm-btn" style="padding:15px 48px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;letter-spacing:0.05em;">CONFIRM SALE</button>
+    <div style="margin-top:14px;">
+      <button id="lot-cancel-btn" style="padding:10px 24px;background:transparent;color:#555;border:1px solid #444;border-radius:8px;font-size:0.85rem;cursor:pointer;">CANCEL — NO SALE</button>
     </div>`;
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'text-align:center;';
+  const label = document.createElement('div');
+  label.style.cssText = 'font-size:0.85rem;color:#555;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:20px;';
+  label.textContent = '🎟️ Drawing Winner';
+  wrapper.appendChild(label);
+  wrapper.appendChild(spinner);
+  wrapper.appendChild(resultDiv);
+  overlay.appendChild(wrapper);
   document.body.appendChild(overlay);
 
+  // Wire up buttons after appending (so IDs exist in DOM)
+  document.getElementById('lot-confirm-btn').addEventListener('click', () => {
+    overlay.remove();
+    recordSale(capturedArtIdx, winner, price, 'Lottery');
+  });
+  document.getElementById('lot-cancel-btn').addEventListener('click', () => {
+    overlay.remove();
+    backToNomination();
+  });
+
   // Slot machine spin
-  const teams = [1,2,3,4];
-  let spins=0; const totalSpins=18;
+  let spins = 0;
+  const totalSpins = 20;
   const spinInterval = setInterval(() => {
-    const fake = teams[spins % 4];
-    document.getElementById('lotterySpinner').textContent = teamColors[fake].name;
-    document.getElementById('lotterySpinner').style.color = teamColors[fake].bg;
+    const fake = [1,2,3,4][spins % 4];
+    spinner.textContent = teamColors[fake].name;
+    spinner.style.color = teamColors[fake].bg;
     spins++;
     if(spins >= totalSpins) {
       clearInterval(spinInterval);
       setTimeout(() => {
-        document.getElementById('lotterySpinner').style.display='none';
-        const res = document.getElementById('lotteryResult');
-        const wn = document.getElementById('lotteryWinnerName');
-        wn.textContent = tc.name;
-        wn.style.color = tc.bg;
-        res.style.display='block';
-      }, 200);
+        spinner.style.display = 'none';
+        resultDiv.style.display = 'block';
+      }, 150);
     }
   }, 80);
 }
