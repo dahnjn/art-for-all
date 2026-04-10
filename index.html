@@ -1696,8 +1696,9 @@ function lotteryDraw() {
   resultDiv.innerHTML = `
     <div style="font-size:1.8rem;color:#fff;margin-bottom:8px;opacity:0.7">"${art.title}"</div>
     <div style="font-size:5rem;font-weight:bold;color:${tc.bg};margin-bottom:8px;line-height:1">${tc.name}</div>
-    <div style="font-size:1.3rem;color:#888;margin-bottom:30px">won with $${price}M in tickets</div>
-    <button id="lot-confirm-btn" style="padding:15px 48px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;letter-spacing:0.05em;">CONFIRM SALE</button>
+    <div style="font-size:1.1rem;color:#888;margin-bottom:4px">${tc.name} bought <strong style="color:#fff">$${lot.tickets[winner]}M</strong> of tickets · Total pool: <strong style="color:#fff">$${price}M</strong></div>
+    <div style="font-size:0.9rem;color:#555;margin-bottom:28px">Winner pays full pool · Losers forfeit their stakes</div>
+    <button id="lot-confirm-btn" style="padding:15px 48px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;letter-spacing:0.05em;">CONFIRM — ${tc.name} pays $${price}M</button>
     <div style="margin-top:14px;">
       <button id="lot-cancel-btn" style="padding:10px 24px;background:transparent;color:#555;border:1px solid #444;border-radius:8px;font-size:0.85rem;cursor:pointer;">CANCEL — NO SALE</button>
     </div>`;
@@ -1716,6 +1717,17 @@ function lotteryDraw() {
   // Wire up buttons after appending (so IDs exist in DOM)
   document.getElementById('lot-confirm-btn').addEventListener('click', () => {
     overlay.remove();
+
+    // All teams pay their ticket stakes (losers lose their entry fee)
+    const tickets = lot.tickets;
+    [1,2,3,4].forEach(tn => {
+      if(tn !== winner && tickets[tn] > 0) {
+        gameState.teams[tn].cash -= tickets[tn] * 1000000;
+      }
+    });
+
+    // Winner pays the full pool (their tickets + everyone else's)
+    // recordSale will deduct price * 1M from winner and record the artwork
     recordSale(capturedArtIdx, winner, price, 'Lottery');
   });
   document.getElementById('lot-cancel-btn').addEventListener('click', () => {
