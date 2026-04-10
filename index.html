@@ -1702,13 +1702,13 @@ function lotteryDraw() {
   resultDiv.style.cssText = 'display:none;text-align:center;';
   resultDiv.innerHTML = `
     <div style="font-size:1.8rem;color:#fff;margin-bottom:8px;opacity:0.7">"${art.title}"</div>
-    <div style="font-size:5rem;font-weight:bold;color:${tc.bg};margin-bottom:8px;line-height:1">${tc.name}</div>
-    <div style="font-size:1.1rem;color:#888;margin-bottom:4px">
-      ${tc.name} entered <strong style="color:#fff">$${lot.tickets[winner]}M</strong> · Total pool was <strong style="color:#fff">$${price}M</strong>
+    <div style="font-size:5rem;font-weight:bold;color:${tc.bg};margin-bottom:12px;line-height:1">${tc.name}</div>
+    <div style="background:rgba(255,255,255,0.07);border-radius:12px;padding:16px 28px;margin-bottom:28px;display:inline-block;">
+      <div style="font-size:1.1rem;color:#fff;font-weight:bold;margin-bottom:6px">${tc.name} spent <span style="color:${tc.bg}">$${lot.tickets[winner]}M</span> on tickets and wins the artwork</div>
+      <div style="font-size:0.85rem;color:#666;">Other teams lose their ticket money. Total pool was $${price}M.</div>
     </div>
-    <div style="font-size:0.9rem;color:#555;margin-bottom:28px">Each team pays their own entry fee · Winner takes the artwork</div>
-    <button id="lot-confirm-btn" style="padding:15px 48px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;letter-spacing:0.05em;">CONFIRM — ${tc.name} pays $${lot.tickets[winner]}M</button>
-    <div style="margin-top:14px;">
+    <div>
+      <button id="lot-confirm-btn" style="padding:15px 48px;background:#fff;color:#000;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;letter-spacing:0.05em;display:block;margin:0 auto 12px;">CONFIRM — ${tc.name} pays $${lot.tickets[winner]}M</button>
       <button id="lot-cancel-btn" style="padding:10px 24px;background:transparent;color:#555;border:1px solid #444;border-radius:8px;font-size:0.85rem;cursor:pointer;">CANCEL — NO SALE</button>
     </div>`;
 
