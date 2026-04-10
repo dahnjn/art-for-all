@@ -43,7 +43,7 @@ h1{font-size:2rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;
 .city-newyork{background:#FFE5E5;color:#B91C1C}.city-london{background:#E0E7FF;color:#3730A3}.city-paris{background:#FEF3C7;color:#92400E}
 .city-dubai{background:#DBEAFE;color:#1E40AF}.city-capetown{background:#D1FAE5;color:#065F46}.city-mexicocity{background:#FCE7F3;color:#9F1239}
 .city-saopaulo{background:#F3E8FF;color:#6B21A8}.city-tokyo{background:#FED7AA;color:#9A3412}.city-shanghai{background:#E0F2FE;color:#075985}
-.city-moscow{background:#e0e0e0;color:#000}
+.city-moscow{background:#e0e0e0;color:#000}.city-sydney{background:#FFF0E0;color:#C05000}.city-singapore{background:#E0FFE8;color:#006620}
 .add-btn{position:absolute;top:10px;right:10px;width:32px;height:32px;background:#000;color:#fff;border:none;font-size:1.5rem;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;border-radius:50%;line-height:1}
 .add-btn:hover{background:#333}
 .team-badge{position:absolute;top:10px;right:50px;padding:6px 12px;font-size:0.7rem;font-weight:700;border-radius:4px;z-index:2;display:flex;align-items:center;gap:6px;text-transform:uppercase}
@@ -56,11 +56,11 @@ h1{font-size:2rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;
 .rounds-input{width:60px;padding:5px;margin-left:10px;border:1px solid #444;background:#222;color:#fff;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
 .map-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:none;flex-direction:column}
 .map-modal.show{display:flex}
-.map-header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#111;border-bottom:1px solid #333}
-.map-title{color:#fff;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:1.2rem}
+.map-header{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:#111;border-bottom:1px solid #333}
+.map-title{color:#fff;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:1.1rem}
 .map-close{background:#333;color:#fff;border:none;padding:8px 16px;cursor:pointer;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
-.map-content{flex:1;display:flex;position:relative;overflow:hidden}
-.map-area{flex:1;position:relative;background:#000;display:flex;align-items:center;justify-content:center;padding:20px}
+.map-content{flex:1;display:flex;position:relative;overflow:hidden;min-height:0}
+.map-area{flex:1;position:relative;background:#000;display:flex;align-items:center;justify-content:center;padding:20px;min-width:0}
 .map-container{position:relative;width:100%;max-width:1200px;height:100%;max-height:800px}
 svg.map-svg{width:100%;height:100%}
 .city-circle{cursor:pointer;transition:all 0.3s}
@@ -71,11 +71,11 @@ svg.map-svg{width:100%;height:100%}
 .team-marker{transition:all 0.3s;cursor:pointer}
 .team-marker:hover{opacity:0.8}
 .starting-position{fill:#4CAF50;stroke:#000;stroke-width:4;opacity:0.3}
-.sidebar{width:320px;background:#111;padding:20px;overflow-y:auto;border-left:1px solid #333}
-.sidebar h3{color:#fff;font-size:0.9rem;margin-bottom:15px;text-transform:uppercase;letter-spacing:0.1em}
-.round-info{background:#222;padding:15px;margin-bottom:15px;border-radius:4px}
-.round-info label{color:#888;font-size:0.75rem;display:block;margin-bottom:5px}
-.round-info span{color:#fff;font-size:1.2rem;font-weight:bold}
+.sidebar{width:260px;background:#111;padding:16px;overflow-y:auto;border-left:1px solid #333;flex-shrink:0}
+.sidebar h3{color:#fff;font-size:0.85rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.1em}
+.round-info{background:#222;padding:12px;margin-bottom:12px;border-radius:4px}
+.round-info label{color:#888;font-size:0.7rem;display:block;margin-bottom:3px}
+.round-info span{color:#fff;font-size:1.1rem;font-weight:bold}
 .team-panel{background:#222;padding:15px;margin-bottom:10px;border-radius:4px;border-left:4px solid}
 .team-panel.team-1{border-left-color:#E94235}
 .team-panel.team-2{border-left-color:#FBBC04}
@@ -84,16 +84,23 @@ svg.map-svg{width:100%;height:100%}
 .team-panel h4{color:#fff;font-size:0.85rem;margin-bottom:10px}
 .team-panel select{width:100%;padding:8px;background:#333;color:#fff;border:1px solid #444;margin-bottom:8px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
 .team-stat{display:flex;justify-content:space-between;color:#ccc;font-size:0.75rem;margin-top:5px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
-.game-controls{padding:15px;background:#222;border-radius:4px;margin-bottom:15px}
-.game-controls button{width:100%;padding:10px;margin-bottom:8px;background:#0F9D58;color:#fff;border:none;cursor:pointer;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:bold;font-size:0.85rem}
-.game-controls button:hover{background:#0d8549}
-#resetGame{background:#E94235}
-#resetGame:hover{background:#c23629}
-#saveGame:hover{background:#3367d6}
-#loadGame:hover{background:#f9ab00}
-.log-container{background:#222;padding:15px;border-radius:4px;max-height:300px;overflow-y:auto}
-.log-container h3{color:#fff;font-size:0.85rem;margin-bottom:10px;text-transform:uppercase}
-.log-entry{color:#ccc;font-size:0.75rem;margin-bottom:5px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;padding:5px;background:#1a1a1a;border-radius:2px}
+.game-controls{padding:12px;background:#222;border-radius:4px;margin-bottom:12px}
+.game-controls button{width:100%;padding:9px;margin-bottom:6px;background:transparent;color:#aaa;border:1px solid #444;cursor:pointer;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:bold;font-size:0.8rem;transition:all 0.15s}
+.game-controls button:hover{background:#1a1a1a;color:#fff;border-color:#fff}
+#resetGame{background:transparent}
+#resetGame:hover{background:#1a1a1a;border-color:#fff;color:#fff}
+#saveGame:hover{background:#1a1a1a;border-color:#fff;color:#fff}
+#loadGame:hover{background:#1a1a1a;border-color:#fff;color:#fff}
+.log-container{background:#222;padding:12px;border-radius:4px;max-height:200px;overflow-y:auto}
+.log-container h3{color:#fff;font-size:0.8rem;margin-bottom:8px;text-transform:uppercase}
+.log-entry{color:#ccc;font-size:0.7rem;margin-bottom:4px;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;padding:4px;background:#1a1a1a;border-radius:2px}
+/* Team destination bar */
+.team-dest-cell{padding:10px 12px;display:flex;flex-direction:column;gap:5px}
+.team-dest-label{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase}
+.dest-select{background:#1a1a1a;color:#fff;border:1px solid #333;padding:6px 8px;font-size:0.8rem;border-radius:4px;width:100%;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif}
+.dest-select:focus{outline:none;border-color:#555}
+.fly-btn{background:#0d0d1f;color:#8b7cf8;border:1px solid #2d2060;border-radius:4px;padding:5px 8px;font-size:0.7rem;font-weight:700;cursor:pointer;letter-spacing:0.04em;white-space:nowrap;transition:all 0.15s}
+.fly-btn:hover{background:#1a1040;border-color:#5040a0}
 
 /* Auction styles */
 .auction-team-section{background:#fff;border-radius:10px;padding:15px;border:2px solid #ddd}
@@ -135,6 +142,8 @@ svg.map-svg{width:100%;height:100%}
         <option value="tokyo">TYO</option>
         <option value="shanghai">SHA</option>
         <option value="moscow">MOS</option>
+        <option value="sydney">SYD</option>
+        <option value="singapore">SIN</option>
       </select>
       <select id="sortDirection">
         <option value="high">High to Low</option>
@@ -188,6 +197,34 @@ svg.map-svg{width:100%;height:100%}
       <button class="map-close" id="mapClose">✕ CLOSE</button>
     </div>
   </div>
+
+  <!-- TEAM DESTINATION BAR — top strip -->
+  <div id="teamBar" style="display:grid;grid-template-columns:repeat(4,1fr);background:#0a0a0a;border-bottom:1px solid #1a1a1a;">
+    <div class="team-dest-cell" style="border-right:1px solid #1a1a1a;border-left:3px solid #E94235;">
+      <div class="team-dest-label" style="color:#E94235;">RED</div>
+      <select id="dest1" class="dest-select"></select>
+      <button id="fly1" onclick="activateFly(1)" class="fly-btn">✈ FLY — $50M</button>
+    </div>
+    <div class="team-dest-cell" style="border-right:1px solid #1a1a1a;border-left:3px solid #FBBC04;">
+      <div class="team-dest-label" style="color:#FBBC04;">YELLOW</div>
+      <select id="dest2" class="dest-select"></select>
+      <button id="fly2" onclick="activateFly(2)" class="fly-btn">✈ FLY — $50M</button>
+    </div>
+    <div class="team-dest-cell" style="border-right:1px solid #1a1a1a;border-left:3px solid #4285F4;">
+      <div class="team-dest-label" style="color:#4285F4;">BLUE</div>
+      <select id="dest3" class="dest-select"></select>
+      <button id="fly3" onclick="activateFly(3)" class="fly-btn">✈ FLY — $50M</button>
+    </div>
+    <div class="team-dest-cell" style="border-left:3px solid #0F9D58;">
+      <div class="team-dest-label" style="color:#0F9D58;">GREEN</div>
+      <select id="dest4" class="dest-select"></select>
+      <button id="fly4" onclick="activateFly(4)" class="fly-btn">✈ FLY — $50M</button>
+    </div>
+  </div>
+
+  <!-- TRAVEL BUTTON — full width strip below team bar -->
+  <button id="nextRound" style="width:100%;padding:13px;background:#1a1a1a;color:#fff;border:none;border-bottom:1px solid #111;font-size:0.95rem;font-weight:700;cursor:pointer;letter-spacing:0.12em;text-transform:uppercase;transition:background 0.2s;">✈ TRAVEL — YEAR 1</button>
+
   <div class="map-content">
     <div class="map-area" id="mapArea">
       <div class="map-container">
@@ -203,44 +240,14 @@ svg.map-svg{width:100%;height:100%}
         <label>Rounds Remaining</label>
         <span id="roundsRemaining">8</span>
       </div>
-      <div class="scoreboard-container" style="background:#222;padding:15px;border-radius:4px;margin-bottom:20px">
+      <div class="scoreboard-container" style="background:#222;padding:15px;border-radius:4px;margin-bottom:15px">
         <h3 style="color:#fff;font-size:0.9rem;margin-bottom:15px;text-transform:uppercase;letter-spacing:0.1em">Scoreboard</h3>
         <div id="scoreboard"></div>
       </div>
       <div class="game-controls">
-        <button id="nextRound">NEXT YEAR →</button>
         <button id="resetGame">⟲ RESET GAME</button>
-        <button id="saveGame" style="background:#4285F4">💾 SAVE GAME</button>
-        <button id="loadGame" style="background:#FBBC04;color:#000">📂 LOAD GAME</button>
-      </div>
-      <h3>Team Destinations</h3>
-      <div class="team-panel team-1">
-        <h4>RED</h4>
-        <select id="dest1"></select>
-        <div class="team-stat"><span>Ticket Value:</span><span id="tv1">$0</span></div>
-        <div class="team-stat"><span>Cash:</span><span id="cash1" style="font-weight:bold">$0</span></div>
-        <div class="team-stat"><span>Artworks:</span><span id="artcount1">0</span></div>
-      </div>
-      <div class="team-panel team-2">
-        <h4>YELLOW</h4>
-        <select id="dest2"></select>
-        <div class="team-stat"><span>Ticket Value:</span><span id="tv2">$0</span></div>
-        <div class="team-stat"><span>Cash:</span><span id="cash2" style="font-weight:bold">$0</span></div>
-        <div class="team-stat"><span>Artworks:</span><span id="artcount2">0</span></div>
-      </div>
-      <div class="team-panel team-3">
-        <h4>BLUE</h4>
-        <select id="dest3"></select>
-        <div class="team-stat"><span>Ticket Value:</span><span id="tv3">$0</span></div>
-        <div class="team-stat"><span>Cash:</span><span id="cash3" style="font-weight:bold">$0</span></div>
-        <div class="team-stat"><span>Artworks:</span><span id="artcount3">0</span></div>
-      </div>
-      <div class="team-panel team-4">
-        <h4>GREEN</h4>
-        <select id="dest4"></select>
-        <div class="team-stat"><span>Ticket Value:</span><span id="tv4">$0</span></div>
-        <div class="team-stat"><span>Cash:</span><span id="cash4" style="font-weight:bold">$0</span></div>
-        <div class="team-stat"><span>Artworks:</span><span id="artcount4">0</span></div>
+        <button id="saveGame">💾 SAVE</button>
+        <button id="loadGame">📂 LOAD</button>
       </div>
       <div class="log-container">
         <h3>Game Log</h3>
@@ -485,47 +492,49 @@ svg.map-svg{width:100%;height:100%}
 
 <script>
 const artworks = [
-  {title:"Infinity Mirrored Room",artist:"Yayoi Kusama",year:"2013",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_4.jpg",cities:{"newyork":12,"london":12,"paris":12,"dubai":12,"capetown":12,"mexicocity":12,"saopaulo":12,"tokyo":12,"shanghai":12,"moscow":12}},
-  {title:"Cloud Gate",artist:"Anish Kapoor",year:"2006",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_1.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":11,"capetown":11,"mexicocity":10,"saopaulo":10,"tokyo":10,"shanghai":8,"moscow":0}},
-  {title:"The Scream",artist:"Edvard Munch",year:"1893",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_1.jpg",cities:{"newyork":12,"london":12,"paris":12,"dubai":11,"capetown":10,"mexicocity":8,"saopaulo":6,"tokyo":4,"shanghai":5,"moscow":0}},
-  {title:"Forever Bicycles",artist:"Ai Weiwei",year:"2011",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_3.webp",cities:{"newyork":8,"london":8,"paris":9,"dubai":9,"capetown":8,"mexicocity":7,"saopaulo":6,"tokyo":12,"shanghai":12,"moscow":0}},
-  {title:"The Persistence of Memory",artist:"Salvador Dalí",year:"1931",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_5.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":10,"capetown":9,"mexicocity":7,"saopaulo":5,"tokyo":3,"shanghai":3,"moscow":0}},
-  {title:"The Physical Impossibility",artist:"Damien Hirst",year:"1991",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_4.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":10,"capetown":8,"mexicocity":7,"saopaulo":6,"tokyo":3,"shanghai":3,"moscow":0}},
-  {title:"Earth Globe",artist:"Mona Hatoum",year:"2007",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_2.jpg",cities:{"newyork":10,"london":10,"paris":10,"dubai":9,"capetown":8,"mexicocity":8,"saopaulo":7,"tokyo":6,"shanghai":6,"moscow":0}},
-  {title:"The Weather Project",artist:"Olafur Eliasson",year:"2003",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_6.jpg",cities:{"newyork":11,"london":11,"paris":10,"dubai":9,"capetown":8,"mexicocity":7,"saopaulo":5,"tokyo":3,"shanghai":2,"moscow":0}},
-  {title:"Composition",artist:"Piet Mondrian",year:"1921",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_3.jpg",cities:{"newyork":11,"london":11,"paris":10,"dubai":9,"capetown":8,"mexicocity":6,"saopaulo":5,"tokyo":3,"shanghai":2,"moscow":0}},
-  {title:"Balloon Dog",artist:"Jeff Koons",year:"1994",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_1.png",cities:{"newyork":10,"london":10,"paris":9,"dubai":8,"capetown":7,"mexicocity":6,"saopaulo":5,"tokyo":5,"shanghai":6,"moscow":0}},
-  {title:"727-727",artist:"Takashi Murakami",year:"2006",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_4.webp",cities:{"newyork":5,"london":4,"paris":5,"dubai":6,"capetown":5,"mexicocity":4,"saopaulo":4,"tokyo":12,"shanghai":15,"moscow":0}},
-  {title:"Sunflower Seeds",artist:"Ai Weiwei",year:"2010",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_5.jpg",cities:{"newyork":8,"london":8,"paris":8,"dubai":7,"capetown":6,"mexicocity":10,"saopaulo":11,"tokyo":4,"shanghai":4,"moscow":6}},
-  {title:"The Two Fridas",artist:"Frida Kahlo",year:"1939",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_6.jpg",cities:{"newyork":4,"london":4,"paris":4,"dubai":3,"capetown":3,"mexicocity":12,"saopaulo":12,"tokyo":5,"shanghai":5,"moscow":0}},
-  {title:"Pumpkin",artist:"Yayoi Kusama",year:"2022",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_2.jpg",cities:{"newyork":3,"london":3,"paris":3,"dubai":4,"capetown":3,"mexicocity":2,"saopaulo":2,"tokyo":12,"shanghai":15,"moscow":3}},
-  {title:"A Bigger Splash",artist:"David Hockney",year:"1967",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_2.jpg",cities:{"newyork":8,"london":11,"paris":10,"dubai":8,"capetown":6,"mexicocity":4,"saopaulo":3,"tokyo":2,"shanghai":0,"moscow":0}},
-  {title:"Maman",artist:"Louise Bourgeois",year:"1999",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_3_.jpg",cities:{"newyork":10,"london":11,"paris":10,"dubai":8,"capetown":6,"mexicocity":3,"saopaulo":2,"tokyo":0,"shanghai":0,"moscow":0}},
-  {title:"Mobile",artist:"Alexander Calder",year:"1958",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_6.jpg",cities:{"newyork":9,"london":9,"paris":9,"dubai":8,"capetown":7,"mexicocity":5,"saopaulo":3,"tokyo":2,"shanghai":0,"moscow":0}},
-  {title:"Migrant Mother",artist:"Dorothea Lange",year:"1936",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_5.jpg",cities:{"newyork":10,"london":9,"paris":8,"dubai":7,"capetown":5,"mexicocity":2,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
-  {title:"Earthrise",artist:"William Anders",year:"1968",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_6.jpg",cities:{"newyork":11,"london":10,"paris":9,"dubai":7,"capetown":3,"mexicocity":0,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
-  {title:"Atmosphere and Environment XII",artist:"Louise Nevelson",year:"1970",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_5_.jpg",cities:{"newyork":9,"london":9,"paris":8,"dubai":7,"capetown":5,"mexicocity":2,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
-  {title:"Einstein Tongue",artist:"Arthur Sasse",year:"1951",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_3.jpg",cities:{"newyork":8,"london":8,"paris":7,"dubai":5,"capetown":2,"mexicocity":0,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
-  {title:"Last Barbary Lion",artist:"Unknown",year:"1925",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_4.webp",cities:{"newyork":7,"london":7,"paris":6,"dubai":5,"capetown":3,"mexicocity":2,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
-  {title:"First Flight",artist:"Wright Brothers",year:"1903",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_1.jpg",cities:{"newyork":6,"london":6,"paris":5,"dubai":3,"capetown":2,"mexicocity":0,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0}},
-  {title:"Abbey Road",artist:"Iain Macmillan",year:"1969",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_2.jpg",cities:{"newyork":1,"london":9,"paris":1,"dubai":1,"capetown":0,"mexicocity":0,"saopaulo":0,"tokyo":2,"shanghai":0,"moscow":6}},
+{title:"Infinity Mirrored Room",artist:"Yayoi Kusama",year:"2013",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_4.jpg",cities:{"newyork":12,"london":12,"paris":12,"dubai":15,"capetown":12,"mexicocity":15,"saopaulo":12,"tokyo":12,"shanghai":12,"moscow":12,"sydney":14,"singapore":14}},
+  {title:"Cloud Gate",artist:"Anish Kapoor",year:"2006",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_1.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":14,"capetown":11,"mexicocity":14,"saopaulo":10,"tokyo":10,"shanghai":8,"moscow":0,"sydney":12,"singapore":10}},
+  {title:"The Scream",artist:"Edvard Munch",year:"1893",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_1.jpg",cities:{"newyork":12,"london":12,"paris":12,"dubai":13,"capetown":10,"mexicocity":12,"saopaulo":6,"tokyo":4,"shanghai":5,"moscow":0,"sydney":11,"singapore":8}},
+  {title:"Forever Bicycles",artist:"Ai Weiwei",year:"2011",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_3.webp",cities:{"newyork":8,"london":8,"paris":9,"dubai":11,"capetown":8,"mexicocity":9,"saopaulo":6,"tokyo":12,"shanghai":12,"moscow":0,"sydney":10,"singapore":14}},
+  {title:"The Persistence of Memory",artist:"Salvador Dalí",year:"1931",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_5.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":13,"capetown":9,"mexicocity":11,"saopaulo":5,"tokyo":3,"shanghai":3,"moscow":0,"sydney":11,"singapore":9}},
+  {title:"The Physical Impossibility",artist:"Damien Hirst",year:"1991",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_4.jpg",cities:{"newyork":12,"london":12,"paris":11,"dubai":13,"capetown":8,"mexicocity":11,"saopaulo":6,"tokyo":3,"shanghai":3,"moscow":0,"sydney":12,"singapore":9}},
+  {title:"Earth Globe",artist:"Mona Hatoum",year:"2007",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_2.jpg",cities:{"newyork":10,"london":10,"paris":10,"dubai":12,"capetown":8,"mexicocity":12,"saopaulo":7,"tokyo":6,"shanghai":6,"moscow":0,"sydney":10,"singapore":11}},
+  {title:"The Weather Project",artist:"Olafur Eliasson",year:"2003",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_6.jpg",cities:{"newyork":11,"london":11,"paris":10,"dubai":12,"capetown":8,"mexicocity":11,"saopaulo":5,"tokyo":3,"shanghai":2,"moscow":0,"sydney":10,"singapore":8}},
+  {title:"Composition",artist:"Piet Mondrian",year:"1921",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_3.jpg",cities:{"newyork":11,"london":11,"paris":10,"dubai":12,"capetown":8,"mexicocity":10,"saopaulo":5,"tokyo":3,"shanghai":2,"moscow":0,"sydney":10,"singapore":9}},
+  {title:"Balloon Dog",artist:"Jeff Koons",year:"1994",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_1.png",cities:{"newyork":10,"london":10,"paris":9,"dubai":12,"capetown":7,"mexicocity":10,"saopaulo":5,"tokyo":5,"shanghai":6,"moscow":0,"sydney":11,"singapore":10}},
+  {title:"727-727",artist:"Takashi Murakami",year:"2006",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_4.webp",cities:{"newyork":5,"london":4,"paris":5,"dubai":9,"capetown":5,"mexicocity":6,"saopaulo":4,"tokyo":12,"shanghai":15,"moscow":0,"sydney":10,"singapore":15}},
+  {title:"Sunflower Seeds",artist:"Ai Weiwei",year:"2010",category:"installation",image:"https://dahnjn.github.io/art-for-all-images/installation_5.jpg",cities:{"newyork":8,"london":8,"paris":8,"dubai":10,"capetown":6,"mexicocity":13,"saopaulo":11,"tokyo":4,"shanghai":4,"moscow":6,"sydney":8,"singapore":12}},
+  {title:"The Two Fridas",artist:"Frida Kahlo",year:"1939",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_6.jpg",cities:{"newyork":4,"london":4,"paris":4,"dubai":7,"capetown":3,"mexicocity":15,"saopaulo":12,"tokyo":5,"shanghai":5,"moscow":0,"sydney":6,"singapore":5}},
+  {title:"Pumpkin",artist:"Yayoi Kusama",year:"2022",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_2.jpg",cities:{"newyork":3,"london":3,"paris":3,"dubai":8,"capetown":3,"mexicocity":5,"saopaulo":2,"tokyo":12,"shanghai":15,"moscow":3,"sydney":11,"singapore":15}},
+  {title:"A Bigger Splash",artist:"David Hockney",year:"1967",category:"painting",image:"https://dahnjn.github.io/art-for-all-images/painting_2.jpg",cities:{"newyork":8,"london":11,"paris":10,"dubai":11,"capetown":6,"mexicocity":8,"saopaulo":3,"tokyo":2,"shanghai":0,"moscow":0,"sydney":12,"singapore":8}},
+  {title:"Maman",artist:"Louise Bourgeois",year:"1999",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_3_.jpg",cities:{"newyork":10,"london":11,"paris":10,"dubai":11,"capetown":6,"mexicocity":7,"saopaulo":2,"tokyo":0,"shanghai":0,"moscow":0,"sydney":10,"singapore":7}},
+  {title:"Mobile",artist:"Alexander Calder",year:"1958",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_6.jpg",cities:{"newyork":9,"london":9,"paris":9,"dubai":11,"capetown":7,"mexicocity":9,"saopaulo":3,"tokyo":2,"shanghai":0,"moscow":0,"sydney":9,"singapore":7}},
+  {title:"Migrant Mother",artist:"Dorothea Lange",year:"1936",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_5.jpg",cities:{"newyork":10,"london":9,"paris":8,"dubai":10,"capetown":5,"mexicocity":6,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0,"sydney":8,"singapore":5}},
+  {title:"Earthrise",artist:"William Anders",year:"1968",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_6.jpg",cities:{"newyork":11,"london":10,"paris":9,"dubai":10,"capetown":3,"mexicocity":4,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0,"sydney":9,"singapore":6}},
+  {title:"Atmosphere and Environment XII",artist:"Louise Nevelson",year:"1970",category:"sculpture",image:"https://dahnjn.github.io/art-for-all-images/sculpture_5_.jpg",cities:{"newyork":9,"london":9,"paris":8,"dubai":10,"capetown":5,"mexicocity":6,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0,"sydney":8,"singapore":6}},
+  {title:"Einstein Tongue",artist:"Arthur Sasse",year:"1951",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_3.jpg",cities:{"newyork":8,"london":8,"paris":7,"dubai":8,"capetown":2,"mexicocity":3,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0,"sydney":7,"singapore":5}},
+  {title:"Last Barbary Lion",artist:"Unknown",year:"1925",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_4.webp",cities:{"newyork":7,"london":7,"paris":6,"dubai":8,"capetown":3,"mexicocity":4,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0,"sydney":6,"singapore":5}},
+  {title:"First Flight",artist:"Wright Brothers",year:"1903",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_1.jpg",cities:{"newyork":6,"london":6,"paris":5,"dubai":6,"capetown":2,"mexicocity":2,"saopaulo":0,"tokyo":0,"shanghai":0,"moscow":0,"sydney":7,"singapore":5}},
+  {title:"Abbey Road",artist:"Iain Macmillan",year:"1969",category:"photography",image:"https://dahnjn.github.io/art-for-all-images/photograph_2.jpg",cities:{"newyork":1,"london":9,"paris":1,"dubai":3,"capetown":0,"mexicocity":1,"saopaulo":0,"tokyo":2,"shanghai":0,"moscow":6,"sydney":7,"singapore":4}},
 ];
 
-const cities = ['newyork','london','paris','dubai','capetown','mexicocity','saopaulo','tokyo','shanghai'];
-const cityNames = {newyork:'NYC',london:'LDN',paris:'PAR',dubai:'DXB',capetown:'CPT',mexicocity:'MEX',saopaulo:'SAO',tokyo:'TYO',shanghai:'SHA',moscow:'MOS'};
+const cities = ['newyork','london','paris','dubai','capetown','mexicocity','saopaulo','tokyo','shanghai','sydney','singapore'];
+const cityNames = {newyork:'NYC',london:'LDN',paris:'PAR',dubai:'DXB',capetown:'CPT',mexicocity:'MEX',saopaulo:'SAO',tokyo:'TYO',shanghai:'SHA',moscow:'MOS',sydney:'SYD',singapore:'SIN'};
 
 const cityData = {
   start:{name:'START',pop:0,x:400,y:550,abbr:'START',connections:['saopaulo','capetown']},
   saopaulo:{name:'SAO PAULO',pop:750000,x:300,y:480,abbr:'SAO',connections:['mexicocity','start','capetown']},
-  mexicocity:{name:'MEXICO CITY',pop:600000,x:180,y:350,abbr:'MEX',connections:['newyork','saopaulo']},
+  mexicocity:{name:'MEXICO CITY',pop:1000000,x:180,y:350,abbr:'MEX',connections:['newyork','saopaulo']},
   newyork:{name:'NEW YORK',pop:1500000,x:250,y:200,abbr:'NYC',connections:['london','paris','mexicocity']},
-  london:{name:'LONDON',pop:1200000,x:480,y:140,abbr:'LDN',connections:['newyork','paris']},
+  london:{name:'LONDON',pop:1200000,x:480,y:140,abbr:'LDN',connections:['newyork','paris','dubai']},
   paris:{name:'PARIS',pop:1000000,x:520,y:220,abbr:'PAR',connections:['dubai','capetown','newyork','london']},
-  capetown:{name:'CAPE TOWN',pop:700000,x:580,y:450,abbr:'CPT',connections:['start','dubai','shanghai','paris','saopaulo']},
-  moscow:{name:'MOSCOW',pop:1000000,x:650,y:100,abbr:'MOS',connections:['shanghai','dubai']},
-  dubai:{name:'DUBAI',pop:500000,x:700,y:280,abbr:'DXB',connections:['paris','capetown','moscow','shanghai']},
-  tokyo:{name:'TOKYO',pop:1200000,x:920,y:180,abbr:'TYO',connections:['shanghai']},
-  shanghai:{name:'SHANGHAI',pop:2000000,x:820,y:260,abbr:'SHA',connections:['tokyo','capetown','moscow','dubai']}
+  capetown:{name:'CAPE TOWN',pop:700000,x:580,y:450,abbr:'CPT',connections:['start','dubai','shanghai','paris','saopaulo','sydney']},
+  moscow:{name:'MOSCOW',pop:1000000,x:650,y:100,abbr:'MOS',connections:['shanghai','dubai','tokyo']},
+  dubai:{name:'DUBAI',pop:600000,x:700,y:280,abbr:'DXB',connections:['paris','capetown','moscow','shanghai','london']},
+  tokyo:{name:'TOKYO',pop:1200000,x:920,y:180,abbr:'TYO',connections:['shanghai','moscow','sydney']},
+  shanghai:{name:'SHANGHAI',pop:2000000,x:820,y:260,abbr:'SHA',connections:['tokyo','capetown','moscow','dubai','singapore']},
+  sydney:{name:'SYDNEY',pop:1000000,x:950,y:450,abbr:'SYD',connections:['tokyo','shanghai','capetown','singapore']},
+  singapore:{name:'SINGAPORE',pop:1700000,x:850,y:370,abbr:'SIN',connections:['shanghai','sydney']}
 };
 
 const teamColors = {
@@ -539,10 +548,10 @@ let gameState = {
   round:1,
   maxRounds:8,
   teams:{
-    1:{cash:0,city:'start',artworks:[],soldTo:{}},
-    2:{cash:0,city:'start',artworks:[],soldTo:{}},
-    3:{cash:0,city:'start',artworks:[],soldTo:{}},
-    4:{cash:0,city:'start',artworks:[],soldTo:{}}
+    1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+    2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+    3:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+    4:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false}
   }
 };
 
@@ -754,8 +763,8 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
 
 function updateCompetitiveAnalysis() {
   const tv = getTeamTicketValues();
-  const allCities = ['newyork','london','paris','dubai','capetown','mexicocity','saopaulo','tokyo','shanghai','moscow'];
-  const cityDisplayNames = {newyork:'New York',london:'London',paris:'Paris',dubai:'Dubai',capetown:'Cape Town',mexicocity:'Mexico City',saopaulo:'São Paulo',tokyo:'Tokyo',shanghai:'Shanghai',moscow:'Moscow'};
+  const allCities = ['newyork','london','paris','dubai','capetown','mexicocity','saopaulo','tokyo','shanghai','moscow','sydney','singapore'];
+  const cityDisplayNames = {newyork:'New York',london:'London',paris:'Paris',dubai:'Dubai',capetown:'Cape Town',mexicocity:'Mexico City',saopaulo:'São Paulo',tokyo:'Tokyo',shanghai:'Shanghai',moscow:'Moscow',sydney:'Sydney',singapore:'Singapore'};
   const tableBody = document.getElementById('analysisTableBody');
   const analysis = document.getElementById('competitiveAnalysis');
   const hasArtworks = [1,2,3,4].some(t => gameState.teams[t].artworks.length > 0);
@@ -859,13 +868,13 @@ function drawTeams() {
 
 function getTeamTicketValues() {
   const values = {1:{},2:{},3:{},4:{}};
-  [...cities, 'moscow'].forEach(city => { [1,2,3,4].forEach(t => values[t][city]=0); });
+  [...cities].forEach(city => { [1,2,3,4].forEach(t => values[t][city]=0); });
   document.querySelectorAll('.art-card').forEach(card => {
     const team = card.dataset.team;
     if(team) {
       const teamNum = parseInt(team.replace('TEAM ',''));
       const art = artworks[parseInt(card.dataset.idx)];
-      [...cities,'moscow'].forEach(city => { values[teamNum][city] += art.cities[city]||0; });
+      [...cities].forEach(city => { values[teamNum][city] += art.cities[city]||0; });
     }
   });
   return values;
@@ -874,37 +883,88 @@ function getTeamTicketValues() {
 function populateDestinationDropdowns() {
   for(let i=1;i<=4;i++) {
     const select = document.getElementById(`dest${i}`);
-    const currentCity = gameState.teams[i].city;
-    const available = cityData[currentCity].connections;
-    select.innerHTML = '<option value="">Stay Here</option>' +
-      available.filter(c=>c!=='start').map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
+    const flyBtn = document.getElementById(`fly${i}`);
+    const team = gameState.teams[i];
+    const currentCity = team.city;
+    const isFlyMode = select.dataset.flyMode === 'true';
+    const currentName = currentCity === 'start' ? 'START' : cityData[currentCity].name;
+
+    if(isFlyMode) {
+      select.innerHTML = `<option value="">— SELECT DESTINATION —</option>` +
+        Object.keys(cityData)
+          .filter(k => k !== 'start' && k !== currentCity)
+          .map(k=>`<option value="${k}">✈ ${cityData[k].name}</option>`).join('');
+    } else {
+      const available = cityData[currentCity].connections.filter(c=>c!=='start');
+      select.innerHTML =
+        `<option value="" disabled selected>📍 ${currentName} (current)</option>` +
+        `<option value="">— Stay here —</option>` +
+        available.map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
+    }
+
+    // Update fly button
+    if(team.hasFlown) {
+      flyBtn.textContent = '✈ FLOWN';
+      flyBtn.style.opacity = '0.3';
+      flyBtn.style.cursor = 'not-allowed';
+      flyBtn.onclick = null;
+    } else if(isFlyMode) {
+      flyBtn.textContent = '✈ FLYING — cancel';
+      flyBtn.style.background = '#3d1fa3';
+      flyBtn.style.color = '#fff';
+      flyBtn.style.borderColor = '#6040cc';
+      flyBtn.style.opacity = '1';
+    } else {
+      flyBtn.textContent = '✈ FLY — $50M';
+      flyBtn.style.background = '#0d0d1f';
+      flyBtn.style.color = '#8b7cf8';
+      flyBtn.style.borderColor = '#2d2060';
+      flyBtn.style.opacity = '1';
+      flyBtn.onclick = () => activateFly(i);
+    }
   }
 }
 
-function updateTeamDisplay() {
-  const tv = getTeamTicketValues();
-  for(let i=1;i<=4;i++) {
-    const dest = document.getElementById(`dest${i}`).value || gameState.teams[i].city;
-    const ticketVal = dest !== 'start' ? tv[i][dest]||0 : 0;
-    document.getElementById(`tv${i}`).textContent = '$'+ticketVal;
-    const cash = gameState.teams[i].cash;
-    const cashEl = document.getElementById(`cash${i}`);
-    cashEl.textContent = '$'+cash.toLocaleString();
-    cashEl.style.color = cash < 0 ? '#E94235' : '#0F9D58';
-    document.getElementById(`artcount${i}`).textContent = gameState.teams[i].artworks.length;
-  }
+function activateFly(teamNum) {
+  const team = gameState.teams[teamNum];
+  if(team.hasFlown) return;
+  const select = document.getElementById(`dest${teamNum}`);
+  const isActive = select.dataset.flyMode === 'true';
+  select.dataset.flyMode = isActive ? 'false' : 'true';
+  populateDestinationDropdowns();
+  updateTeamDisplay();
+}
 
+function updateTeamDisplay() {
   const sorted = [1,2,3,4].map(n=>({n,cash:gameState.teams[n].cash})).sort((a,b)=>b.cash-a.cash);
   document.getElementById('scoreboard').innerHTML = sorted.map((t,i) => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:#1a1a1a;margin-bottom:6px;border-radius:4px;border-left:4px solid ${teamColors[t.n].bg}">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:#666;font-weight:bold">#${i+1}</span>
-        <span style="color:${teamColors[t.n].bg};font-weight:bold">${teamColors[t.n].name}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="color:#555;font-weight:bold;font-size:0.75rem">#${i+1}</span>
+        <span style="color:${teamColors[t.n].bg};font-weight:bold;font-size:0.85rem">${teamColors[t.n].name}</span>
+        <span style="color:#555;font-size:0.7rem">${gameState.teams[t.n].artworks.length} works</span>
       </div>
-      <span style="color:${t.cash>=0?'#0F9D58':'#E94235'};font-weight:bold">$${t.cash.toLocaleString()}</span>
+      <span style="color:${t.cash>=0?'#0F9D58':'#E94235'};font-weight:bold;font-size:0.85rem">$${t.cash.toLocaleString()}</span>
     </div>`).join('');
 
-  document.getElementById('roundsRemaining').textContent = Math.max(0, gameState.maxRounds - gameState.round + 1);
+  const remaining = Math.max(0, gameState.maxRounds - gameState.round + 1);
+  document.getElementById('roundsRemaining').textContent = remaining;
+
+  // Update travel button
+  const travelBtn = document.getElementById('nextRound');
+  if(travelBtn) {
+    const yr = gameState.round;
+    const maxRd = gameState.maxRounds;
+    if(yr > maxRd) {
+      travelBtn.textContent = 'GAME OVER';
+      travelBtn.style.background = '#333';
+      travelBtn.style.cursor = 'default';
+    } else {
+      travelBtn.textContent = `✈  TRAVEL — YEAR ${yr}  (${remaining} remaining)`;
+      travelBtn.style.background = '#1a1a1a';
+      travelBtn.style.cursor = 'pointer';
+    }
+  }
 }
 
 function calculateRevenue() {
@@ -913,13 +973,25 @@ function calculateRevenue() {
   const results = [];
 
   for(let i=1;i<=4;i++) {
-    const dest = document.getElementById(`dest${i}`).value;
+    const select = document.getElementById(`dest${i}`);
+    const dest = select.value;
+    const isFlyMode = select.dataset.flyMode === 'true';
     const actualDest = dest || gameState.teams[i].city;
+
+    // Charge $50M for flying and mark used
+    if(isFlyMode && dest && !gameState.teams[i].hasFlown) {
+      gameState.teams[i].cash -= 50000000;
+      gameState.teams[i].hasFlown = true;
+    }
+
     if(actualDest && actualDest !== 'start') {
       if(!destinations[actualDest]) destinations[actualDest] = [];
-      destinations[actualDest].push({team:i, value:tv[i][actualDest]||0});
+      destinations[actualDest].push({team:i, value:tv[i][actualDest]||0, flew: isFlyMode && !!dest});
       gameState.teams[i].city = actualDest;
     }
+
+    // Reset fly mode after this round
+    select.dataset.flyMode = 'false';
   }
 
   Object.keys(destinations).forEach(cityKey => {
@@ -967,7 +1039,7 @@ function calculateRevenue() {
         }
       }
 
-      cityResult.teams.push({teamNum,ticketPrice:t.value,idealShare:idealSplits[idx],actualShare,alreadySold,canSell,revenue});
+      cityResult.teams.push({teamNum,ticketPrice:t.value,idealShare:idealSplits[idx],actualShare,alreadySold,canSell,revenue,flew:t.flew||false});
     });
     results.push(cityResult);
   });
@@ -978,10 +1050,22 @@ function nextRound() {
   const currentRound = gameState.round;
   const results = calculateRevenue();
 
+  // Build fly notes before template literal
+  const flyNotes = [1,2,3,4].filter(i => {
+    const sel = document.getElementById(`dest${i}`);
+    return sel && sel.dataset.flyMode === 'true' && sel.value;
+  }).map(i => {
+    const dest = document.getElementById(`dest${i}`).value;
+    const cityEntry = cityData[dest];
+    const destName = cityEntry ? cityEntry.name : '?';
+    return `<div style="font-size:0.8rem;color:#a78bfa;margin-top:4px">✈ ${teamColors[i].name} flew to ${destName} (−$50M)</div>`;
+  }).join('');
+
   let popupContent = `
     <div style="background:#fff;padding:0;border-radius:8px;max-width:700px;width:95%;max-height:90vh;overflow:auto">
       <div style="background:#000;color:#fff;padding:20px;position:sticky;top:0;z-index:10">
-        <h2 style="margin:0;font-size:1.5rem">Year ${currentRound} Results</h2>
+        <h2 style="margin:0 0 4px;font-size:1.5rem">Year ${currentRound} Results</h2>
+        ${flyNotes}
       </div>
       <div style="padding:20px">`;
 
@@ -999,7 +1083,7 @@ function nextRound() {
         popupContent += `
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:${soldOut?'#fff5f5':'#f5f5f5'};border-left:4px solid ${tc.bg}">
             <div style="display:flex;align-items:center;gap:15px;flex:1">
-              <div style="background:${tc.bg};color:${tc.text};padding:6px 12px;border-radius:4px;font-weight:bold;min-width:80px;text-align:center">${tc.name}</div>
+              <div style="background:${tc.bg};color:${tc.text};padding:6px 12px;border-radius:4px;font-weight:bold;min-width:80px;text-align:center">${tc.name}${t.flew?' ✈':''}</div>
               <div><div style="font-size:0.85rem;color:#666">Ticket Price</div><div style="font-size:1.1rem;font-weight:bold">$${t.ticketPrice}</div></div>
             </div>
             <div style="display:flex;gap:20px;align-items:center">
@@ -1083,8 +1167,11 @@ function loadGame() {
 
         // Restore game state
         gameState = saveData.gameState;
-        // Ensure all teams have soldTo
-        [1,2,3,4].forEach(t => { if(!gameState.teams[t].soldTo) gameState.teams[t].soldTo={}; });
+        // Ensure all teams have soldTo and hasFlown (backward compat)
+        [1,2,3,4].forEach(t => {
+          if(!gameState.teams[t].soldTo) gameState.teams[t].soldTo={};
+          if(gameState.teams[t].hasFlown === undefined) gameState.teams[t].hasFlown=false;
+        });
 
         // Restore auction state
         if(saveData.auctionState) {
@@ -1145,10 +1232,10 @@ function resetGame() {
     round:1,
     maxRounds:parseInt(document.getElementById('totalRounds').value)||8,
     teams:{
-      1:{cash:0,city:'start',artworks:[],soldTo:{}},
-      2:{cash:0,city:'start',artworks:[],soldTo:{}},
-      3:{cash:0,city:'start',artworks:[],soldTo:{}},
-      4:{cash:0,city:'start',artworks:[],soldTo:{}}
+      1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+      2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+      3:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+      4:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false}
     }
   };
   auctionState.history = [];
