@@ -245,6 +245,7 @@ svg.map-svg{width:100%;height:100%}
         <div id="scoreboard"></div>
       </div>
       <div class="game-controls">
+        <button id="undoBtn" onclick="undoLastRound()" style="opacity:0.3;cursor:not-allowed;" title="Nothing to undo">↩ UNDO LAST YEAR</button>
         <button id="resetGame">⟲ RESET GAME</button>
         <button id="saveGame">💾 SAVE</button>
         <button id="loadGame">📂 LOAD</button>
@@ -1046,7 +1047,77 @@ function calculateRevenue() {
   return results;
 }
 
+// ─── UNDO ────────────────────────────────────────────────────────────────────
+let undoStack = [];
+
+function snapshotState() {
+  undoStack.push({
+    gameState: JSON.parse(JSON.stringify(gameState)),
+    artworkAssignments: Array.from(document.querySelectorAll('.art-card[data-team]')).map(card => ({
+      idx: parseInt(card.dataset.idx),
+      team: parseInt(card.dataset.team.replace('TEAM ', ''))
+    })),
+    logHTML: document.getElementById('logEntries')?.innerHTML || ''
+  });
+  // Keep max 10 snapshots
+  if(undoStack.length > 10) undoStack.shift();
+  updateUndoBtn();
+}
+
+function undoLastRound() {
+  if(!undoStack.length) return;
+  const snap = undoStack.pop();
+
+  gameState = snap.gameState;
+
+  // Restore artwork assignments
+  document.querySelectorAll('.team-badge-container').forEach(c => c.innerHTML = '');
+  document.querySelectorAll('.art-card').forEach(card => delete card.dataset.team);
+
+  snap.artworkAssignments.forEach(a => {
+    const card = document.querySelector(`.art-card[data-idx="${a.idx}"]`);
+    if(!card) return;
+    card.dataset.team = 'TEAM ' + a.team;
+    const container = card.querySelector('.team-badge-container');
+    container.innerHTML = `<div class="team-badge team-${a.team}">
+      <span>${teamColors[a.team].name}</span>
+      <span class="remove" data-idx="${a.idx}" data-team="${a.team}">×</span>
+    </div>`;
+    attachRemoveHandler(container.querySelector('.remove'), a.idx, a.team);
+  });
+
+  if(document.getElementById('logEntries')) {
+    document.getElementById('logEntries').innerHTML = snap.logHTML;
+  }
+
+  drawTeams();
+  populateDestinationDropdowns();
+  updateTeamDisplay();
+  updateCompetitiveAnalysis();
+  updateUndoBtn();
+}
+
+function updateUndoBtn() {
+  const btn = document.getElementById('undoBtn');
+  if(!btn) return;
+  btn.style.opacity = undoStack.length ? '1' : '0.3';
+  btn.style.cursor = undoStack.length ? 'pointer' : 'not-allowed';
+  btn.title = undoStack.length ? `Undo last travel (${undoStack.length} saved)` : 'Nothing to undo';
+}
+
 function nextRound() {
+  // Build a summary of what each team is doing for the confirm dialog
+  const summary = [1,2,3,4].map(i => {
+    const sel = document.getElementById(`dest${i}`);
+    const dest = sel ? sel.value : '';
+    const isFly = sel && sel.dataset.flyMode === 'true';
+    const destName = dest ? (cityData[dest] ? cityData[dest].name : dest) : cityData[gameState.teams[i].city].name + ' (stay)';
+    return `${teamColors[i].name}: ${isFly ? '✈ ' : ''}${destName}`;
+  }).join('\n');
+
+  if(!confirm(`TRAVEL — YEAR ${gameState.round}\n\n${summary}\n\nProceed?`)) return;
+
+  snapshotState(); // save undo point before anything changes
   const currentRound = gameState.round;
   const results = calculateRevenue();
 
@@ -1239,6 +1310,7 @@ function resetGame() {
     }
   };
   auctionState.history = [];
+  undoStack = [];
 
   document.getElementById('logEntries').innerHTML = '';
   document.querySelectorAll('.team-badge-container').forEach(c => c.innerHTML='');
