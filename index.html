@@ -164,6 +164,7 @@ svg.map-svg{width:100%;height:100%}
   </div>
   <button id="mapBtn" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer">MAP</button>
   <button id="auctionBtn" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;margin-left:10px">AUCTIONS</button>
+  <button onclick="openAutoAssign()" style="margin-top:15px;padding:12px 30px;background:#fff;color:#000;border:2px solid #000;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;margin-left:10px">⚡ AUTO ASSIGN</button>
 </header>
 
 <div id="competitiveAnalysis" style="margin-bottom:30px;display:none">
@@ -181,6 +182,30 @@ svg.map-svg{width:100%;height:100%}
       </thead>
       <tbody id="analysisTableBody"></tbody>
     </table>
+  </div>
+</div>
+
+<!-- AUTO ASSIGN MODAL -->
+<div id="autoAssignModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;display:none;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:32px;max-width:560px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+    <h2 style="margin:0 0 8px;font-size:1.3rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">⚡ Auto Assign</h2>
+    <p style="color:#666;font-size:0.85rem;margin-bottom:24px;">Distribute all unassigned works across teams. Each team gets 6 artworks, balanced by total city value so no team has an unfair advantage.</p>
+
+    <div style="margin-bottom:20px;">
+      <label style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#999;display:block;margin-bottom:8px;">Purchase Price Per Work ($M)</label>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <input type="range" id="autoPrice" min="0" max="50" value="10" style="flex:1;" oninput="document.getElementById('autoPriceVal').textContent=this.value">
+        <span style="font-size:1.2rem;font-weight:700;min-width:48px;text-align:right">$<span id="autoPriceVal">10</span>M</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;color:#bbb;font-size:0.7rem;margin-top:4px;"><span>Free</span><span>$50M each</span></div>
+    </div>
+
+    <div id="autoAssignPreview" style="background:#f8f8f8;border-radius:8px;padding:16px;margin-bottom:20px;font-size:0.82rem;border:1px solid #eee;"></div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="executeAutoAssign()" style="flex:1;padding:13px;background:#000;color:#fff;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;letter-spacing:0.05em;">ASSIGN NOW</button>
+      <button onclick="closeAutoAssign()" style="padding:13px 20px;background:#fff;color:#333;border:1px solid #ddd;border-radius:8px;font-size:0.95rem;cursor:pointer;">CANCEL</button>
+    </div>
   </div>
 </div>
 
@@ -1993,6 +2018,94 @@ function closeEndGameModal() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
+// ─── AUTO ASSIGN ──────────────────────────────────────────────────────────────
+
+let autoAssignPlan = []; // [{artIdx, team}]
+
+function totalValue(artIdx) {
+  return Object.values(artworks[artIdx].cities).reduce((a,b)=>a+b,0);
+}
+
+function buildAutoAssignPlan() {
+  // Get unassigned artwork indices
+  const unassigned = artworks
+    .map((_,idx) => idx)
+    .filter(idx => !Object.values(gameState.teams).some(t => t.artworks.some(a => a.idx === idx)))
+    .filter(idx => !document.querySelector(`.art-card[data-idx="${idx}"][data-team]`));
+
+  // Sort by total value descending (best first)
+  unassigned.sort((a,b) => totalValue(b) - totalValue(a));
+
+  // Greedy balanced allocation: always give next artwork to team with lowest total so far
+  const teamTotals = {1:0, 2:0, 3:0, 4:0};
+  const plan = [];
+
+  unassigned.forEach(idx => {
+    // Pick team with lowest current total value
+    const team = [1,2,3,4].reduce((best, t) => teamTotals[t] < teamTotals[best] ? t : best, 1);
+    plan.push({artIdx: idx, team});
+    teamTotals[team] += totalValue(idx);
+  });
+
+  return {plan, teamTotals, count: unassigned.length};
+}
+
+function openAutoAssign() {
+  const modal = document.getElementById('autoAssignModal');
+  modal.style.display = 'flex';
+  refreshAutoAssignPreview();
+}
+
+function closeAutoAssign() {
+  document.getElementById('autoAssignModal').style.display = 'none';
+}
+
+function refreshAutoAssignPreview() {
+  const {plan, teamTotals, count} = buildAutoAssignPlan();
+  autoAssignPlan = plan;
+
+  const perTeam = {1:[], 2:[], 3:[], 4:[]};
+  plan.forEach(p => perTeam[p.team].push(p.artIdx));
+
+  const previewEl = document.getElementById('autoAssignPreview');
+  if(count === 0) {
+    previewEl.innerHTML = '<div style="text-align:center;color:#aaa;padding:12px;">All artworks are already assigned.</div>';
+    return;
+  }
+
+  previewEl.innerHTML = `
+    <div style="font-weight:700;margin-bottom:10px;color:#333;">${count} works to distribute</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      ${[1,2,3,4].map(t => `
+        <div style="border-left:3px solid ${teamColors[t].bg};padding:8px 10px;background:#fff;border-radius:4px;">
+          <div style="font-weight:700;color:${teamColors[t].bg};font-size:0.8rem;margin-bottom:4px;">${teamColors[t].name} — ${perTeam[t].length} works</div>
+          <div style="color:#666;font-size:0.75rem;margin-bottom:4px;">Portfolio value: <strong>$${teamTotals[t]}</strong></div>
+          <div style="color:#aaa;font-size:0.7rem;line-height:1.5;">${perTeam[t].map(idx => artworks[idx].title).join(', ') || '—'}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function executeAutoAssign() {
+  if(!autoAssignPlan.length) { closeAutoAssign(); return; }
+
+  const price = parseInt(document.getElementById('autoPrice').value) || 0;
+
+  autoAssignPlan.forEach(({artIdx, team}) => {
+    // Skip if somehow already assigned
+    if(document.querySelector(`.art-card[data-idx="${artIdx}"][data-team]`)) return;
+    assignArtworkToTeam(artIdx, team, price);
+  });
+
+  updateCompetitiveAnalysis();
+  closeAutoAssign();
+}
+
+// Refresh preview when price slider moves (for display consistency)
+document.addEventListener('DOMContentLoaded', () => {
+  const slider = document.getElementById('autoPrice');
+  if(slider) slider.addEventListener('input', () => {});
+});
+
 initGallery();
 updateCompetitiveAnalysis();
 </script>
