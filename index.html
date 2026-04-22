@@ -964,13 +964,12 @@ function activateFly(teamNum) {
 function updateTeamDisplay() {
   const sorted = [1,2,3,4].map(n=>({n,cash:gameState.teams[n].cash})).sort((a,b)=>b.cash-a.cash);
   document.getElementById('scoreboard').innerHTML = sorted.map((t,i) => `
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:#1a1a1a;margin-bottom:6px;border-radius:4px;border-left:4px solid ${teamColors[t.n].bg}">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="color:#555;font-weight:bold;font-size:0.75rem">#${i+1}</span>
-        <span style="color:${teamColors[t.n].bg};font-weight:bold;font-size:0.85rem">${teamColors[t.n].name}</span>
-        <span style="color:#555;font-size:0.7rem">${gameState.teams[t.n].artworks.length} works</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#1a1a1a;margin-bottom:6px;border-radius:4px;border-left:4px solid ${teamColors[t.n].bg};min-width:0;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:6px;min-width:0;flex-shrink:1;">
+        <span style="color:#555;font-weight:bold;font-size:0.7rem;flex-shrink:0">#${i+1}</span>
+        <span style="color:${teamColors[t.n].bg};font-weight:bold;font-size:0.82rem;flex-shrink:0">${teamColors[t.n].name}</span>
       </div>
-      <span style="color:${t.cash>=0?'#0F9D58':'#E94235'};font-weight:bold;font-size:0.85rem">$${t.cash.toLocaleString()}</span>
+      <span style="color:${t.cash>=0?'#0F9D58':'#E94235'};font-weight:bold;font-size:0.78rem;flex-shrink:0;margin-left:6px;white-space:nowrap;">$${(t.cash/1000000).toFixed(1)}M</span>
     </div>`).join('');
 
   const remaining = Math.max(0, gameState.maxRounds - gameState.round + 1);
@@ -1022,50 +1021,67 @@ function calculateRevenue() {
 
   Object.keys(destinations).forEach(cityKey => {
     const teams = destinations[cityKey];
-    const pop = cityData[cityKey].pop;
+    const totalPop = cityData[cityKey].pop;
     const cityName = cityData[cityKey].name;
-    teams.sort((a,b) => b.value - a.value);
+
+    // (1) Filter out teams with zero ticket value — they don't sell tickets
+    const activeTeams = teams.filter(t => t.value > 0);
+
+    // (2) Calculate remaining population across all teams' soldTo for this city
+    // Each team has their own soldTo fraction — remaining pop = what THIS team hasn't sold to yet
+    activeTeams.sort((a,b) => b.value - a.value);
+
+    // Build city result including zero-value teams (for display) but don't process them
+    const cityResult = {city:cityName, population:totalPop, teams:[]};
+
+    // Add zero-value teams to display with 0 revenue
+    teams.filter(t => t.value === 0).forEach(t => {
+      cityResult.teams.push({teamNum:t.team, ticketPrice:0, idealShare:0, actualShare:0, alreadySold:gameState.teams[t.team].soldTo[cityKey]||0, canSell:0, revenue:0, flew:t.flew||false});
+    });
+
+    if(activeTeams.length === 0) { results.push(cityResult); return; }
 
     let idealSplits;
-    if(teams.length===1) idealSplits=[1.0];
-    else if(teams.length===2) idealSplits = teams[0].value===teams[1].value ? [0.5,0.5] : [0.6,0.4];
-    else if(teams.length===3) {
-      if(teams[0].value===teams[1].value&&teams[1].value===teams[2].value) idealSplits=[0.333,0.333,0.334];
-      else if(teams[0].value===teams[1].value) idealSplits=[0.45,0.45,0.1];
-      else if(teams[1].value===teams[2].value) idealSplits=[0.6,0.2,0.2];
+    if(activeTeams.length===1) idealSplits=[1.0];
+    else if(activeTeams.length===2) idealSplits = activeTeams[0].value===activeTeams[1].value ? [0.5,0.5] : [0.6,0.4];
+    else if(activeTeams.length===3) {
+      if(activeTeams[0].value===activeTeams[1].value&&activeTeams[1].value===activeTeams[2].value) idealSplits=[0.333,0.333,0.334];
+      else if(activeTeams[0].value===activeTeams[1].value) idealSplits=[0.45,0.45,0.1];
+      else if(activeTeams[1].value===activeTeams[2].value) idealSplits=[0.6,0.2,0.2];
       else idealSplits=[0.6,0.3,0.1];
     } else {
-      if(teams[0].value===teams[1].value&&teams[2].value===teams[3].value) idealSplits=[0.4,0.4,0.1,0.1];
-      else if(teams[0].value===teams[1].value) idealSplits=[0.4,0.4,0.1,0.1];
+      if(activeTeams[0].value===activeTeams[1].value&&activeTeams[2].value===activeTeams[3].value) idealSplits=[0.4,0.4,0.1,0.1];
+      else if(activeTeams[0].value===activeTeams[1].value) idealSplits=[0.4,0.4,0.1,0.1];
       else idealSplits=[0.6,0.2,0.1,0.1];
     }
 
-    const cityResult = {city:cityName,population:pop,teams:[]};
-
-    teams.forEach((t,idx) => {
+    activeTeams.forEach((t,idx) => {
       const teamNum = t.team;
       if(!gameState.teams[teamNum].soldTo[cityKey]) gameState.teams[teamNum].soldTo[cityKey]=0;
       const alreadySold = gameState.teams[teamNum].soldTo[cityKey];
-      const canSell = 1.0 - alreadySold;
+      const canSell = Math.max(0, 1.0 - alreadySold);
       const actualShare = Math.min(idealSplits[idx], canSell);
-      const revenue = Math.round(pop * t.value * actualShare);
+
+      // (2) Revenue based on REMAINING tickets available to this team
+      const remainingPop = Math.round(totalPop * canSell);
+      const ticketsThisRound = Math.round(totalPop * actualShare);
+      const revenue = ticketsThisRound * t.value;
       gameState.teams[teamNum].cash += revenue;
       gameState.teams[teamNum].soldTo[cityKey] += actualShare;
 
       const teamArts = gameState.teams[teamNum].artworks;
       if(teamArts.length>0 && revenue>0) {
         const totalTV = teamArts.reduce((sum,art)=>sum+(artworks[art.idx].cities[cityKey]||0),0);
-        const ticketsSold = Math.round(pop*actualShare);
         if(totalTV>0) {
           teamArts.forEach(art => {
             const fraction = (artworks[art.idx].cities[cityKey]||0)/totalTV;
             art.revenue += Math.round(revenue*fraction);
-            art.ticketsSold += Math.round(ticketsSold*fraction);
+            art.ticketsSold += Math.round(ticketsThisRound*fraction);
           });
         }
       }
 
-      cityResult.teams.push({teamNum,ticketPrice:t.value,idealShare:idealSplits[idx],actualShare,alreadySold,canSell,revenue,flew:t.flew||false});
+      cityResult.teams.push({teamNum, ticketPrice:t.value, idealShare:idealSplits[idx], actualShare, alreadySold, canSell, revenue, remainingPop, flew:t.flew||false});
     });
     results.push(cityResult);
   });
@@ -1144,18 +1160,18 @@ function nextRound() {
 
   snapshotState(); // save undo point before anything changes
   const currentRound = gameState.round;
-  const results = calculateRevenue();
 
-  // Build fly notes before template literal
+  // (4) Capture fly info BEFORE calculateRevenue resets flyMode
   const flyNotes = [1,2,3,4].filter(i => {
     const sel = document.getElementById(`dest${i}`);
     return sel && sel.dataset.flyMode === 'true' && sel.value;
   }).map(i => {
     const dest = document.getElementById(`dest${i}`).value;
-    const cityEntry = cityData[dest];
-    const destName = cityEntry ? cityEntry.name : '?';
+    const destName = cityData[dest] ? cityData[dest].name : '?';
     return `<div style="font-size:0.8rem;color:#a78bfa;margin-top:4px">✈ ${teamColors[i].name} flew to ${destName} (−$50M)</div>`;
   }).join('');
+
+  const results = calculateRevenue();
 
   let popupContent = `
     <div style="background:#fff;padding:0;border-radius:8px;max-width:700px;width:95%;max-height:90vh;overflow:auto">
@@ -1615,8 +1631,10 @@ function renderOcDisplay() {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div style="color:${tc.bg};font-weight:700;font-size:1rem">${tc.name}</div>
         ${isLeader ? `<div style="background:${tc.bg};color:${tc.text};font-size:0.65rem;padding:3px 8px;border-radius:4px;font-weight:700">LEADING</div>` : ''}
-        ${isNext && !isLeader ? `<div style="background:#111;color:#fff;font-size:0.65rem;padding:3px 8px;border-radius:4px;font-weight:700">YOUR TURN</div>` : ''}
-        ${tn===nomTeam && !isLeader ? `<div style="background:#f0f0f0;color:#999;font-size:0.65rem;padding:3px 8px;border-radius:4px">NOMINATED</div>` : ''}
+        ${isNext && !isLeader && raises>0 ? `<div style="background:#111;color:#fff;font-size:0.65rem;padding:3px 8px;border-radius:4px;font-weight:700">YOUR TURN</div>` : ''}
+        ${isNext && !isLeader && raises===0 ? `<div style="background:#c00;color:#fff;font-size:0.65rem;padding:3px 8px;border-radius:4px;font-weight:700">NO RAISES</div>` : ''}
+        ${tn===nomTeam && !isLeader && !isNext ? `<div style="background:#f0f0f0;color:#999;font-size:0.65rem;padding:3px 8px;border-radius:4px">NOMINATED</div>` : ''}
+        ${!isLeader && !isNext && raises===0 ? `<div style="background:#f5f5f5;color:#bbb;font-size:0.65rem;padding:3px 8px;border-radius:4px">OUT</div>` : ''}
       </div>
       <div style="margin-bottom:12px">
         <div style="color:#bbb;font-size:0.68rem;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em">Raises Remaining</div>
@@ -1665,19 +1683,25 @@ function ocPass(teamNum) {
   oc.passCount++;
   oc.turnIdx++;
 
-  // If all non-leader teams have passed, the leader wins
   const nonLeaders = [1,2,3,4].filter(t=>t!==oc.leadingTeam);
-  if(oc.passCount >= nonLeaders.length) {
-    ocSoldClick();
-    return;
-  }
-  // Skip teams who are out of raises and can never raise
-  while(true) {
+
+  // Skip teams who have 0 raises (they can't bid) or who are the leader
+  // Keep skipping until we find someone who CAN raise, or everyone has passed
+  let skipped = 0;
+  while(skipped < nonLeaders.length) {
     const next = oc.turnOrder[oc.turnIdx % oc.turnOrder.length];
-    if(next===oc.leadingTeam || oc.raises[next]>0) break;
+    if(next !== oc.leadingTeam && oc.raises[next] > 0) break; // valid bidder found
+    // Skip this team
     oc.turnIdx++;
     oc.passCount++;
-    if(oc.passCount >= nonLeaders.length) { ocSoldClick(); return; }
+    skipped++;
+  }
+
+  // If all non-leaders have passed or have no raises left, leader wins
+  const anyoneCanBid = nonLeaders.some(t => oc.raises[t] > 0);
+  if(!anyoneCanBid || oc.passCount >= nonLeaders.length) {
+    ocSoldClick();
+    return;
   }
 
   renderOcDisplay();
