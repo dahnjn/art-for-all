@@ -218,7 +218,7 @@ svg.map-svg{width:100%;height:100%}
   <div class="map-header">
     <div class="map-title">🎨 ART for ALL - TRAVEL MAP</div>
     <div style="display:flex;align-items:center;gap:20px">
-      <label style="color:#888;font-size:0.8rem">Rounds:<input type="number" id="totalRounds" class="rounds-input" value="8" min="1" max="20"></label>
+      <label style="color:#888;font-size:0.8rem">Rounds:<input type="number" id="totalRounds" class="rounds-input" value="6" min="1" max="20"></label>
       <button class="map-close" id="mapClose">✕ CLOSE</button>
     </div>
   </div>
@@ -572,7 +572,7 @@ const teamColors = {
 
 let gameState = {
   round:1,
-  maxRounds:8,
+  maxRounds:6,
   teams:{
     1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
     2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
@@ -1342,7 +1342,7 @@ function resetGame() {
   if(!confirm('Reset game? All progress will be lost.')) return;
   gameState = {
     round:1,
-    maxRounds:parseInt(document.getElementById('totalRounds').value)||8,
+    maxRounds:parseInt(document.getElementById('totalRounds').value)||6,
     teams:{
       1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
       2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
@@ -1367,7 +1367,7 @@ function resetGame() {
 
 document.getElementById('mapBtn').addEventListener('click', () => {
   document.getElementById('mapModal').classList.add('show');
-  gameState.maxRounds = parseInt(document.getElementById('totalRounds').value)||8;
+  gameState.maxRounds = parseInt(document.getElementById('totalRounds').value)||6;
   initMap();
   populateDestinationDropdowns();
   updateTeamDisplay();
@@ -1379,7 +1379,7 @@ document.getElementById('saveGame').addEventListener('click', saveGame);
 document.getElementById('loadGame').addEventListener('click', loadGame);
 document.getElementById('auctionBtn').addEventListener('click', openAuctionModal);
 document.getElementById('totalRounds').addEventListener('change', (e) => {
-  gameState.maxRounds = parseInt(e.target.value)||8;
+  gameState.maxRounds = parseInt(e.target.value)||6;
   updateTeamDisplay();
 });
 for(let i=1;i<=4;i++) document.getElementById(`dest${i}`).addEventListener('change', updateTeamDisplay);
