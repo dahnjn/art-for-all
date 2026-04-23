@@ -229,21 +229,25 @@ svg.map-svg{width:100%;height:100%}
       <div class="team-dest-label" style="color:#E94235;">RED</div>
       <select id="dest1" class="dest-select"></select>
       <button id="fly1" onclick="activateFly(1)" class="fly-btn">✈ FLY — $50M</button>
+      <select id="flydest1" class="dest-select" style="display:none;border-color:#6040cc;color:#c4b5fd;background:#0d0d1f;margin-top:2px;"></select>
     </div>
     <div class="team-dest-cell" style="border-right:1px solid #1a1a1a;border-left:3px solid #FBBC04;">
       <div class="team-dest-label" style="color:#FBBC04;">YELLOW</div>
       <select id="dest2" class="dest-select"></select>
       <button id="fly2" onclick="activateFly(2)" class="fly-btn">✈ FLY — $50M</button>
+      <select id="flydest2" class="dest-select" style="display:none;border-color:#6040cc;color:#c4b5fd;background:#0d0d1f;margin-top:2px;"></select>
     </div>
     <div class="team-dest-cell" style="border-right:1px solid #1a1a1a;border-left:3px solid #4285F4;">
       <div class="team-dest-label" style="color:#4285F4;">BLUE</div>
       <select id="dest3" class="dest-select"></select>
       <button id="fly3" onclick="activateFly(3)" class="fly-btn">✈ FLY — $50M</button>
+      <select id="flydest3" class="dest-select" style="display:none;border-color:#6040cc;color:#c4b5fd;background:#0d0d1f;margin-top:2px;"></select>
     </div>
     <div class="team-dest-cell" style="border-left:3px solid #0F9D58;">
       <div class="team-dest-label" style="color:#0F9D58;">GREEN</div>
       <select id="dest4" class="dest-select"></select>
       <button id="fly4" onclick="activateFly(4)" class="fly-btn">✈ FLY — $50M</button>
+      <select id="flydest4" class="dest-select" style="display:none;border-color:#6040cc;color:#c4b5fd;background:#0d0d1f;margin-top:2px;"></select>
     </div>
   </div>
 
@@ -906,53 +910,37 @@ function getTeamTicketValues() {
   return values;
 }
 
-function populateOneDropdown(i, preserveValue) {
+function populateOneDropdown(i) {
   const select = document.getElementById(`dest${i}`);
   const flyBtn = document.getElementById(`fly${i}`);
+  const flyDest = document.getElementById(`flydest${i}`);
   const team = gameState.teams[i];
   const currentCity = team.city;
-  const isFlyMode = select.dataset.flyMode === 'true';
   const currentName = currentCity === 'start' ? 'START' : cityData[currentCity].name;
-  // Preserve existing selection unless caller overrides
-  const savedValue = preserveValue !== undefined ? preserveValue : select.value;
+  const savedValue = select.value;
 
-  if(isFlyMode) {
-    select.innerHTML = `<option value="">— SELECT DESTINATION —</option>` +
-      Object.keys(cityData)
-        .filter(k => k !== 'start' && k !== currentCity)
-        .map(k=>`<option value="${k}">✈ ${cityData[k].name}</option>`).join('');
-  } else {
-    const available = cityData[currentCity].connections.filter(c=>c!=='start');
-    select.innerHTML =
-      `<option value="" disabled selected>📍 ${currentName} (current)</option>` +
-      `<option value="">— Stay here —</option>` +
-      available.map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
-  }
+  // Normal dropdown — always just connected cities, never touched by fly
+  const available = cityData[currentCity].connections.filter(c=>c!=='start');
+  select.innerHTML =
+    `<option value="" disabled selected>📍 ${currentName} (current)</option>` +
+    `<option value="">— Stay here —</option>` +
+    available.map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
 
   // Restore selection if still valid
   if(savedValue && Array.from(select.options).some(o => o.value === savedValue)) {
     select.value = savedValue;
   }
 
-  // Update fly button
+  // Update fly button state
   if(team.hasFlown) {
     flyBtn.textContent = '✈ FLOWN';
     flyBtn.style.opacity = '0.3';
     flyBtn.style.cursor = 'not-allowed';
     flyBtn.onclick = null;
-  } else if(isFlyMode) {
-    flyBtn.textContent = '✈ FLYING — cancel';
-    flyBtn.style.background = '#3d1fa3';
-    flyBtn.style.color = '#fff';
-    flyBtn.style.borderColor = '#6040cc';
-    flyBtn.style.opacity = '1';
-    flyBtn.onclick = () => activateFly(i);
+    flyDest.style.display = 'none';
   } else {
-    flyBtn.textContent = '✈ FLY — $50M';
-    flyBtn.style.background = '#0d0d1f';
-    flyBtn.style.color = '#8b7cf8';
-    flyBtn.style.borderColor = '#2d2060';
     flyBtn.style.opacity = '1';
+    flyBtn.style.cursor = 'pointer';
     flyBtn.onclick = () => activateFly(i);
   }
 }
@@ -964,13 +952,34 @@ function populateDestinationDropdowns() {
 function activateFly(teamNum) {
   const team = gameState.teams[teamNum];
   if(team.hasFlown) return;
-  const select = document.getElementById(`dest${teamNum}`);
-  const isActive = select.dataset.flyMode === 'true';
-  // Save current non-fly selection before toggling
-  const savedVal = isActive ? '' : select.value;
-  select.dataset.flyMode = isActive ? 'false' : 'true';
-  // Only rebuild THIS team's dropdown — preserve all other teams' selections
-  populateOneDropdown(teamNum, savedVal);
+
+  const flyBtn = document.getElementById(`fly${teamNum}`);
+  const flyDest = document.getElementById(`flydest${teamNum}`);
+  const isActive = flyDest.style.display !== 'none';
+
+  if(isActive) {
+    // Cancel fly — hide the fly destination, reset button
+    flyDest.style.display = 'none';
+    flyDest.value = '';
+    flyBtn.textContent = '✈ FLY — $50M';
+    flyBtn.style.background = '#0d0d1f';
+    flyBtn.style.color = '#8b7cf8';
+    flyBtn.style.borderColor = '#2d2060';
+  } else {
+    // Activate fly — populate and show fly destination select
+    const currentCity = team.city;
+    flyDest.innerHTML = `<option value="">✈ fly to any city...</option>` +
+      Object.keys(cityData)
+        .filter(k => k !== 'start' && k !== currentCity)
+        .sort((a,b) => cityData[a].name.localeCompare(cityData[b].name))
+        .map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
+    flyDest.style.display = 'block';
+    flyBtn.textContent = '✈ CANCEL FLY';
+    flyBtn.style.background = '#3d1fa3';
+    flyBtn.style.color = '#fff';
+    flyBtn.style.borderColor = '#6040cc';
+  }
+  // Never touch dest{teamNum} or any other team's dropdowns
   updateTeamDisplay();
 }
 
@@ -1012,24 +1021,38 @@ function calculateRevenue() {
 
   for(let i=1;i<=4;i++) {
     const select = document.getElementById(`dest${i}`);
-    const dest = select.value;
-    const isFlyMode = select.dataset.flyMode === 'true';
+    const flyDest = document.getElementById(`flydest${i}`);
+    const flyValue = flyDest ? flyDest.value : '';
+    const isFlyMode = !!flyValue;
+    const dest = isFlyMode ? flyValue : select.value;
     const actualDest = dest || gameState.teams[i].city;
 
     // Charge $50M for flying and mark used
-    if(isFlyMode && dest && !gameState.teams[i].hasFlown) {
+    if(isFlyMode && !gameState.teams[i].hasFlown) {
       gameState.teams[i].cash -= 50000000;
       gameState.teams[i].hasFlown = true;
     }
 
     if(actualDest && actualDest !== 'start') {
       if(!destinations[actualDest]) destinations[actualDest] = [];
-      destinations[actualDest].push({team:i, value:tv[i][actualDest]||0, flew: isFlyMode && !!dest});
+      destinations[actualDest].push({team:i, value:tv[i][actualDest]||0, flew: isFlyMode});
       gameState.teams[i].city = actualDest;
     }
 
-    // Reset fly mode after this round
-    select.dataset.flyMode = 'false';
+    // Reset fly UI after this round
+    if(flyDest) { flyDest.style.display = 'none'; flyDest.value = ''; }
+    const flyBtn = document.getElementById(`fly${i}`);
+    if(flyBtn && gameState.teams[i].hasFlown) {
+      flyBtn.textContent = '✈ FLOWN';
+      flyBtn.style.opacity = '0.3';
+      flyBtn.style.cursor = 'not-allowed';
+      flyBtn.onclick = null;
+    } else if(flyBtn) {
+      flyBtn.textContent = '✈ FLY — $50M';
+      flyBtn.style.background = '#0d0d1f';
+      flyBtn.style.color = '#8b7cf8';
+      flyBtn.style.borderColor = '#2d2060';
+    }
   }
 
   Object.keys(destinations).forEach(cityKey => {
@@ -1163,24 +1186,26 @@ function nextRound() {
   // Build a summary of what each team is doing for the confirm dialog
   const summary = [1,2,3,4].map(i => {
     const sel = document.getElementById(`dest${i}`);
-    const dest = sel ? sel.value : '';
-    const isFly = sel && sel.dataset.flyMode === 'true';
+    const flyD = document.getElementById(`flydest${i}`);
+    const flyVal = flyD ? flyD.value : '';
+    const isFly = !!flyVal;
+    const dest = isFly ? flyVal : (sel ? sel.value : '');
     const destName = dest ? (cityData[dest] ? cityData[dest].name : dest) : cityData[gameState.teams[i].city].name + ' (stay)';
     return `${teamColors[i].name}: ${isFly ? '✈ ' : ''}${destName}`;
   }).join('\n');
 
   if(!confirm(`TRAVEL — YEAR ${gameState.round}\n\n${summary}\n\nProceed?`)) return;
 
-  snapshotState(); // save undo point before anything changes
+  snapshotState();
   const currentRound = gameState.round;
 
-  // (4) Capture fly info BEFORE calculateRevenue resets flyMode
+  // Capture fly info BEFORE calculateRevenue resets fly UI
   const flyNotes = [1,2,3,4].filter(i => {
-    const sel = document.getElementById(`dest${i}`);
-    return sel && sel.dataset.flyMode === 'true' && sel.value;
+    const fd = document.getElementById(`flydest${i}`);
+    return fd && fd.value;
   }).map(i => {
-    const dest = document.getElementById(`dest${i}`).value;
-    const destName = cityData[dest] ? cityData[dest].name : '?';
+    const fd = document.getElementById(`flydest${i}`);
+    const destName = cityData[fd.value] ? cityData[fd.value].name : '?';
     return `<div style="font-size:0.8rem;color:#a78bfa;margin-top:4px">✈ ${teamColors[i].name} flew to ${destName} (−$50M)</div>`;
   }).join('');
 
