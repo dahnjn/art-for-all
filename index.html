@@ -906,49 +906,59 @@ function getTeamTicketValues() {
   return values;
 }
 
-function populateDestinationDropdowns() {
-  for(let i=1;i<=4;i++) {
-    const select = document.getElementById(`dest${i}`);
-    const flyBtn = document.getElementById(`fly${i}`);
-    const team = gameState.teams[i];
-    const currentCity = team.city;
-    const isFlyMode = select.dataset.flyMode === 'true';
-    const currentName = currentCity === 'start' ? 'START' : cityData[currentCity].name;
+function populateOneDropdown(i, preserveValue) {
+  const select = document.getElementById(`dest${i}`);
+  const flyBtn = document.getElementById(`fly${i}`);
+  const team = gameState.teams[i];
+  const currentCity = team.city;
+  const isFlyMode = select.dataset.flyMode === 'true';
+  const currentName = currentCity === 'start' ? 'START' : cityData[currentCity].name;
+  // Preserve existing selection unless caller overrides
+  const savedValue = preserveValue !== undefined ? preserveValue : select.value;
 
-    if(isFlyMode) {
-      select.innerHTML = `<option value="">— SELECT DESTINATION —</option>` +
-        Object.keys(cityData)
-          .filter(k => k !== 'start' && k !== currentCity)
-          .map(k=>`<option value="${k}">✈ ${cityData[k].name}</option>`).join('');
-    } else {
-      const available = cityData[currentCity].connections.filter(c=>c!=='start');
-      select.innerHTML =
-        `<option value="" disabled selected>📍 ${currentName} (current)</option>` +
-        `<option value="">— Stay here —</option>` +
-        available.map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
-    }
-
-    // Update fly button
-    if(team.hasFlown) {
-      flyBtn.textContent = '✈ FLOWN';
-      flyBtn.style.opacity = '0.3';
-      flyBtn.style.cursor = 'not-allowed';
-      flyBtn.onclick = null;
-    } else if(isFlyMode) {
-      flyBtn.textContent = '✈ FLYING — cancel';
-      flyBtn.style.background = '#3d1fa3';
-      flyBtn.style.color = '#fff';
-      flyBtn.style.borderColor = '#6040cc';
-      flyBtn.style.opacity = '1';
-    } else {
-      flyBtn.textContent = '✈ FLY — $50M';
-      flyBtn.style.background = '#0d0d1f';
-      flyBtn.style.color = '#8b7cf8';
-      flyBtn.style.borderColor = '#2d2060';
-      flyBtn.style.opacity = '1';
-      flyBtn.onclick = () => activateFly(i);
-    }
+  if(isFlyMode) {
+    select.innerHTML = `<option value="">— SELECT DESTINATION —</option>` +
+      Object.keys(cityData)
+        .filter(k => k !== 'start' && k !== currentCity)
+        .map(k=>`<option value="${k}">✈ ${cityData[k].name}</option>`).join('');
+  } else {
+    const available = cityData[currentCity].connections.filter(c=>c!=='start');
+    select.innerHTML =
+      `<option value="" disabled selected>📍 ${currentName} (current)</option>` +
+      `<option value="">— Stay here —</option>` +
+      available.map(k=>`<option value="${k}">${cityData[k].name}</option>`).join('');
   }
+
+  // Restore selection if still valid
+  if(savedValue && Array.from(select.options).some(o => o.value === savedValue)) {
+    select.value = savedValue;
+  }
+
+  // Update fly button
+  if(team.hasFlown) {
+    flyBtn.textContent = '✈ FLOWN';
+    flyBtn.style.opacity = '0.3';
+    flyBtn.style.cursor = 'not-allowed';
+    flyBtn.onclick = null;
+  } else if(isFlyMode) {
+    flyBtn.textContent = '✈ FLYING — cancel';
+    flyBtn.style.background = '#3d1fa3';
+    flyBtn.style.color = '#fff';
+    flyBtn.style.borderColor = '#6040cc';
+    flyBtn.style.opacity = '1';
+    flyBtn.onclick = () => activateFly(i);
+  } else {
+    flyBtn.textContent = '✈ FLY — $50M';
+    flyBtn.style.background = '#0d0d1f';
+    flyBtn.style.color = '#8b7cf8';
+    flyBtn.style.borderColor = '#2d2060';
+    flyBtn.style.opacity = '1';
+    flyBtn.onclick = () => activateFly(i);
+  }
+}
+
+function populateDestinationDropdowns() {
+  for(let i=1;i<=4;i++) populateOneDropdown(i);
 }
 
 function activateFly(teamNum) {
@@ -956,8 +966,11 @@ function activateFly(teamNum) {
   if(team.hasFlown) return;
   const select = document.getElementById(`dest${teamNum}`);
   const isActive = select.dataset.flyMode === 'true';
+  // Save current non-fly selection before toggling
+  const savedVal = isActive ? '' : select.value;
   select.dataset.flyMode = isActive ? 'false' : 'true';
-  populateDestinationDropdowns();
+  // Only rebuild THIS team's dropdown — preserve all other teams' selections
+  populateOneDropdown(teamNum, savedVal);
   updateTeamDisplay();
 }
 
