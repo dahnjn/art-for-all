@@ -859,6 +859,7 @@ function drawCities() {
       const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
       circle.setAttribute('cx',city.x); circle.setAttribute('cy',city.y); circle.setAttribute('r',radius);
       circle.setAttribute('fill','#ffffff'); circle.setAttribute('class','city-circle');
+      circle.setAttribute('id',`city-circle-${cityKey}`);
       citiesGroup.appendChild(circle);
       const label = document.createElementNS('http://www.w3.org/2000/svg','text');
       label.setAttribute('x',city.x); label.setAttribute('y',city.y-radius-8);
@@ -866,8 +867,42 @@ function drawCities() {
       citiesGroup.appendChild(label);
       const popLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
       popLabel.setAttribute('x',city.x); popLabel.setAttribute('y',city.y+5);
-      popLabel.setAttribute('class','city-pop-label'); popLabel.textContent=(city.pop/1000000).toFixed(1)+'M';
+      popLabel.setAttribute('class','city-pop-label');
+      popLabel.setAttribute('id',`city-pop-${cityKey}`);
+      popLabel.textContent = (city.pop/1000000).toFixed(1)+'M';
       citiesGroup.appendChild(popLabel);
+    }
+  });
+}
+
+function updateCityPopLabels() {
+  Object.entries(cityData).forEach(([cityKey, city]) => {
+    if(cityKey === 'start') return;
+    const el = document.getElementById(`city-pop-${cityKey}`);
+    if(!el) return;
+
+    // Total fraction sold across all teams for this city
+    const totalSoldFraction = [1,2,3,4].reduce((sum, t) => {
+      return sum + (gameState.teams[t].soldTo[cityKey] || 0);
+    }, 0);
+
+    // Remaining = pop * (1 - totalSoldFraction), clamped to 0
+    const remaining = Math.max(0, Math.round(city.pop * (1 - Math.min(1, totalSoldFraction))));
+    const remainingM = (remaining / 1000000).toFixed(1);
+    const totalM = (city.pop / 1000000).toFixed(1);
+
+    if(remaining === 0) {
+      el.textContent = 'SOLD OUT';
+      el.setAttribute('fill', '#E94235');
+      el.setAttribute('font-size', '12');
+    } else if(totalSoldFraction > 0) {
+      el.textContent = `${remainingM}M left`;
+      el.setAttribute('fill', '#F59E0B');
+      el.setAttribute('font-size', '13');
+    } else {
+      el.textContent = `${totalM}M`;
+      el.setAttribute('fill', '#000');
+      el.setAttribute('font-size', '16');
     }
   });
 }
@@ -1170,6 +1205,7 @@ function undoLastRound() {
   drawTeams();
   populateDestinationDropdowns();
   updateTeamDisplay();
+  updateCityPopLabels();
   updateCompetitiveAnalysis();
   updateUndoBtn();
 }
@@ -1360,6 +1396,7 @@ function loadGame() {
         drawTeams();
         populateDestinationDropdowns();
         updateTeamDisplay();
+        updateCityPopLabels();
         updateCompetitiveAnalysis();
         updateAuctionHistory();
 
@@ -1397,6 +1434,7 @@ function resetGame() {
   drawTeams();
   populateDestinationDropdowns();
   updateTeamDisplay();
+  updateCityPopLabels();
   updateCompetitiveAnalysis();
   updateAuctionHistory();
 }
@@ -1409,6 +1447,7 @@ document.getElementById('mapBtn').addEventListener('click', () => {
   initMap();
   populateDestinationDropdowns();
   updateTeamDisplay();
+  updateCityPopLabels();
 });
 document.getElementById('mapClose').addEventListener('click', () => document.getElementById('mapModal').classList.remove('show'));
 document.getElementById('nextRound').addEventListener('click', nextRound);
