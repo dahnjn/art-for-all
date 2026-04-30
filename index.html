@@ -218,7 +218,7 @@ svg.map-svg{width:100%;height:100%}
   <div class="map-header">
     <div class="map-title">🎨 ART for ALL - TRAVEL MAP</div>
     <div style="display:flex;align-items:center;gap:20px">
-      <label style="color:#888;font-size:0.8rem">Rounds:<input type="number" id="totalRounds" class="rounds-input" value="6" min="1" max="20"></label>
+      <label style="color:#888;font-size:0.8rem">Years:<input type="number" id="totalRounds" class="rounds-input" value="8" min="1" max="20"></label>
       <button class="map-close" id="mapClose">✕ CLOSE</button>
     </div>
   </div>
@@ -266,7 +266,7 @@ svg.map-svg{width:100%;height:100%}
     </div>
     <div class="sidebar">
       <div class="round-info">
-        <label>Rounds Remaining</label>
+        <label>Years Remaining</label>
         <span id="roundsRemaining">8</span>
       </div>
       <div class="scoreboard-container" style="background:#222;padding:15px;border-radius:4px;margin-bottom:15px">
@@ -576,12 +576,12 @@ const teamColors = {
 
 let gameState = {
   round:1,
-  maxRounds:6,
+  maxRounds:8,
   teams:{
-    1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
-    2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
-    3:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
-    4:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false}
+    1:{cash:0,city:'start',artworks:[],hasFlown:false},
+    2:{cash:0,city:'start',artworks:[],hasFlown:false},
+    3:{cash:0,city:'start',artworks:[],hasFlown:false},
+    4:{cash:0,city:'start',artworks:[],hasFlown:false}
   }
 };
 
@@ -875,37 +875,6 @@ function drawCities() {
   });
 }
 
-function updateCityPopLabels() {
-  Object.entries(cityData).forEach(([cityKey, city]) => {
-    if(cityKey === 'start') return;
-    const el = document.getElementById(`city-pop-${cityKey}`);
-    if(!el) return;
-
-    // Total fraction sold across all teams for this city
-    const totalSoldFraction = [1,2,3,4].reduce((sum, t) => {
-      return sum + (gameState.teams[t].soldTo[cityKey] || 0);
-    }, 0);
-
-    // Remaining = pop * (1 - totalSoldFraction), clamped to 0
-    const remaining = Math.max(0, Math.round(city.pop * (1 - Math.min(1, totalSoldFraction))));
-    const remainingM = (remaining / 1000000).toFixed(1);
-    const totalM = (city.pop / 1000000).toFixed(1);
-
-    if(remaining === 0) {
-      el.textContent = 'SOLD OUT';
-      el.setAttribute('fill', '#E94235');
-      el.setAttribute('font-size', '12');
-    } else if(totalSoldFraction > 0) {
-      el.textContent = `${remainingM}M left`;
-      el.setAttribute('fill', '#F59E0B');
-      el.setAttribute('font-size', '13');
-    } else {
-      el.textContent = `${totalM}M`;
-      el.setAttribute('fill', '#000');
-      el.setAttribute('font-size', '16');
-    }
-  });
-}
 
 function drawTeams() {
   const teamsGroup = document.getElementById('teamsGroup');
@@ -1060,100 +1029,97 @@ function calculateRevenue() {
     const flyValue = flyDest ? flyDest.value : '';
     const isFlyMode = !!flyValue;
     const dest = isFlyMode ? flyValue : select.value;
+    // If no dest selected, team stays where they are
     const actualDest = dest || gameState.teams[i].city;
 
-    // Charge $50M for flying and mark used
     if(isFlyMode && !gameState.teams[i].hasFlown) {
       gameState.teams[i].cash -= 50000000;
       gameState.teams[i].hasFlown = true;
     }
 
+    // Move team (even if staying — updates city to itself)
+    // Only skip if they're stuck at start with no selection
     if(actualDest && actualDest !== 'start') {
       if(!destinations[actualDest]) destinations[actualDest] = [];
-      destinations[actualDest].push({team:i, value:tv[i][actualDest]||0, flew: isFlyMode});
-      gameState.teams[i].city = actualDest;
+      destinations[actualDest].push({team:i, value:tv[i][actualDest]||0, flew:isFlyMode});
+      gameState.teams[i].city = actualDest; // commit the move
+    } else if(dest && dest !== 'start') {
+      // Explicitly selected a city that happens to be start (shouldn't happen but guard)
+      gameState.teams[i].city = dest;
     }
 
-    // Reset fly UI after this round
-    if(flyDest) { flyDest.style.display = 'none'; flyDest.value = ''; }
+    if(flyDest) { flyDest.style.display='none'; flyDest.value=''; }
     const flyBtn = document.getElementById(`fly${i}`);
     if(flyBtn && gameState.teams[i].hasFlown) {
-      flyBtn.textContent = '✈ FLOWN';
-      flyBtn.style.opacity = '0.3';
-      flyBtn.style.cursor = 'not-allowed';
-      flyBtn.onclick = null;
+      flyBtn.textContent='✈ FLOWN'; flyBtn.style.opacity='0.3';
+      flyBtn.style.cursor='not-allowed'; flyBtn.onclick=null;
     } else if(flyBtn) {
-      flyBtn.textContent = '✈ FLY — $50M';
-      flyBtn.style.background = '#0d0d1f';
-      flyBtn.style.color = '#8b7cf8';
-      flyBtn.style.borderColor = '#2d2060';
+      flyBtn.textContent='✈ FLY — $50M'; flyBtn.style.background='#0d0d1f';
+      flyBtn.style.color='#8b7cf8'; flyBtn.style.borderColor='#2d2060';
     }
   }
 
   Object.keys(destinations).forEach(cityKey => {
     const teams = destinations[cityKey];
-    const totalPop = cityData[cityKey].pop;
+    const pop = cityData[cityKey].pop;
     const cityName = cityData[cityKey].name;
+    const cityResult = {city:cityName, population:pop, teams:[]};
 
-    // (1) Filter out teams with zero ticket value — they don't sell tickets
-    const activeTeams = teams.filter(t => t.value > 0);
-
-    // (2) Calculate remaining population across all teams' soldTo for this city
-    // Each team has their own soldTo fraction — remaining pop = what THIS team hasn't sold to yet
-    activeTeams.sort((a,b) => b.value - a.value);
-
-    // Build city result including zero-value teams (for display) but don't process them
-    const cityResult = {city:cityName, population:totalPop, teams:[]};
-
-    // Add zero-value teams to display with 0 revenue
+    // Skip teams with zero ticket value — they earn nothing
+    const active = teams.filter(t => t.value > 0);
     teams.filter(t => t.value === 0).forEach(t => {
-      cityResult.teams.push({teamNum:t.team, ticketPrice:0, idealShare:0, actualShare:0, alreadySold:gameState.teams[t.team].soldTo[cityKey]||0, canSell:0, revenue:0, flew:t.flew||false});
+      cityResult.teams.push({teamNum:t.team, ticketPrice:0, tickets:0, revenue:0, alone:false, flew:t.flew||false});
     });
 
-    if(activeTeams.length === 0) { results.push(cityResult); return; }
+    if(active.length === 0) { results.push(cityResult); return; }
 
-    let idealSplits;
-    if(activeTeams.length===1) idealSplits=[1.0];
-    else if(activeTeams.length===2) idealSplits = activeTeams[0].value===activeTeams[1].value ? [0.5,0.5] : [0.6,0.4];
-    else if(activeTeams.length===3) {
-      if(activeTeams[0].value===activeTeams[1].value&&activeTeams[1].value===activeTeams[2].value) idealSplits=[0.333,0.333,0.334];
-      else if(activeTeams[0].value===activeTeams[1].value) idealSplits=[0.45,0.45,0.1];
-      else if(activeTeams[1].value===activeTeams[2].value) idealSplits=[0.6,0.2,0.2];
-      else idealSplits=[0.6,0.3,0.1];
-    } else {
-      if(activeTeams[0].value===activeTeams[1].value&&activeTeams[2].value===activeTeams[3].value) idealSplits=[0.4,0.4,0.1,0.1];
-      else if(activeTeams[0].value===activeTeams[1].value) idealSplits=[0.4,0.4,0.1,0.1];
-      else idealSplits=[0.6,0.2,0.1,0.1];
+    // Each team sells to the full city population, but competition splits the audience.
+    // Alone = full pop. Split by ticket price ranking:
+    //   1 team  → 100%
+    //   2 teams → 60% / 40%  (or 50/50 if tied)
+    //   3 teams → 60% / 25% / 15%
+    //   4 teams → 55% / 25% / 13% / 7%
+    // Ties at any rank share that rank's share equally.
+
+    active.sort((a,b) => b.value - a.value);
+    const n = active.length;
+    const BASE_SPLITS = {1:[1.0], 2:[0.6,0.4], 3:[0.6,0.25,0.15], 4:[0.55,0.25,0.13,0.07]};
+    const baseSplits = BASE_SPLITS[n];
+
+    // Resolve ties: groups of teams with the same value share the combined split equally
+    const splits = [];
+    let i = 0;
+    while(i < n) {
+      let j = i;
+      while(j < n && active[j].value === active[i].value) j++;
+      const groupSize = j - i;
+      const groupShare = baseSplits.slice(i, j).reduce((a,b)=>a+b, 0) / groupSize;
+      for(let k=i;k<j;k++) splits.push(groupShare);
+      i = j;
     }
 
-    activeTeams.forEach((t,idx) => {
+    active.forEach((t, idx) => {
       const teamNum = t.team;
-      if(!gameState.teams[teamNum].soldTo[cityKey]) gameState.teams[teamNum].soldTo[cityKey]=0;
-      const alreadySold = gameState.teams[teamNum].soldTo[cityKey];
-      const canSell = Math.max(0, 1.0 - alreadySold);
-      const actualShare = Math.min(idealSplits[idx], canSell);
-
-      // (2) Revenue based on REMAINING tickets available to this team
-      const remainingPop = Math.round(totalPop * canSell);
-      const ticketsThisRound = Math.round(totalPop * actualShare);
-      const revenue = ticketsThisRound * t.value;
+      const share = splits[idx];
+      const tickets = Math.round(pop * share);
+      const revenue = tickets * t.value;
       gameState.teams[teamNum].cash += revenue;
-      gameState.teams[teamNum].soldTo[cityKey] += actualShare;
 
       const teamArts = gameState.teams[teamNum].artworks;
-      if(teamArts.length>0 && revenue>0) {
+      if(teamArts.length > 0 && revenue > 0) {
         const totalTV = teamArts.reduce((sum,art)=>sum+(artworks[art.idx].cities[cityKey]||0),0);
-        if(totalTV>0) {
+        if(totalTV > 0) {
           teamArts.forEach(art => {
-            const fraction = (artworks[art.idx].cities[cityKey]||0)/totalTV;
-            art.revenue += Math.round(revenue*fraction);
-            art.ticketsSold += Math.round(ticketsThisRound*fraction);
+            const frac = (artworks[art.idx].cities[cityKey]||0)/totalTV;
+            art.revenue += Math.round(revenue*frac);
+            art.ticketsSold += Math.round(tickets*frac);
           });
         }
       }
 
-      cityResult.teams.push({teamNum, ticketPrice:t.value, idealShare:idealSplits[idx], actualShare, alreadySold, canSell, revenue, remainingPop, flew:t.flew||false});
+      cityResult.teams.push({teamNum, ticketPrice:t.value, share, tickets, revenue, alone:n===1, flew:t.flew||false});
     });
+
     results.push(cityResult);
   });
   return results;
@@ -1205,7 +1171,6 @@ function undoLastRound() {
   drawTeams();
   populateDestinationDropdowns();
   updateTeamDisplay();
-  updateCityPopLabels();
   updateCompetitiveAnalysis();
   updateUndoBtn();
 }
@@ -1263,24 +1228,24 @@ function nextRound() {
         <div style="background:#000;color:#fff;padding:12px 15px;font-weight:bold">${cr.city} — Pop: ${(cr.population/1000000).toFixed(1)}M</div>
         <div style="padding:15px">`;
       cr.teams.forEach(t => {
-        const soldOut = t.actualShare === 0;
-        const partial = t.alreadySold > 0;
         const tc = teamColors[t.teamNum];
+        const noRevenue = t.revenue === 0;
         popupContent += `
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:${soldOut?'#fff5f5':'#f5f5f5'};border-left:4px solid ${tc.bg}">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:${noRevenue?'#fff5f5':'#f5f5f5'};border-left:4px solid ${tc.bg}">
             <div style="display:flex;align-items:center;gap:15px;flex:1">
               <div style="background:${tc.bg};color:${tc.text};padding:6px 12px;border-radius:4px;font-weight:bold;min-width:80px;text-align:center">${tc.name}${t.flew?' ✈':''}</div>
-              <div><div style="font-size:0.85rem;color:#666">Ticket Price</div><div style="font-size:1.1rem;font-weight:bold">$${t.ticketPrice}</div></div>
+              <div><div style="font-size:0.85rem;color:#666">Ticket Price</div><div style="font-size:1.1rem;font-weight:bold">${t.ticketPrice > 0 ? '$'+t.ticketPrice : '—'}</div></div>
+              ${t.alone ? '<div style="background:#0F9D58;color:#fff;font-size:0.7rem;padding:3px 8px;border-radius:4px;font-weight:bold">ALONE</div>' : ''}
             </div>
             <div style="display:flex;gap:20px;align-items:center">
               <div style="text-align:right">
-                <div style="font-size:0.85rem;color:#666">Market Share</div>
-                <div style="font-size:1.1rem;font-weight:bold;color:${soldOut?'#E94235':tc.bg}">${Math.round(t.actualShare*100)}%${soldOut?' (SOLD OUT)':''}</div>
-                ${partial?`<div style="font-size:0.75rem;color:#999">Already sold: ${Math.round(t.alreadySold*100)}%</div>`:''}
+                <div style="font-size:0.85rem;color:#666">Tickets Sold</div>
+                <div style="font-size:1.1rem;font-weight:bold;color:${tc.bg}">${t.tickets ? t.tickets.toLocaleString() : '0'}</div>
+                ${t.share > 0 ? `<div style="font-size:0.75rem;color:#999">${Math.round(t.share*100)}% of city</div>` : ''}
               </div>
               <div style="text-align:right;min-width:120px">
                 <div style="font-size:0.85rem;color:#666">Revenue</div>
-                <div style="font-size:1.2rem;font-weight:bold;color:${soldOut?'#E94235':'#0F9D58'}">$${t.revenue.toLocaleString()}</div>
+                <div style="font-size:1.2rem;font-weight:bold;color:${noRevenue?'#ccc':'#0F9D58'}">$${t.revenue.toLocaleString()}</div>
               </div>
             </div>
           </div>`;
@@ -1298,7 +1263,7 @@ function nextRound() {
 
   const logDiv = document.getElementById('logEntries');
   const logLines = results.flatMap(cr =>
-    cr.teams.map(t => `${teamColors[t.teamNum].name} in ${cr.city}: $${t.revenue.toLocaleString()} (${Math.round(t.actualShare*100)}%)`)
+    cr.teams.map(t => `${teamColors[t.teamNum].name} in ${cr.city}: $${t.revenue.toLocaleString()} (${t.tickets ? t.tickets.toLocaleString()+' tickets' : 'no tickets'})`)
   );
   logDiv.innerHTML = `<div class="log-entry"><strong>Year ${currentRound}:</strong></div>` +
     logLines.map(l=>`<div class="log-entry">${l}</div>`).join('') + logDiv.innerHTML;
@@ -1307,7 +1272,6 @@ function nextRound() {
   drawTeams();
   populateDestinationDropdowns();
   updateTeamDisplay();
-  updateCityPopLabels();
 
   if(gameState.round > gameState.maxRounds) showEndGameScreen();
 }
@@ -1356,7 +1320,6 @@ function loadGame() {
         gameState = saveData.gameState;
         // Ensure all teams have soldTo and hasFlown (backward compat)
         [1,2,3,4].forEach(t => {
-          if(!gameState.teams[t].soldTo) gameState.teams[t].soldTo={};
           if(gameState.teams[t].hasFlown === undefined) gameState.teams[t].hasFlown=false;
         });
 
@@ -1397,8 +1360,7 @@ function loadGame() {
         drawTeams();
         populateDestinationDropdowns();
         updateTeamDisplay();
-        updateCityPopLabels();
-        updateCompetitiveAnalysis();
+              updateCompetitiveAnalysis();
         updateAuctionHistory();
 
         // Clear log
@@ -1418,12 +1380,12 @@ function resetGame() {
   if(!confirm('Reset game? All progress will be lost.')) return;
   gameState = {
     round:1,
-    maxRounds:parseInt(document.getElementById('totalRounds').value)||6,
+    maxRounds:parseInt(document.getElementById('totalRounds').value)||8,
     teams:{
-      1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
-      2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
-      3:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
-      4:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false}
+      1:{cash:0,city:'start',artworks:[],hasFlown:false},
+      2:{cash:0,city:'start',artworks:[],hasFlown:false},
+      3:{cash:0,city:'start',artworks:[],hasFlown:false},
+      4:{cash:0,city:'start',artworks:[],hasFlown:false}
     }
   };
   auctionState.history = [];
@@ -1435,7 +1397,6 @@ function resetGame() {
   drawTeams();
   populateDestinationDropdowns();
   updateTeamDisplay();
-  updateCityPopLabels();
   updateCompetitiveAnalysis();
   updateAuctionHistory();
 }
@@ -1444,11 +1405,10 @@ function resetGame() {
 
 document.getElementById('mapBtn').addEventListener('click', () => {
   document.getElementById('mapModal').classList.add('show');
-  gameState.maxRounds = parseInt(document.getElementById('totalRounds').value)||6;
+  gameState.maxRounds = parseInt(document.getElementById('totalRounds').value)||8;
   initMap();
   populateDestinationDropdowns();
   updateTeamDisplay();
-  updateCityPopLabels();
 });
 document.getElementById('mapClose').addEventListener('click', () => document.getElementById('mapModal').classList.remove('show'));
 document.getElementById('nextRound').addEventListener('click', nextRound);
@@ -1457,7 +1417,7 @@ document.getElementById('saveGame').addEventListener('click', saveGame);
 document.getElementById('loadGame').addEventListener('click', loadGame);
 document.getElementById('auctionBtn').addEventListener('click', openAuctionModal);
 document.getElementById('totalRounds').addEventListener('change', (e) => {
-  gameState.maxRounds = parseInt(e.target.value)||6;
+  gameState.maxRounds = parseInt(e.target.value)||8;
   updateTeamDisplay();
 });
 for(let i=1;i<=4;i++) document.getElementById(`dest${i}`).addEventListener('change', updateTeamDisplay);
@@ -2077,21 +2037,11 @@ function showEndGameScreen() {
   const teamStats = {};
   [1,2,3,4].forEach(teamNum => {
     const team = gameState.teams[teamNum];
-    // Cost = sum of purchase prices from artworks
     const totalCost = team.artworks.reduce((s,a)=>s+a.price,0) * 1000000;
-    let totalRevenue=0, totalTickets=0;
-    if(team.soldTo) {
-      Object.keys(team.soldTo).forEach(cityKey => {
-        const pct = team.soldTo[cityKey];
-        const pop = cityData[cityKey].pop;
-        totalTickets += Math.round(pop*pct);
-        const avgPrice = team.artworks.length>0
-          ? team.artworks.reduce((s,art)=>s+(artworks[art.idx].cities[cityKey]||0),0)
-          : 0;
-        totalRevenue += Math.round(pop*pct*avgPrice);
-      });
-    }
-    teamStats[teamNum] = {teamNum,totalRevenue,totalCost,profit:totalRevenue-totalCost,ticketsSold:totalTickets,artworksOwned:team.artworks.length};
+    // Revenue and tickets are tracked directly on each artwork object
+    const totalRevenue = team.artworks.reduce((s,a)=>s+a.revenue,0);
+    const totalTickets = team.artworks.reduce((s,a)=>s+a.ticketsSold,0);
+    teamStats[teamNum] = {teamNum, totalRevenue, totalCost, profit:totalRevenue-totalCost, ticketsSold:totalTickets, artworksOwned:team.artworks.length};
   });
   const rankings = Object.values(teamStats).sort((a,b)=>b.profit-a.profit);
   const winner = rankings[0];
