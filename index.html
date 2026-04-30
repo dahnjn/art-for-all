@@ -165,6 +165,7 @@ svg.map-svg{width:100%;height:100%}
   <button id="mapBtn" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer">MAP</button>
   <button id="auctionBtn" style="margin-top:15px;padding:12px 30px;background:#000;color:#fff;border:none;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;margin-left:10px">AUCTIONS</button>
   <button onclick="openAutoAssign()" style="margin-top:15px;padding:12px 30px;background:#fff;color:#000;border:2px solid #000;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;margin-left:10px">⚡ AUTO ASSIGN</button>
+  <button onclick="openTicketSales()" style="margin-top:15px;padding:12px 30px;background:#fff;color:#000;border:2px solid #000;font-family:'Helvetica Now Micro','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;margin-left:10px">🎟 TICKET SALES</button>
 </header>
 
 <div id="competitiveAnalysis" style="margin-bottom:30px;display:none">
@@ -578,10 +579,10 @@ let gameState = {
   round:1,
   maxRounds:8,
   teams:{
-    1:{cash:0,city:'start',artworks:[],hasFlown:false},
-    2:{cash:0,city:'start',artworks:[],hasFlown:false},
-    3:{cash:0,city:'start',artworks:[],hasFlown:false},
-    4:{cash:0,city:'start',artworks:[],hasFlown:false}
+    1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+    2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+    3:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+    4:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false}
   }
 };
 
@@ -1065,44 +1066,47 @@ function calculateRevenue() {
     const cityName = cityData[cityKey].name;
     const cityResult = {city:cityName, population:pop, teams:[]};
 
-    // Skip teams with zero ticket value — they earn nothing
     const active = teams.filter(t => t.value > 0);
     teams.filter(t => t.value === 0).forEach(t => {
-      cityResult.teams.push({teamNum:t.team, ticketPrice:0, tickets:0, revenue:0, alone:false, flew:t.flew||false});
+      cityResult.teams.push({teamNum:t.team, ticketPrice:0, ticketsSold:0, ticketsRemaining:pop, revenue:0, alone:false, flew:t.flew||false});
     });
 
     if(active.length === 0) { results.push(cityResult); return; }
 
-    // Each team sells to the full city population, but competition splits the audience.
-    // Alone = full pop. Split by ticket price ranking:
-    //   1 team  → 100%
-    //   2 teams → 60% / 40%  (or 50/50 if tied)
-    //   3 teams → 60% / 25% / 15%
-    //   4 teams → 55% / 25% / 13% / 7%
-    // Ties at any rank share that rank's share equally.
-
+    // Base competition splits by rank (ticket price order)
     active.sort((a,b) => b.value - a.value);
     const n = active.length;
     const BASE_SPLITS = {1:[1.0], 2:[0.6,0.4], 3:[0.6,0.25,0.15], 4:[0.55,0.25,0.13,0.07]};
     const baseSplits = BASE_SPLITS[n];
 
-    // Resolve ties: groups of teams with the same value share the combined split equally
-    const splits = [];
-    let i = 0;
-    while(i < n) {
-      let j = i;
-      while(j < n && active[j].value === active[i].value) j++;
-      const groupSize = j - i;
-      const groupShare = baseSplits.slice(i, j).reduce((a,b)=>a+b, 0) / groupSize;
-      for(let k=i;k<j;k++) splits.push(groupShare);
-      i = j;
+    // Resolve ties
+    const competitionSplits = [];
+    let ci = 0;
+    while(ci < n) {
+      let cj = ci;
+      while(cj < n && active[cj].value === active[ci].value) cj++;
+      const groupShare = baseSplits.slice(ci, cj).reduce((a,b)=>a+b,0) / (cj-ci);
+      for(let k=ci;k<cj;k++) competitionSplits.push(groupShare);
+      ci = cj;
     }
 
     active.forEach((t, idx) => {
       const teamNum = t.team;
-      const share = splits[idx];
-      const tickets = Math.round(pop * share);
-      const revenue = tickets * t.value;
+      if(!gameState.teams[teamNum].soldTo) gameState.teams[teamNum].soldTo = {};
+      if(!gameState.teams[teamNum].soldTo[cityKey]) gameState.teams[teamNum].soldTo[cityKey] = 0;
+
+      // Each team has their own lifetime pool = cityPop
+      // Their remaining = pop * (1 - soldTo fraction)
+      const soldFraction = gameState.teams[teamNum].soldTo[cityKey];
+      const remaining = Math.max(0, pop - Math.round(pop * soldFraction));
+
+      // This year's share = competition split, but capped to what they have left
+      const idealThisYear = Math.round(pop * competitionSplits[idx]);
+      const ticketsThisYear = Math.min(idealThisYear, remaining);
+      const revenue = ticketsThisYear * t.value;
+
+      // Update depletion
+      gameState.teams[teamNum].soldTo[cityKey] += ticketsThisYear / pop;
       gameState.teams[teamNum].cash += revenue;
 
       const teamArts = gameState.teams[teamNum].artworks;
@@ -1112,12 +1116,19 @@ function calculateRevenue() {
           teamArts.forEach(art => {
             const frac = (artworks[art.idx].cities[cityKey]||0)/totalTV;
             art.revenue += Math.round(revenue*frac);
-            art.ticketsSold += Math.round(tickets*frac);
+            art.ticketsSold += Math.round(ticketsThisYear*frac);
           });
         }
       }
 
-      cityResult.teams.push({teamNum, ticketPrice:t.value, share, tickets, revenue, alone:n===1, flew:t.flew||false});
+      cityResult.teams.push({
+        teamNum, ticketPrice:t.value,
+        competitionShare: competitionSplits[idx],
+        ticketsSold: ticketsThisYear,
+        totalSold: Math.round(pop * gameState.teams[teamNum].soldTo[cityKey]),
+        ticketsRemaining: Math.max(0, remaining - ticketsThisYear),
+        revenue, alone: n===1, flew: t.flew||false
+      });
     });
 
     results.push(cityResult);
@@ -1230,6 +1241,7 @@ function nextRound() {
       cr.teams.forEach(t => {
         const tc = teamColors[t.teamNum];
         const noRevenue = t.revenue === 0;
+        const pctSold = cr.population > 0 ? Math.round(t.ticketsSold / cr.population * 100) : 0;
         popupContent += `
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:${noRevenue?'#fff5f5':'#f5f5f5'};border-left:4px solid ${tc.bg}">
             <div style="display:flex;align-items:center;gap:15px;flex:1">
@@ -1239,9 +1251,9 @@ function nextRound() {
             </div>
             <div style="display:flex;gap:20px;align-items:center">
               <div style="text-align:right">
-                <div style="font-size:0.85rem;color:#666">Tickets Sold</div>
-                <div style="font-size:1.1rem;font-weight:bold;color:${tc.bg}">${t.tickets ? t.tickets.toLocaleString() : '0'}</div>
-                ${t.share > 0 ? `<div style="font-size:0.75rem;color:#999">${Math.round(t.share*100)}% of city</div>` : ''}
+                <div style="font-size:0.85rem;color:#666">Tickets This Year</div>
+                <div style="font-size:1.1rem;font-weight:bold;color:${tc.bg}">${t.ticketsSold.toLocaleString()} <span style="font-size:0.75rem;color:#999">(${pctSold}%)</span></div>
+                <div style="font-size:0.75rem;color:#999">${t.ticketsRemaining.toLocaleString()} remaining</div>
               </div>
               <div style="text-align:right;min-width:120px">
                 <div style="font-size:0.85rem;color:#666">Revenue</div>
@@ -1263,7 +1275,7 @@ function nextRound() {
 
   const logDiv = document.getElementById('logEntries');
   const logLines = results.flatMap(cr =>
-    cr.teams.map(t => `${teamColors[t.teamNum].name} in ${cr.city}: $${t.revenue.toLocaleString()} (${t.tickets ? t.tickets.toLocaleString()+' tickets' : 'no tickets'})`)
+    cr.teams.map(t => `${teamColors[t.teamNum].name} in ${cr.city}: ${t.ticketsSold.toLocaleString()} tickets → $${t.revenue.toLocaleString()}`)
   );
   logDiv.innerHTML = `<div class="log-entry"><strong>Year ${currentRound}:</strong></div>` +
     logLines.map(l=>`<div class="log-entry">${l}</div>`).join('') + logDiv.innerHTML;
@@ -1320,6 +1332,7 @@ function loadGame() {
         gameState = saveData.gameState;
         // Ensure all teams have soldTo and hasFlown (backward compat)
         [1,2,3,4].forEach(t => {
+          if(!gameState.teams[t].soldTo) gameState.teams[t].soldTo={};
           if(gameState.teams[t].hasFlown === undefined) gameState.teams[t].hasFlown=false;
         });
 
@@ -1382,10 +1395,10 @@ function resetGame() {
     round:1,
     maxRounds:parseInt(document.getElementById('totalRounds').value)||8,
     teams:{
-      1:{cash:0,city:'start',artworks:[],hasFlown:false},
-      2:{cash:0,city:'start',artworks:[],hasFlown:false},
-      3:{cash:0,city:'start',artworks:[],hasFlown:false},
-      4:{cash:0,city:'start',artworks:[],hasFlown:false}
+      1:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+      2:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+      3:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false},
+      4:{cash:0,city:'start',artworks:[],soldTo:{},hasFlown:false}
     }
   };
   auctionState.history = [];
@@ -2158,8 +2171,113 @@ document.addEventListener('DOMContentLoaded', () => {
   if(slider) slider.addEventListener('input', () => {});
 });
 
+// ─── TICKET SALES VISUAL ─────────────────────────────────────────────────────
+
+function openTicketSales() {
+  renderTicketSalesGrid();
+  document.getElementById('ticketSalesModal').style.display = 'block';
+}
+
+function closeTicketSales() {
+  document.getElementById('ticketSalesModal').style.display = 'none';
+}
+
+function renderTicketSalesGrid() {
+  const el = document.getElementById('ticketSalesGrid');
+  const allCities = Object.keys(cityData).filter(k => k !== 'start');
+
+  // Check if any team has sold any tickets
+  const anySales = [1,2,3,4].some(t =>
+    gameState.teams[t].soldTo && Object.keys(gameState.teams[t].soldTo).length > 0
+  );
+
+  if(!anySales) {
+    el.innerHTML = '<div style="text-align:center;color:#666;padding:60px;font-size:1rem;">No tickets sold yet — travel to cities to start selling.</div>';
+    return;
+  }
+
+  // Build the grid: one card per city that has any sales
+  const activeCities = allCities.filter(cityKey =>
+    [1,2,3,4].some(t => gameState.teams[t].soldTo && gameState.teams[t].soldTo[cityKey] > 0)
+  );
+
+  el.innerHTML = activeCities.map(cityKey => {
+    const city = cityData[cityKey];
+    const pop = city.pop;
+
+    const teamBars = [1,2,3,4].map(tn => {
+      const tc = teamColors[tn];
+      const sold = gameState.teams[tn].soldTo && gameState.teams[tn].soldTo[cityKey]
+        ? Math.min(1, gameState.teams[tn].soldTo[cityKey])
+        : 0;
+      const soldTickets = Math.round(pop * sold);
+      const remaining = pop - soldTickets;
+      const pct = Math.round(sold * 100);
+
+      // Ticket price for this team in this city
+      const tv = gameState.teams[tn].artworks.reduce((s, a) => s + (artworks[a.idx].cities[cityKey] || 0), 0);
+
+      return `
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:${tc.bg};flex-shrink:0;"></div>
+              <span style="color:${tc.bg};font-weight:700;font-size:0.8rem;">${tc.name}</span>
+              <span style="color:#555;font-size:0.75rem;">$${tv} / ticket</span>
+            </div>
+            <div style="text-align:right;font-size:0.75rem;">
+              <span style="color:#fff;font-weight:600;">${soldTickets.toLocaleString()}</span>
+              <span style="color:#555;"> / ${pop.toLocaleString()}</span>
+              <span style="color:#444;margin-left:6px;">${pct}%</span>
+            </div>
+          </div>
+          <div style="height:10px;background:#1a1a1a;border-radius:5px;overflow:hidden;position:relative;">
+            <div style="height:100%;width:${pct}%;background:${tc.bg};border-radius:5px;transition:width 0.4s ease;"></div>
+          </div>
+          <div style="font-size:0.68rem;color:#444;margin-top:2px;text-align:right;">${remaining.toLocaleString()} remaining</div>
+        </div>`;
+    }).join('');
+
+    const totalSoldAcrossTeams = [1,2,3,4].reduce((s, tn) => {
+      const sold = gameState.teams[tn].soldTo && gameState.teams[tn].soldTo[cityKey]
+        ? Math.min(1, gameState.teams[tn].soldTo[cityKey]) : 0;
+      return s + Math.round(pop * sold);
+    }, 0);
+
+    return `
+      <div style="background:#111;border-radius:10px;padding:18px 20px;border:1px solid #222;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #222;">
+          <div>
+            <div style="color:#fff;font-weight:700;font-size:1rem;letter-spacing:0.05em;">${city.name}</div>
+            <div style="color:#555;font-size:0.75rem;margin-top:2px;">Population: ${pop.toLocaleString()}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:#888;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;">Total sold (all teams)</div>
+            <div style="color:#fff;font-weight:700;font-size:0.95rem;">${totalSoldAcrossTeams.toLocaleString()}</div>
+          </div>
+        </div>
+        ${teamBars}
+      </div>`;
+  }).join('');
+
+  if(activeCities.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#666;padding:60px;">No tickets sold yet.</div>';
+  }
+}
+
 initGallery();
 updateCompetitiveAnalysis();
 </script>
+<!-- TICKET SALES MODAL -->
+<div id="ticketSalesModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;overflow-y:auto;">
+  <div style="max-width:1300px;margin:30px auto;padding:24px;position:relative;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h2 style="color:#fff;font-size:1.4rem;font-weight:300;letter-spacing:0.15em;text-transform:uppercase;">🎟 Ticket Sales by City</h2>
+      <button onclick="closeTicketSales()" style="background:#333;color:#fff;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:0.9rem;">✕ CLOSE</button>
+    </div>
+    <div id="ticketSalesGrid"></div>
+  </div>
+</div>
+
 </body>
 </html>
